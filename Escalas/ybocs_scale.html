@@ -6,6 +6,7 @@
     <title>Escala Y-BOCS</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -717,39 +718,139 @@
             }
         }
 
-        async function saveAsPDF() {
-            const resultsCard = document.getElementById('card-results');
-            try {
-                const canvas = await html2canvas(resultsCard, {
-                    backgroundColor: '#ffffff',
-                    scale: 2,
-                    logging: false
-                });
-                
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF();
-                const imgWidth = 190;
-                const pageHeight = 295;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                
-                let position = 10;
-                
-                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+        function exportToPDF() {
+    try {
+        // Verificar que jsPDF esté disponible
+        if (typeof window.jsPDF === 'undefined') {
+            alert('Error: jsPDF no está cargado');
+            return;
+        }
+
+        const { jsPDF } = window.jsPDF;
+        const doc = new jsPDF();
+        
+        // Configuración del documento
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 20;
+        let yPosition = 30;
+        
+        // Título principal
+        doc.setFontSize(18);
+        doc.setFont("helvetica", "bold");
+        doc.text("Resultados de Evaluación", margin, yPosition);
+        yPosition += 15;
+        
+        // Fecha y hora
+        const fecha = new Date();
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Fecha: ${fecha.toLocaleDateString('es-MX')} - ${fecha.toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'})}`, margin, yPosition);
+        yPosition += 20;
+        
+        // Obtener datos del contenedor de resultados
+        const resultsContainer = document.getElementById('resultsContainer');
+        if (!resultsContainer) {
+            alert('No se encontraron resultados para exportar');
+            return;
+        }
+        
+        // Procesar cada sección de resultados
+        const sections = resultsContainer.querySelectorAll('.result-section');
+        
+        sections.forEach((section, index) => {
+            // Verificar si necesitamos nueva página
+            if (yPosition > 250) {
+                doc.addPage();
+                yPosition = 30;
+            }
+            
+            // Título de la sección
+            const title = section.querySelector('h3');
+            if (title) {
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text(title.textContent.trim(), margin, yPosition);
+                yPosition += 10;
+            }
+            
+            // Puntuación
+            const score = section.querySelector('.score');
+            if (score) {
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "bold");
+                doc.text(`Puntuación: ${score.textContent.trim()}`, margin, yPosition);
+                yPosition += 8;
+            }
+            
+            // Texto descriptivo
+            const paragraphs = section.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                if (p.textContent.trim() && !p.querySelector('.score')) {
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    
+                    // Dividir texto largo en líneas
+                    const text = p.textContent.trim();
+                    const lines = doc.splitTextToSize(text, pageWidth - (margin * 2));
+                    
+                    lines.forEach(line => {
+                        if (yPosition > 270) {
+                            doc.addPage();
+                            yPosition = 30;
+                        }
+                        doc.text(line, margin, yPosition);
+                        yPosition += 5;
+                    });
+                    yPosition += 3;
+                }
+            });
+            
+            // Interpretaciones
+            const interpretations = section.querySelectorAll('.interpretation');
+            interpretations.forEach(interp => {
+                if (yPosition > 260) {
+                    doc.addPage();
+                    yPosition = 30;
                 }
                 
-                pdf.save('resultados-ybocs.pdf');
-            } catch (error) {
-                alert('Error al generar el PDF');
-            }
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "italic");
+                const text = interp.textContent.trim();
+                const lines = doc.splitTextToSize(text, pageWidth - (margin * 2));
+                
+                lines.forEach(line => {
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 30;
+                    }
+                    doc.text(line, margin, yPosition);
+                    yPosition += 5;
+                });
+                yPosition += 8;
+            });
+            
+            yPosition += 5; // Espacio entre secciones
+        });
+        
+        // Pie de página en todas las páginas
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Página ${i} de ${totalPages}`, pageWidth - 40, doc.internal.pageSize.getHeight() - 10);
+            doc.text('Generado automáticamente por el Sistema de Evaluación', margin, doc.internal.pageSize.getHeight() - 10);
         }
+        
+        // Guardar el PDF
+        const fileName = `resultados-evaluacion-${fecha.toISOString().split('T')[0]}.pdf`;
+        doc.save(fileName);
+        
+    } catch (error) {
+        console.error('Error al generar PDF:', error);
+        alert('Error al generar el PDF. Verifica que todos los elementos estén cargados.');
+    }
+}
 
         // Inicializar
         updateProgress();
