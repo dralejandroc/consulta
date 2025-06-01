@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalas de Evaluación Psicológica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #29A98C;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scales-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .scale-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .scale-item:hover {
+            background: #29A98C;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(41, 169, 140, 0.3);
+        }
+
+        .scale-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .scale-desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .empty-category {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px dashed #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .scales-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Escalas de Evaluación</h1>
+            <p>Sistema de evaluación psicológica</p>
+        </div>
+        
+        <div class="content">
+            <!-- DEPRESIÓN -->
+            <div class="category">
+                <div class="category-title">
+                    😔 Depresión
+                </div>
+                <div class="scales-list">
+                    <div class="scale-item" onclick="window.open('bdi-13-assessment.html', '_blank')">
+                        <div class="scale-name">BDI-13</div>
+                        <div class="scale-desc">Inventario de Depresión de Beck (Versión Abreviada)</div>
+                    </div>
+                    <div class="scale-item" onclick="window.open('beck-21-assessment.html', '_blank')">
+                        <div class="scale-name">BDI-21</div>
+                        <div class="scale-desc">Inventario de Depresión de Beck (Versión Completa)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANSIEDAD -->
+            <div class="category">
+                <div class="category-title">
+                    😰 Ansiedad
+                </div>
+                <div class="scales-list">
+                    <div class="scale-item" onclick="window.open('gadi-assessment.html', '_blank')">
+                        <div class="scale-name">GADI</div>
+                        <div class="scale-desc">Trastorno de Ansiedad Generalizada</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOC -->
+            <div class="category">
+                <div class="category-title">
+                    🔄 TOC (Trastorno Obsesivo-Compulsivo)
+                </div>
+                <div class="empty-category">
+                    Próximamente...
+                </div>
+            </div>
+
+            <!-- FOBIA SOCIAL -->
+            <div class="category">
+                <div class="category-title">
+                    👥 Fobia Social
+                </div>
+                <div class="scales-list">
+                    <div class="scale-item" onclick="window.open('spin-assessment.html', '_blank')">
+                        <div class="scale-name">SPIN</div>
+                        <div class="scale-desc">Inventario de Fobia Social</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERSONALIDAD -->
+            <div class="category">
+                <div class="category-title">
+                    🌊 Trastornos de Personalidad
+                </div>
+                <div class="scales-list">
+                    <div class="scale-item" onclick="window.open('bls-23-assessment.html', '_blank')">
+                        <div class="scale-name">BLS-23</div>
+                        <div class="scale-desc">Borderline Symptoms List</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUSTANCIAS -->
+            <div class="category">
+                <div class="category-title">
+                    🍷 Trastornos por Sustancias
+                </div>
+                <div class="empty-category">
+                    Próximamente...
+                </div>
+            </div>
+
+            <!-- TDAH -->
+            <div class="category">
+                <div class="category-title">
+                    🎯 TDAH
+                </div>
+                <div class="scales-list">
+                    <div class="scale-item" onclick="window.open('tdah-assessment.html', '_blank')">
+                        <div class="scale-name">ADHD-RS</div>
+                        <div class="scale-desc">Escala de Autoevaluación del TDAH</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUEÑO -->
+            <div class="category">
+                <div class="category-title">
+                    😴 Trastornos del Sueño
+                </div>
+                <div class="scales-list">
+                    <div class="scale-item" onclick="window.open('escala-sueno-mos-v2.html', '_blank')">
+                        <div class="scale-name">MOS</div>
+                        <div class="scale-desc">Escala de Sueño MOS</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRASTORNOS ALIMENTARIOS -->
+            <div class="category">
+                <div class="category-title">
+                    🍽️ Trastornos Alimentarios
+                </div>
+                <div class="empty-category">
+                    Próximamente...
+                </div>
+            </div>
+
+            <!-- TRAUMA Y ESTRÉS -->
+            <div class="category">
+                <div class="category-title">
+                    ⚡ Trauma y Estrés
+                </div>
+                <div class="empty-category">
+                    Próximamente...
+                </div>
+            </div>
+
+            <!-- PSICOSIS -->
+            <div class="category">
+                <div class="category-title">
+                    🧠 Síntomas Psicóticos
+                </div>
+                <div class="empty-category">
+                    Próximamente...
+                </div>
+            </div>
+
+            <!-- OTROS -->
+            <div class="category">
+                <div class="category-title">
+                    📊 Otros
+                </div>
+                <div class="empty-category">
+                    Escalas adicionales...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Efecto simple al hacer clic
+        document.querySelectorAll('.scale-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-2px)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
