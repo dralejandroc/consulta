@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borderline Symptoms List (BLS-23)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            background: rgba(255,248,238,0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #FFF8EE;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section-header {
+            background: #f0fff8;
+            border: 2px solid #29A98C;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #112F33;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .section-instructions {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .question-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #29A98C;
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .option-button {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 22px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .option-button:hover {
+            border-color: #29A98C;
+            background: #f0fff8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(41, 169, 140, 0.2);
+        }
+
+        .option-button.selected {
+            background: #29A98C;
+            color: #FFF8EE;
+            border-color: #29A98C;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score-interpretation {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .subscales-section {
+            background: #f0fff8;
+            border: 2px solid #29A98C;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .subscales-title {
+            color: #112F33;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .subscale-item {
+            background: white;
+            border: 1px solid #29A98C;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subscale-info {
+            flex: 1;
+        }
+
+        .subscale-name {
+            font-weight: bold;
+            color: #112F33;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .subscale-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .subscale-score {
+            background: #29A98C;
+            color: #FFF8EE;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .red-flags-section {
+            background: #fff5f5;
+            border: 2px solid #EC7367;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .red-flags-title {
+            color: #EC7367;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .red-flag-item {
+            background: white;
+            border: 1px solid #EC7367;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .red-flag-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .red-flag-text {
+            flex: 1;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .red-flag-score {
+            background: #FFF8EE;
+            color: #EC7367;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 1px solid #EC7367;
+        }
+
+        .high-risk-warning {
+            background: #FFF8EE;
+            border: 3px solid #EC7367;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .high-risk-title {
+            color: #EC7367;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .no-red-flags {
+            background: #f0fff8;
+            border: 2px solid #29A98C;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #112F33;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 169, 140, 0.3);
+        }
+
+        .patient-view-message {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: #29A98C;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: #FFF8EE;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .option-button {
+                padding: 15px;
+                font-size: 0.95rem;
+            }
+
+            .subscale-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="headerTitle">Borderline Symptoms List (BLS-23)</h1>
+            <p id="headerSubtitle">Evaluación de síntomas borderline</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <div class="content" id="mainContent">
+            <!-- El contenido se generará dinámicamente -->
+        </div>
+    </div>
+
+    <script>
+        class BLS23Assessment {
+            constructor() {
+                this.currentQuestion = 0;
+                this.responses = {};
+                this.showResults = false;
+                this.showDoctorView = false;
+                this.currentSection = 1;
+                
+                this.symptomsQuestions = [
+                    "Me resultaba difícil concentrarme",
+                    "Me sentí indefenso",
+                    "Estuve ausente e incapaz de recordar que estaba haciendo en realidad",
+                    "Sentí asco",
+                    "Pensé en hacerme daño",
+                    "Desconfié de los demás",
+                    "No creía que tuviera derecho a vivir",
+                    "Me sentía solo",
+                    "Sentí una tensión interna estresante",
+                    "Sentí mucho miedo de imágenes que me vinieron a la cabeza",
+                    "Me odié a mí mismo",
+                    "Quise castigarme",
+                    "Sufrí de vergüenza",
+                    "Mi humor oscilaba rápidamente entre la ansiedad, la rabia y la depresión",
+                    "Sufrí al oír voces y ruidos procedentes de dentro o fuera de mi cabeza",
+                    "Las críticas tuvieron un efecto demoledor en mí",
+                    "Me sentí vulnerable",
+                    "La idea de morirme me causó una cierta fascinación",
+                    "Nada parecía tener sentido para mí",
+                    "Tuve miedo de perder el control",
+                    "Me di asco a mí mismo",
+                    "Tuve la sensación de salir de mí mismo",
+                    "Sentí que no valía nada"
+                ];
+
+                this.behaviorQuestions = [
+                    "Me hice daño cortándome, quemándome, estrangulándome, dándome golpes con la cabeza, etc.",
+                    "Dije a otras personas que iba a matarme",
+                    "Intenté suicidarme",
+                    "Tuve atracones de comida",
+                    "Me provoqué el vómito",
+                    "Realicé deliberadamente conductas arriesgadas como conducir demasiado rápido o en dirección contraria, hacer equilibrios y juegos en lugares altos, etc.",
+                    "Me emborraché",
+                    "Usé drogas",
+                    "Tomé medicación que no se me había recetado o si se me había prescrito, tomé más de la dosis recetada",
+                    "Tuve brotes de ira incontrolada o ataqué físicamente a otras personas",
+                    "Tuve relaciones sexuales que no pude controlar, de las cuales más tarde me sentí avergonzado/a o enfadado/a"
+                ];
+                
+                this.symptomOptions = [
+                    { value: 0, label: "En absoluto" },
+                    { value: 1, label: "Un poco" },
+                    { value: 2, label: "Algo" },
+                    { value: 3, label: "Mucho" },
+                    { value: 4, label: "Extremadamente" }
+                ];
+
+                this.behaviorOptions = [
+                    { value: 0, label: "No ha ocurrido" },
+                    { value: 1, label: "1 vez" },
+                    { value: 2, label: "2-3 veces" },
+                    { value: 3, label: "4-6 veces" },
+                    { value: 4, label: "Más de 6 veces" }
+                ];
+
+                this.totalQuestions = this.symptomsQuestions.length + this.behaviorQuestions.length;
+                this.init();
+            }
+            
+            init() {
+                this.updateProgress();
+                this.renderCurrentState();
+            }
+            
+            updateProgress() {
+                const progress = ((this.currentQuestion + 1) / this.totalQuestions) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            }
+            
+            renderCurrentState() {
+                if (!this.showResults) {
+                    if (this.currentQuestion === 0 && this.currentSection === 1) {
+                        this.renderSectionHeader();
+                    } else if (this.currentQuestion === this.symptomsQuestions.length && this.currentSection === 2) {
+                        this.renderSectionHeader();
+                    } else {
+                        this.renderQuestion();
+                    }
+                } else if (!this.showDoctorView) {
+                    this.renderPatientResults();
+                } else {
+                    this.renderDoctorResults();
+                }
+            }
+
+            renderSectionHeader() {
+                const content = document.getElementById('mainContent');
+                
+                if (this.currentSection === 1) {
+                    content.innerHTML = `
+                        <div class="section-header">
+                            <h2 class="section-title">Parte 1: Síntomas Emocionales</h2>
+                            <p class="section-instructions">
+                                En la siguiente sección encontrará una serie de dificultades y problemas que podrían describirle. 
+                                Por favor, lea y decida en qué grado le afectó cada problema en la <strong>última semana</strong>. 
+                                En el caso de que no sienta nada en este momento, por favor responda de acuerdo a cómo piensa 
+                                que podría haberse sentido. Si se ha sentido de diferente manera en diferentes momentos de la semana, 
+                                haga una valoración promedio de cómo le fueron las cosas.
+                            </p>
+                            <button class="button" onclick="assessment.startSection()" style="margin-top: 20px;">
+                                Comenzar Evaluación
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div class="section-header">
+                            <h2 class="section-title">Parte 2: Conductas Específicas</h2>
+                            <p class="section-instructions">
+                                Ahora, en la siguiente sección encontrará una serie de <strong>CONDUCTAS</strong> que podrían 
+                                haberle pasado en la última semana. Por favor seleccione la <strong>FRECUENCIA</strong> 
+                                que corresponda en cada una.
+                            </p>
+                            <button class="button" onclick="assessment.startSection()" style="margin-top: 20px;">
+                                Continuar con Parte 2
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            startSection() {
+                this.renderQuestion();
+            }
+            
+            renderQuestion() {
+                const content = document.getElementById('mainContent');
+                let currentQuestionText, currentOptions, questionInSection;
+                
+                if (this.currentSection === 1) {
+                    questionInSection = this.currentQuestion;
+                    currentQuestionText = this.symptomsQuestions[questionInSection];
+                    currentOptions = this.symptomOptions;
+                } else {
+                    questionInSection = this.currentQuestion - this.symptomsQuestions.length;
+                    currentQuestionText = this.behaviorQuestions[questionInSection];
+                    currentOptions = this.behaviorOptions;
+                }
+                
+                content.innerHTML = `
+                    <div class="question-container">
+                        <div class="question-number">
+                            ${this.currentQuestion + 1}
+                        </div>
+                        <div class="question-text">
+                            ${currentQuestionText}
+                        </div>
+                    </div>
+                    
+                    <div class="options">
+                        ${currentOptions.map(option => `
+                            <button class="option-button" onclick="assessment.handleResponse(${option.value})">
+                                ${option.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                document.getElementById('headerSubtitle').textContent = 
+                    `${this.currentSection === 1 ? 'Síntomas' : 'Conductas'} - Pregunta ${this.currentQuestion + 1} de ${this.totalQuestions}`;
+            }
+            
+            renderPatientResults() {
+                document.getElementById('headerTitle').textContent = 'Cuestionario Completado';
+                document.getElementById('headerSubtitle').textContent = 'Gracias por completar el BLS-23';
+                
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="patient-view-message">
+                        <div class="checkmark">✓</div>
+                        <h2 style="font-size: 1.5rem; margin-bottom: 15px; color: #2d3748;">
+                            Por favor, pase el dispositivo al médico para su revisión
+                        </h2>
+                        <p style="color: #666; margin-bottom: 30px; font-size: 1.1rem;">
+                            Su información ha sido registrada correctamente
+                        </p>
+                        <button class="button" onclick="assessment.showDoctorResults()">
+                            🩺 Revisar Resultados (Médico)
+                        </button>
+                    </div>
+                `;
+            }
+            
+            renderDoctorResults() {
+                document.getElementById('headerTitle').textContent = 'Resultados BLS-23 - Vista Médica';
+                document.getElementById('headerSubtitle').textContent = 'Análisis profesional de síntomas borderline';
+                
+                const totalScore = this.calculateTotal();
+                const symptomsScore = this.calculateSymptomsScore();
+                const behaviorScore = this.calculateBehaviorScore();
+                const interpretation = this.getInterpretation(totalScore);
+                const redFlags = this.getRedFlags();
+                const hasHighRiskBehaviors = this.hasHighRiskBehaviors();
+                
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="score-display">
+                        <div class="score-number">${totalScore}/136</div>
+                        <div class="score-interpretation">${interpretation}</div>
+                    </div>
+                    
+                    <div class="subscales-section">
+                        <h3 class="subscales-title">📊 Análisis por Dimensiones</h3>
+                        
+                        <div class="subscale-item">
+                            <div class="subscale-info">
+                                <div class="subscale-name">Síntomas Emocionales</div>
+                                <div class="subscale-description">Intensidad de síntomas emocionales y cognitivos</div>
+                            </div>
+                            <div class="subscale-score">${symptomsScore}/92</div>
+                        </div>
+                        
+                        <div class="subscale-item">
+                            <div class="subscale-info">
+                                <div class="subscale-name">Conductas de Riesgo</div>
+                                <div class="subscale-description">Frecuencia de conductas autolesivas y de riesgo</div>
+                            </div>
+                            <div class="subscale-score">${behaviorScore}/44</div>
+                        </div>
+                    </div>
+                    
+                    ${hasHighRiskBehaviors ? `
+                        <div class="high-risk-warning">
+                            <h3 class="high-risk-title">
+                                ⚠️ ALERTA: Conductas de Alto Riesgo Detectadas
+                            </h3>
+                            <p style="font-size: 1.1rem; color: #EC7367;">
+                                <strong>El paciente ha reportado conductas autolesivas, suicidas o de alto riesgo. Se requiere evaluación inmediata y seguimiento especializado.</strong>
+                            </p>
+                        </div>
+                    ` : ''}
+                    
+                    ${redFlags.length > 0 ? `
+                        <div class="red-flags-section">
+                            <h3 class="red-flags-title">
+                                🚩 Síntomas y Conductas Significativas (Puntuación ≥ 3)
+                            </h3>
+                            ${redFlags.map(item => `
+                                <div class="red-flag-item">
+                                    <div class="red-flag-header">
+                                        <div class="red-flag-text">
+                                            <strong>${item.category}:</strong><br>
+                                            ${item.text}
+                                        </div>
+                                        <div class="red-flag-score">
+                                            ${this.getScoreLabel(item.score, item.category)}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <div class="no-red-flags">
+                            <p><strong>✅ No hay síntomas o conductas reportadas como significativas (puntuación ≥ 3)</strong></p>
+                        </div>
+                    `}
+                    
+                    <div style="text-align: center;">
+                        <button class="button" onclick="assessment.resetTest()">
+                            🔄 Nuevo Cuestionario
+                        </button>
+                    </div>
+                `;
+            }
+            
+            handleResponse(value) {
+                this.responses[this.currentQuestion] = value;
+                
+                const buttons = document.querySelectorAll('.option-button');
+                buttons.forEach((btn, index) => {
+                    if (index === value) {
+                        btn.classList.add('selected');
+                    }
+                });
+                
+                setTimeout(() => {
+                    this.currentQuestion++;
+                    
+                    if (this.currentQuestion === this.symptomsQuestions.length) {
+                        this.currentSection = 2;
+                        this.updateProgress();
+                        this.renderCurrentState();
+                    } else if (this.currentQuestion < this.totalQuestions) {
+                        this.updateProgress();
+                        this.renderCurrentState();
+                    } else {
+                        this.showResults = true;
+                        this.renderCurrentState();
+                    }
+                }, 800);
+            }
+            
+            showDoctorResults() {
+                this.showDoctorView = true;
+                this.renderCurrentState();
+            }
+            
+            resetTest() {
+                this.currentQuestion = 0;
+                this.responses = {};
+                this.showResults = false;
+                this.showDoctorView = false;
+                this.currentSection = 1;
+                
+                document.getElementById('headerTitle').textContent = 'Borderline Symptoms List (BLS-23)';
+                document.getElementById('headerSubtitle').textContent = 'Evaluación de síntomas borderline';
+                
+                this.init();
+            }
+            
+            calculateTotal() {
+                return Object.values(this.responses).reduce((sum, value) => sum + value, 0);
+            }
+            
+            calculateSymptomsScore() {
+                let symptomsScore = 0;
+                for (let i = 0; i < this.symptomsQuestions.length; i++) {
+                    symptomsScore += (this.responses[i] || 0);
+                }
+                return symptomsScore;
+            }
+            
+            calculateBehaviorScore() {
+                let behaviorScore = 0;
+                for (let i = this.symptomsQuestions.length; i < this.totalQuestions; i++) {
+                    behaviorScore += (this.responses[i] || 0);
+                }
+                return behaviorScore;
+            }
+            
+            getInterpretation(score) {
+                if (score >= 0 && score <= 40) return "Síntomas borderline mínimos";
+                if (score >= 41 && score <= 68) return "Síntomas borderline leves";
+                if (score >= 69 && score <= 95) return "Síntomas borderline moderados";
+                if (score >= 96) return "Síntomas borderline severos";
+                return "";
+            }
+            
+            hasHighRiskBehaviors() {
+                const highRiskItems = [0, 1, 2];
+                const symptomsLength = this.symptomsQuestions.length;
+                
+                for (let riskItem of highRiskItems) {
+                    const questionIndex = symptomsLength + riskItem;
+                    if (this.responses[questionIndex] > 0) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            getRedFlags() {
+                const redFlags = [];
+                
+                Object.keys(this.responses).forEach(questionIndex => {
+                    const score = this.responses[questionIndex];
+                    if (score >= 3) {
+                        const questionNum = parseInt(questionIndex);
+                        
+                        if (questionNum < this.symptomsQuestions.length) {
+                            redFlags.push({
+                                text: this.symptomsQuestions[questionNum],
+                                score: score,
+                                category: "Síntoma Emocional"
+                            });
+                        } else {
+                            const behaviorIndex = questionNum - this.symptomsQuestions.length;
+                            redFlags.push({
+                                text: this.behaviorQuestions[behaviorIndex],
+                                score: score,
+                                category: "Conducta de Riesgo"
+                            });
+                        }
+                    }
+                });
+                
+                return redFlags.sort((a, b) => {
+                    if (a.category === "Conducta de Riesgo" && b.category === "Síntoma Emocional") return -1;
+                    if (a.category === "Síntoma Emocional" && b.category === "Conducta de Riesgo") return 1;
+                    return b.score - a.score;
+                });
+            }
+            
+            getScoreLabel(score, category) {
+                if (category === "Síntoma Emocional") {
+                    const labels = ["En absoluto", "Un poco", "Algo", "Mucho", "Extremadamente"];
+                    return labels[score] || "";
+                } else {
+                    const labels = ["No ocurrió", "1 vez", "2-3 veces", "4-6 veces", "Más de 6 veces"];
+                    return labels[score] || "";
+                }
+            }
+        }
+        
+        const assessment = new BLS23Assessment();
+    </script>
+</body>
+</html>

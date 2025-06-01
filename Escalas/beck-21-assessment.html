@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Depresión de Beck 21 (BDI-21)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            background: rgba(255,248,238,0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #FFF8EE;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .question-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .question-intro {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #29A98C;
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .option-button {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 22px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .option-button:hover {
+            border-color: #29A98C;
+            background: #f0fff8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(41, 169, 140, 0.2);
+        }
+
+        .option-button.selected {
+            background: #29A98C;
+            color: #FFF8EE;
+            border-color: #29A98C;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score-interpretation {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .red-flags-section {
+            background: #fff5f5;
+            border: 2px solid #EC7367;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .red-flags-title {
+            color: #EC7367;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .red-flag-item {
+            background: white;
+            border: 1px solid #EC7367;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .red-flag-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .red-flag-text {
+            flex: 1;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .red-flag-score {
+            background: #FFF8EE;
+            color: #EC7367;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 1px solid #EC7367;
+        }
+
+        .suicide-risk-warning {
+            background: #FFF8EE;
+            border: 3px solid #EC7367;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .suicide-risk-title {
+            color: #EC7367;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .no-red-flags {
+            background: #f0fff8;
+            border: 2px solid #29A98C;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #112F33;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 169, 140, 0.3);
+        }
+
+        .patient-view-message {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: #29A98C;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: #FFF8EE;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .option-button {
+                padding: 15px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="headerTitle">Inventario de Depresión de Beck 21</h1>
+            <p id="headerSubtitle">Evaluación completa de síntomas depresivos</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <div class="content" id="mainContent">
+            <!-- El contenido se generará dinámicamente -->
+        </div>
+    </div>
+
+    <script>
+        class BDI21Assessment {
+            constructor() {
+                this.currentQuestion = 0;
+                this.responses = {};
+                this.showResults = false;
+                this.showDoctorView = false;
+                
+                this.questions = [
+                    // 1. Estado de ánimo
+                    [
+                        "No me encuentro triste",
+                        "Me siento algo triste y deprimido", 
+                        "Esta tristeza me produce verdaderos sufrimientos",
+                        "Ya no puedo soportar esta pena"
+                    ],
+                    // 2. Pesimismo  
+                    [
+                        "No soy especialmente pesimista, ni creo que las cosas me vayan a ir mal",
+                        "Me siento desanimado cuando pienso en el futuro",
+                        "Creo que nunca me recuperaré de mis penas", 
+                        "No espero nada bueno de la vida"
+                    ],
+                    // 3. Sentimiento de fracaso
+                    [
+                        "No me considero fracasado",
+                        "Siento que he hecho pocas cosas que valgan la pena",
+                        "He tenido más fracasos que la mayoría de la gente",
+                        "He fracasado totalmente como persona"
+                    ],
+                    // 4. Insatisfacción
+                    [
+                        "No estoy especialmente insatisfecho",
+                        "Ya no me divierte lo que antes me divertía",
+                        "Me encuentro insatisfecho conmigo mismo",
+                        "Ya nada me llena"
+                    ],
+                    // 5. Sentimientos de culpa
+                    [
+                        "No me siento culpable",
+                        "A veces me siento despreciable y mala persona",
+                        "Me siento bastante culpable",
+                        "Me siento prácticamente todo el tiempo mala persona y despreciable"
+                    ],
+                    // 6. Sentimiento de castigo
+                    [
+                        "No pienso que esté siendo castigado",
+                        "Presiento que algo malo me puede suceder",
+                        "Siento que merezco ser castigado",
+                        "Siento que me están castigando o me castigarán"
+                    ],
+                    // 7. Odio a sí mismo
+                    [
+                        "Estoy satisfecho de mí mismo",
+                        "Estoy descontento conmigo mismo",
+                        "No me aprecio",
+                        "Me odio (me desprecio)"
+                    ],
+                    // 8. Autoacusación
+                    [
+                        "No creo ser peor que otros",
+                        "Me critico mucho a causa de mis debilidades y errores",
+                        "Me acuso a mí mismo de todo lo que va mal",
+                        "Me siento culpable de todo lo malo que ocurre"
+                    ],
+                    // 9. Impulsos suicidas
+                    [
+                        "No tengo pensamientos de hacerme daño",
+                        "Tengo pensamientos de hacerme daño, pero no llegaría a hacerlo",
+                        "Siento que estaría mejor muerto",
+                        "Siento que mi familia estaría mejor si yo muriera",
+                        "Tengo planes decididos de suicidarme",
+                        "Me mataría si pudiera"
+                    ],
+                    // 10. Períodos de llanto
+                    [
+                        "No lloro más de lo habitual",
+                        "Ahora lloro más de lo normal",
+                        "Ahora lloro continuamente. No puedo evitarlo",
+                        "Antes podía llorar; ahora no lloro ni aun queriéndolo"
+                    ],
+                    // 11. Irritabilidad
+                    [
+                        "No estoy más irritable que normalmente",
+                        "Me irrito con más facilidad que antes",
+                        "Me siento irritado todo el tiempo",
+                        "Ya no me irrita ni lo que antes me irritaba"
+                    ],
+                    // 12. Aislamiento social
+                    [
+                        "No he perdido mi interés por los demás",
+                        "Me intereso por la gente menos que antes",
+                        "He perdido casi todo mi interés por los demás",
+                        "He perdido todo mi interés por los demás"
+                    ],
+                    // 13. Indecisión
+                    [
+                        "Tomo mis decisiones como siempre",
+                        "Ahora estoy inseguro de mí mismo y procuro evitar tomar decisiones",
+                        "Ya no puedo tomar decisiones sin ayuda",
+                        "Ya no puedo tomar decisiones en absoluto"
+                    ],
+                    // 14. Imagen corporal
+                    [
+                        "No me siento con peor aspecto que antes",
+                        "Estoy preocupado porque me veo más viejo y desmejorado",
+                        "Siento que hay cambios en mi aspecto físico que me hacen parecer desagradable",
+                        "Me siento feo y repulsivo"
+                    ],
+                    // 15. Capacidad laboral
+                    [
+                        "Puedo trabajar tan bien como antes",
+                        "Necesito un esfuerzo extra para empezar a hacer algo",
+                        "No trabajo tan bien como lo hacía antes",
+                        "Tengo que esforzarme mucho para hacer cualquier cosa",
+                        "No puedo trabajar en nada"
+                    ],
+                    // 16. Trastornos del sueño
+                    [
+                        "Duermo tan bien como antes",
+                        "Me despierto más cansado por la mañana",
+                        "Me despierto unas 2 horas antes de lo normal",
+                        "Tardo 1 o 2 horas en dormirme por la noche",
+                        "Me despierto sin motivo en mitad de la noche",
+                        "Me despierto temprano todos los días",
+                        "Tardo más de 2 horas en dormirme"
+                    ],
+                    // 17. Cansancio
+                    [
+                        "No me canso más de lo normal",
+                        "Me canso más fácilmente que antes",
+                        "Cualquier cosa que hago me fatiga",
+                        "Me canso tanto que no puedo hacer nada"
+                    ],
+                    // 18. Pérdida de apetito
+                    [
+                        "Tengo el mismo apetito de siempre",
+                        "Mi apetito no es tan bueno como antes",
+                        "Mi apetito es ahora mucho menor",
+                        "He perdido totalmente el apetito"
+                    ],
+                    // 19. Pérdida de peso
+                    [
+                        "No he perdido peso últimamente",
+                        "He perdido más de 2,5 kg",
+                        "He perdido más de 5 kg",
+                        "He perdido más de 7,5 kg"
+                    ],
+                    // 20. Hipocondría
+                    [
+                        "No me preocupa mi salud más de lo normal",
+                        "Estoy preocupado por dolores y trastornos",
+                        "Estoy constantemente pendiente de lo que me sucede",
+                        "Estoy tan preocupado por mi salud que me es difícil pensar en otras cosas"
+                    ],
+                    // 21. Libido
+                    [
+                        "No he notado ningún cambio en mi atracción por el sexo",
+                        "Estoy menos interesado por el sexo que antes",
+                        "Apenas me siento atraído sexualmente",
+                        "He perdido todo mi interés por el sexo"
+                    ]
+                ];
+                
+                this.questionTitles = [
+                    "Estado de ánimo", "Pesimismo", "Sentimiento de fracaso", "Insatisfacción",
+                    "Sentimientos de culpa", "Sentimiento de castigo", "Odio a sí mismo", "Autoacusación",
+                    "Impulsos suicidas", "Períodos de llanto", "Irritabilidad", "Aislamiento social", 
+                    "Indecisión", "Imagen corporal", "Capacidad laboral", "Trastornos del sueño",
+                    "Cansancio", "Pérdida de apetito", "Pérdida de peso", "Hipocondría", "Libido"
+                ];
+                
+                this.init();
+            }
+            
+            init() {
+                this.updateProgress();
+                this.renderCurrentState();
+            }
+            
+            updateProgress() {
+                const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            }
+            
+            renderCurrentState() {
+                if (!this.showResults) {
+                    this.renderQuestion();
+                } else if (!this.showDoctorView) {
+                    this.renderPatientResults();
+                } else {
+                    this.renderDoctorResults();
+                }
+            }
+            
+            renderQuestion() {
+                const content = document.getElementById('mainContent');
+                const currentQuestionOptions = this.questions[this.currentQuestion];
+                
+                content.innerHTML = `
+                    <div class="question-container">
+                        <p class="question-intro">
+                            Lea íntegro el grupo de afirmaciones y escoja la que mejor describa el modo en que se siente en el tiempo más reciente:
+                        </p>
+                        <div class="question-number">
+                            ${this.currentQuestion + 1}
+                        </div>
+                    </div>
+                    
+                    <div class="options">
+                        ${currentQuestionOptions.map((option, index) => `
+                            <button class="option-button" onclick="assessment.handleResponse(${index})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                
+                document.getElementById('headerSubtitle').textContent = 
+                    `Pregunta ${this.currentQuestion + 1} de ${this.questions.length}`;
+            }
+            
+            renderPatientResults() {
+                document.getElementById('headerTitle').textContent = 'Cuestionario Completado';
+                document.getElementById('headerSubtitle').textContent = 'Gracias por completar el BDI-21';
+                
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="patient-view-message">
+                        <div class="checkmark">✓</div>
+                        <h2 style="font-size: 1.5rem; margin-bottom: 15px; color: #2d3748;">
+                            Por favor, pase el dispositivo al médico para su revisión
+                        </h2>
+                        <p style="color: #666; margin-bottom: 30px; font-size: 1.1rem;">
+                            Su información ha sido registrada correctamente
+                        </p>
+                        <button class="button" onclick="assessment.showDoctorResults()">
+                            🩺 Revisar Resultados (Médico)
+                        </button>
+                    </div>
+                `;
+            }
+            
+            renderDoctorResults() {
+                document.getElementById('headerTitle').textContent = 'Resultados BDI-21 - Vista Médica';
+                document.getElementById('headerSubtitle').textContent = 'Análisis profesional de depresión';
+                
+                const totalScore = this.calculateTotal();
+                const interpretation = this.getInterpretation(totalScore);
+                const redFlags = this.getRedFlags();
+                const hasSuicideRisk = this.responses[8] > 0;
+                
+                const content = document.getElementById('mainContent');
+                content.innerHTML = `
+                    <div class="score-display">
+                        <div class="score-number">${totalScore}/63</div>
+                        <div class="score-interpretation">${interpretation}</div>
+                    </div>
+                    
+                    ${hasSuicideRisk ? `
+                        <div class="suicide-risk-warning">
+                            <h3 class="suicide-risk-title">
+                                ⚠️ ALERTA: Riesgo Suicida Detectado
+                            </h3>
+                            <p style="font-size: 1.1rem; color: #EC7367;">
+                                <strong>El paciente ha reportado impulsos suicidas. Se requiere evaluación inmediata.</strong>
+                            </p>
+                        </div>
+                    ` : ''}
+                    
+                    ${redFlags.length > 0 ? `
+                        <div class="red-flags-section">
+                            <h3 class="red-flags-title">
+                                🚩 Síntomas Significativos (Puntuación ≥ 2)
+                            </h3>
+                            ${redFlags.map(item => `
+                                <div class="red-flag-item">
+                                    <div class="red-flag-header">
+                                        <div class="red-flag-text">
+                                            <strong>${item.title}:</strong><br>
+                                            ${item.selectedResponse}
+                                        </div>
+                                        <div class="red-flag-score">
+                                            Nivel ${item.score}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <div class="no-red-flags">
+                            <p><strong>✅ No hay síntomas reportados como significativos</strong></p>
+                        </div>
+                    `}
+                    
+                    <div style="text-align: center;">
+                        <button class="button" onclick="assessment.resetTest()">
+                            🔄 Nuevo Cuestionario
+                        </button>
+                    </div>
+                `;
+            }
+            
+            handleResponse(value) {
+                this.responses[this.currentQuestion] = value;
+                
+                const buttons = document.querySelectorAll('.option-button');
+                buttons.forEach((btn, index) => {
+                    if (index === value) {
+                        btn.classList.add('selected');
+                    }
+                });
+                
+                setTimeout(() => {
+                    if (this.currentQuestion < this.questions.length - 1) {
+                        this.currentQuestion++;
+                        this.updateProgress();
+                        this.renderCurrentState();
+                    } else {
+                        this.showResults = true;
+                        this.renderCurrentState();
+                    }
+                }, 1000);
+            }
+            
+            showDoctorResults() {
+                this.showDoctorView = true;
+                this.renderCurrentState();
+            }
+            
+            resetTest() {
+                this.currentQuestion = 0;
+                this.responses = {};
+                this.showResults = false;
+                this.showDoctorView = false;
+                
+                document.getElementById('headerTitle').textContent = 'Inventario de Depresión de Beck 21';
+                document.getElementById('headerSubtitle').textContent = 'Evaluación completa de síntomas depresivos';
+                
+                this.init();
+            }
+            
+            calculateTotal() {
+                return Object.values(this.responses).reduce((sum, value) => sum + value, 0);
+            }
+            
+            getInterpretation(score) {
+                if (score >= 0 && score <= 13) return "Depresión mínima";
+                if (score >= 14 && score <= 19) return "Depresión leve";
+                if (score >= 20 && score <= 28) return "Depresión moderada";
+                if (score >= 29 && score <= 63) return "Depresión severa";
+                return "";
+            }
+            
+            getRedFlags() {
+                const redFlags = [];
+                
+                Object.keys(this.responses).forEach(questionIndex => {
+                    const score = this.responses[questionIndex];
+                    if (score >= 2) {
+                        const questionNum = parseInt(questionIndex);
+                        redFlags.push({
+                            title: this.questionTitles[questionNum],
+                            score: score,
+                            selectedResponse: this.questions[questionNum][score],
+                            isSuicidal: questionNum === 8
+                        });
+                    }
+                });
+                
+                return redFlags.sort((a, b) => {
+                    if (a.isSuicidal && !b.isSuicidal) return -1;
+                    if (!a.isSuicidal && b.isSuicidal) return 1;
+                    return b.score - a.score;
+                });
+            }
+        }
+        
+        const assessment = new BDI21Assessment();
+    </script>
+</body>
+</html>
