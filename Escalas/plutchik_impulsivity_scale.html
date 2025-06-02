@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Impulsividad de Plutchik (EI)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-title {
+            color: #4a5568;
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .instructions {
+            color: #718096;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            color: #2d3748;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            cursor: pointer;
+            color: #4a5568;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .completion-message {
+            text-align: center;
+            color: #2d3748;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-container {
+            color: #2d3748;
+        }
+
+        .score-section {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .score-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .interpretation {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .alert-section {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .alert-title {
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-tertiary {
+            background: #ed8936;
+        }
+
+        .btn-tertiary:hover {
+            box-shadow: 0 6px 20px rgba(237, 137, 54, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 30px 25px;
+            }
+            
+            .welcome-title {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card 0: Bienvenida -->
+        <div class="card active" id="card-0">
+            <h1 class="welcome-title">Escala de Impulsividad de Plutchik (EI)</h1>
+            <div class="instructions">
+                <p>Por favor, lea cada afirmación cuidadosamente e indique con qué frecuencia le ocurren las siguientes situaciones.</p>
+                <br>
+                <p>Seleccione lo que mejor se ajuste a su caso:</p>
+                <br>
+                <p><strong>NUNCA</strong> = No me pasa<br>
+                <strong>A VECES</strong> = Me pasa ocasionalmente<br>
+                <strong>A MENUDO</strong> = Me pasa la mayoría de las veces<br>
+                <strong>CASI SIEMPRE</strong> = Me pasa todo el tiempo</p>
+            </div>
+            <button class="btn" onclick="nextCard()">Comenzar Evaluación</button>
+        </div>
+
+        <!-- Card 1-15: Ítems -->
+        <div class="card" id="card-1">
+            <div class="question-number">Pregunta 1 de 15</div>
+            <div class="question-text">¿Le resulta difícil esperar en una cola?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(1, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(1, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(1, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-2">
+            <div class="question-number">Pregunta 2 de 15</div>
+            <div class="question-text">¿Hace cosas impulsivamente?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(2, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(2, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(2, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-3">
+            <div class="question-number">Pregunta 3 de 15</div>
+            <div class="question-text">¿Gasta dinero impulsivamente?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(3, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(3, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(3, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-4">
+            <div class="question-number">Pregunta 4 de 15</div>
+            <div class="question-text">¿Planea cosas con anticipación?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 3, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(4, 2, this)">A VECES</div>
+                <div class="option" onclick="selectOption(4, 1, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(4, 0, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-5">
+            <div class="question-number">Pregunta 5 de 15</div>
+            <div class="question-text">¿Pierde la paciencia a menudo?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(5, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(5, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(5, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-6">
+            <div class="question-number">Pregunta 6 de 15</div>
+            <div class="question-text">¿Le resulta fácil concentrarse?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 3, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(6, 2, this)">A VECES</div>
+                <div class="option" onclick="selectOption(6, 1, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(6, 0, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-7">
+            <div class="question-number">Pregunta 7 de 15</div>
+            <div class="question-text">¿Le resulta difícil controlar los impulsos sexuales?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(7, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(7, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(7, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-8">
+            <div class="question-number">Pregunta 8 de 15</div>
+            <div class="question-text">¿Dice usted lo primero que le viene a la cabeza?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(8, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(8, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(8, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-9">
+            <div class="question-number">Pregunta 9 de 15</div>
+            <div class="question-text">¿Acostumbra a comer aun cuando no tenga hambre?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(9, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(9, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(9, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-10">
+            <div class="question-number">Pregunta 10 de 15</div>
+            <div class="question-text">¿Es usted impulsivo/a?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(10, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(10, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(10, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-11">
+            <div class="question-number">Pregunta 11 de 15</div>
+            <div class="question-text">¿Termina las cosas que empieza?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 3, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(11, 2, this)">A VECES</div>
+                <div class="option" onclick="selectOption(11, 1, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(11, 0, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-12">
+            <div class="question-number">Pregunta 12 de 15</div>
+            <div class="question-text">¿Le resulta difícil controlar las emociones?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(12, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(12, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(12, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-13">
+            <div class="question-number">Pregunta 13 de 15</div>
+            <div class="question-text">¿Se distrae fácilmente?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(13, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(13, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(13, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-14">
+            <div class="question-number">Pregunta 14 de 15</div>
+            <div class="question-text">¿Le resulta difícil quedarse quieto?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 0, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(14, 1, this)">A VECES</div>
+                <div class="option" onclick="selectOption(14, 2, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(14, 3, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-15">
+            <div class="question-number">Pregunta 15 de 15</div>
+            <div class="question-text">¿Es usted cuidadoso o cauteloso?</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 3, this)">NUNCA</div>
+                <div class="option" onclick="selectOption(15, 2, this)">A VECES</div>
+                <div class="option" onclick="selectOption(15, 1, this)">A MENUDO</div>
+                <div class="option" onclick="selectOption(15, 0, this)">CASI SIEMPRE</div>
+            </div>
+        </div>
+
+        <!-- Card Final -->
+        <div class="card" id="card-final">
+            <div class="completion-message">
+                <h2 style="color: #667eea; margin-bottom: 20px;">Escala completada</h2>
+                <p>Muchas gracias por completar la evaluación.</p>
+                <p>Por favor pase el dispositivo a su médico o profesional de la salud para su revisión.</p>
+            </div>
+            <button class="btn" onclick="showResults()">Revisar resultados (Médico)</button>
+        </div>
+
+        <!-- Card Results -->
+        <div class="card" id="card-results">
+            <div class="results-container">
+                <h2 style="color: #667eea; text-align: center; margin-bottom: 30px;">Resultados - Escala de Impulsividad de Plutchik</h2>
+                
+                <div class="score-section">
+                    <div class="score-title">Puntuación Total</div>
+                    <div class="score-value" id="total-score">0</div>
+                    <div id="score-range">de 45 puntos posibles</div>
+                </div>
+
+                <div class="interpretation" id="interpretation">
+                    <!-- Se llenará con JavaScript -->
+                </div>
+
+                <div id="alerts-section">
+                    <!-- Se llenará con JavaScript si hay alertas -->
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="generatePDF()">Generar PDF</button>
+                    <button class="btn btn-tertiary" onclick="captureScreen()">Captura de Pantalla</button>
+                    <button class="btn" onclick="newEvaluation()">Nueva Evaluación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <button class="back-btn" id="back-btn" onclick="previousCard()" style="display: none;">← Regresar</button>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        const totalQuestions = 15;
+
+        function updateProgress() {
+            const progress = (currentCard / (totalQuestions + 2)) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function showCard(cardNumber) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`card-${cardNumber}`).classList.add('active');
+            
+            const backBtn = document.getElementById('back-btn');
+            if (cardNumber === 0 || cardNumber === 'final' || cardNumber === 'results') {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+            
+            updateProgress();
+        }
+
+        function nextCard() {
+            if (currentCard === 0) {
+                currentCard = 1;
+                showCard(1);
+            } else if (currentCard <= totalQuestions) {
+                currentCard++;
+                if (currentCard > totalQuestions) {
+                    showCard('final');
+                } else {
+                    showCard(currentCard);
+                }
+            }
+        }
+
+        function previousCard() {
+            if (currentCard > 1) {
+                currentCard--;
+                showCard(currentCard);
+            } else if (currentCard === 1) {
+                currentCard = 0;
+                showCard(0);
+            }
+        }
+
+        function selectOption(questionNumber, score, element) {
+            // Remover selección previa
+            element.parentNode.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Agregar selección actual
+            element.classList.add('selected');
+            
+            // Guardar respuesta
+            responses[questionNumber] = score;
+            
+            // Auto-avance después de 150ms
+            setTimeout(() => {
+                nextCard();
+            }, 150);
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] !== undefined) {
+                    totalScore += responses[i];
+                }
+            }
+            return totalScore;
+        }
+
+        function getInterpretation(score) {
+            if (score <= 15) {
+                return {
+                    level: "Impulsividad Baja",
+                    description: "El paciente presenta un nivel bajo de impulsividad. Esto sugiere un buen control de impulsos y capacidad de planificación. Es importante mantener estas estrategias de autorregulación.",
+                    color: "#48bb78",
+                    recommendations: "Continuar con las estrategias actuales de autocontrol. Puede servir como modelo para otros pacientes."
+                };
+            } else if (score <= 30) {
+                return {
+                    level: "Impulsividad Moderada",
+                    description: "El paciente presenta un nivel moderado de impulsividad. Se recomienda trabajar en estrategias de autocontrol y técnicas de regulación emocional.",
+                    color: "#ed8936",
+                    recommendations: "Considerar intervenciones psicoeducativas sobre control de impulsos, técnicas de mindfulness y estrategias de resolución de problemas."
+                };
+            } else {
+                return {
+                    level: "Impulsividad Alta",
+                    description: "El paciente presenta un nivel alto de impulsividad que puede interferir significativamente con su funcionamiento diario. Se recomienda evaluación e intervención especializada.",
+                    color: "#e53e3e",
+                    recommendations: "Evaluación psiquiátrica especializada. Considerar terapia cognitivo-conductual, entrenamiento en habilidades de regulación emocional y posible evaluación farmacológica."
+                };
+            }
+        }
+
+        function getHighRiskItems() {
+            const highRiskItems = [];
+            const itemTexts = [
+                "", // índice 0 vacío
+                "Dificultad para esperar en colas",
+                "Hacer cosas impulsivamente", 
+                "Gastar dinero impulsivamente",
+                "Falta de planificación",
+                "Perder la paciencia frecuentemente",
+                "Dificultad de concentración",
+                "Dificultad para controlar impulsos sexuales",
+                "Decir lo primero que viene a la mente",
+                "Comer sin hambre",
+                "Autopercepción de impulsividad",
+                "No terminar las cosas que empieza",
+                "Dificultad para controlar emociones",
+                "Distraerse fácilmente",
+                "Dificultad para quedarse quieto",
+                "Falta de cautela"
+            ];
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] >= 2) { // A MENUDO o CASI SIEMPRE
+                    highRiskItems.push({
+                        item: i,
+                        text: itemTexts[i],
+                        score: responses[i],
+                        level: responses[i] === 2 ? "A MENUDO" : "CASI SIEMPRE"
+                    });
+                }
+            }
+            return highRiskItems;
+        }
+
+        function showResults() {
+            const totalScore = calculateScore();
+            const interpretation = getInterpretation(totalScore);
+            const highRiskItems = getHighRiskItems();
+
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('total-score').style.color = interpretation.color;
+
+            const interpretationDiv = document.getElementById('interpretation');
+            interpretationDiv.innerHTML = `
+                <div class="score-section">
+                    <div class="score-title" style="color: ${interpretation.color};">${interpretation.level}</div>
+                    <p>${interpretation.description}</p>
+                    <br>
+                    <p><strong>Recomendaciones:</strong> ${interpretation.recommendations}</p>
+                </div>
+            `;
+
+            const alertsSection = document.getElementById('alerts-section');
+            if (highRiskItems.length > 0) {
+                let alertsHTML = `
+                    <div class="alert-section">
+                        <div class="alert-title">Áreas de Atención Prioritaria</div>
+                        <p>Los siguientes ítems obtuvieron puntuaciones altas (A MENUDO o CASI SIEMPRE):</p>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                `;
+                
+                highRiskItems.forEach(item => {
+                    alertsHTML += `<li><strong>${item.text}</strong> - ${item.level}</li>`;
+                });
+                
+                alertsHTML += `
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Recomendación:</strong> Estas áreas requieren atención específica en el plan de tratamiento.</p>
+                    </div>
+                `;
+                alertsSection.innerHTML = alertsHTML;
+            } else {
+                alertsSection.innerHTML = '';
+            }
+
+            showCard('results');
+        }
+
+        function generatePDF() {
+            const totalScore = calculateScore();
+            const interpretation = getInterpretation(totalScore);
+            const highRiskItems = getHighRiskItems();
+            const date = new Date().toLocaleDateString('es-ES');
+
+            let content = `
+ESCALA DE IMPULSIVIDAD DE PLUTCHIK (EI)
+Fecha de evaluación: ${date}
+
+PUNTUACIÓN TOTAL: ${totalScore}/45
+
+INTERPRETACIÓN:
+${interpretation.level}
+${interpretation.description}
+
+RECOMENDACIONES:
+${interpretation.recommendations}
+            `;
+
+            if (highRiskItems.length > 0) {
+                content += `
+
+ÁREAS DE ATENCIÓN PRIORITARIA:
+`;
+                highRiskItems.forEach(item => {
+                    content += `- ${item.text}: ${item.level}\n`;
+                });
+            }
+
+            content += `
+
+RESPUESTAS DETALLADAS:
+`;
+            const itemTexts = [
+                "", 
+                "¿Le resulta difícil esperar en una cola?",
+                "¿Hace cosas impulsivamente?", 
+                "¿Gasta dinero impulsivamente?",
+                "¿Planea cosas con anticipación?",
+                "¿Pierde la paciencia a menudo?",
+                "¿Le resulta fácil concentrarse?",
+                "¿Le resulta difícil controlar los impulsos sexuales?",
+                "¿Dice usted lo primero que le viene a la cabeza?",
+                "¿Acostumbra a comer aun cuando no tenga hambre?",
+                "¿Es usted impulsivo/a?",
+                "¿Termina las cosas que empieza?",
+                "¿Le resulta difícil controlar las emociones?",
+                "¿Se distrae fácilmente?",
+                "¿Le resulta difícil quedarse quieto?",
+                "¿Es usted cuidadoso o cauteloso?"
+            ];
+
+            const responseTexts = ["NUNCA", "A VECES", "A MENUDO", "CASI SIEMPRE"];
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] !== undefined) {
+                    content += `${i}. ${itemTexts[i]} - ${responseTexts[responses[i]]}\n`;
+                }
+            }
+
+            // Crear blob y descargar
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Escala_Impulsividad_Plutchik_${date.replace(/\//g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function captureScreen() {
+            // Simular captura de pantalla (en implementación real se usaría html2canvas)
+            alert('Función de captura de pantalla disponible. En implementación clínica se integraría con html2canvas o similar para generar imagen PNG/JPG de los resultados.');
+        }
+
+        function newEvaluation() {
+            if (confirm('¿Está seguro de que desea iniciar una nueva evaluación? Se perderán los datos actuales.')) {
+                currentCard = 0;
+                responses = {};
+                
+                // Limpiar selecciones
+                document.querySelectorAll('.option.selected').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                showCard(0);
+            }
+        }
+
+        // Inicializar
+        updateProgress();
+    </script>
+</body>
+</html>
+                

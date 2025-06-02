@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Sueño MOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 50%, #64b5f6 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(20px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #5c7cfa 0%, #748ffc 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(92, 124, 250, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px 30px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(227, 242, 253, 0.3) 100%);
+        }
+        
+        .card {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .card.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question {
+            font-size: 20px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #1a237e;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .option {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
+            border: 2px solid #e3f2fd;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #424242;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .option:hover {
+            background: linear-gradient(135deg, #e8f0fe 0%, #dbeafe 100%);
+            border-color: #90caf9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(92, 124, 250, 0.15);
+        }
+        
+        .option:active {
+            transform: translateY(0);
+        }
+        
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(227, 242, 253, 0.5);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5c7cfa 0%, #748ffc 100%);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(92, 124, 250, 0.5);
+        }
+        
+        .navigation {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateX(-2px);
+        }
+        
+        .instruction {
+            background: linear-gradient(135deg, #e8f0fe 0%, #f3f4ff 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #424242;
+            border: 1px solid rgba(92, 124, 250, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        
+        .instruction strong {
+            color: #5c7cfa;
+        }
+        
+        .results {
+            text-align: left;
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(92, 124, 250, 0.1);
+        }
+        
+        .result-section h3 {
+            color: #5c7cfa;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .result-section p {
+            line-height: 1.6;
+            color: #424242;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3949ab;
+            margin: 10px 0;
+        }
+        
+        .interpretation {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid #5c7cfa;
+            padding: 16px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+        
+        .doctor-notice {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 18px;
+            color: #424242;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(233, 30, 99, 0.2);
+        }
+        
+        .doctor-notice strong {
+            color: #e91e63;
+        }
+        
+        .time-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .time-input {
+            width: 80px;
+            padding: 10px;
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .time-input:focus {
+            outline: none;
+            border-color: #5c7cfa;
+            box-shadow: 0 0 0 3px rgba(92, 124, 250, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <button class="back-button" id="backButton" onclick="previousCard()" style="display: none;">← Regresar</button>
+        </div>
+        
+        <div class="header">
+            <h1>Escala de Sueño MOS</h1>
+            <p>Evaluación de la Calidad del Sueño</p>
+        </div>
+        
+        <div class="content">
+            <!-- Tarjeta de bienvenida -->
+            <div class="card active" id="card-0">
+                <div class="instruction">
+                    <strong>Bienvenido/a</strong><br><br>
+                    La siguiente escala evalúa diversas dimensiones del sueño, por favor piensa en cómo has dormido en las <strong>últimas 4 semanas</strong>.<br><br>
+                    Responda con sinceridad, no hay respuestas correctas o incorrectas.<br><br>
+                    Al final te pedirá que entregues el dispositivo al Médico para su interpretación.
+                </div>
+                <button class="option" onclick="nextCard()">Comenzar evaluación</button>
+            </div>
+            
+            <!-- Preguntas -->
+            <div class="card" id="card-1">
+                <div class="question">¿Cuánto tiempo tardó en dormirse durante las últimas 4 semanas?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(1, 0)">0-15 minutos</div>
+                    <div class="option" onclick="saveAnswer(1, 1)">16-30 minutos</div>
+                    <div class="option" onclick="saveAnswer(1, 2)">31-45 minutos</div>
+                    <div class="option" onclick="saveAnswer(1, 3)">46-60 minutos</div>
+                    <div class="option" onclick="saveAnswer(1, 4)">Más de 60 minutos</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-2">
+                <div class="question">Durante las últimas 4 semanas, ¿cuántas horas durmió cada noche en promedio?</div>
+                <div class="instruction" style="font-size: 14px;">
+                    Piense en las horas que realmente durmió, no el tiempo que pasó en la cama.
+                </div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(2, 3)">Menos de 4 horas</div>
+                    <div class="option" onclick="saveAnswer(2, 4.5)">4 a 5 horas</div>
+                    <div class="option" onclick="saveAnswer(2, 5.5)">5 a 6 horas</div>
+                    <div class="option" onclick="saveAnswer(2, 6.5)">6 a 7 horas</div>
+                    <div class="option" onclick="saveAnswer(2, 7.5)">7 a 8 horas</div>
+                    <div class="option" onclick="saveAnswer(2, 8.5)">8 a 9 horas</div>
+                    <div class="option" onclick="saveAnswer(2, 10)">Más de 9 horas</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-3">
+                <div class="question">¿Con qué frecuencia tuvo dificultades para quedarse dormido?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(3, 0)">Nunca</div>
+                    <div class="option" onclick="saveAnswer(3, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(3, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(3, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(3, 4)">Siempre</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-4">
+                <div class="question">¿Con qué frecuencia se despertó durante la noche y tuvo dificultades para volver a dormirse?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(4, 0)">Nunca</div>
+                    <div class="option" onclick="saveAnswer(4, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(4, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(4, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(4, 4)">Siempre</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-5">
+                <div class="question">¿Con qué frecuencia se despertó demasiado temprano y no pudo volver a dormirse?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(5, 0)">Nunca</div>
+                    <div class="option" onclick="saveAnswer(5, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(5, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(5, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(5, 4)">Siempre</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-6">
+                <div class="question">¿Con qué frecuencia sintió que su sueño no fue reparador?</div>
+                <div class="instruction" style="font-size: 14px;">
+                    Es decir, se levantó sintiéndose cansado/a a pesar de haber dormido.
+                </div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(6, 0)">Nunca</div>
+                    <div class="option" onclick="saveAnswer(6, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(6, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(6, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(6, 4)">Siempre</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-7">
+                <div class="question">¿Con qué frecuencia tuvo somnolencia durante el día?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(7, 0)">Nunca</div>
+                    <div class="option" onclick="saveAnswer(7, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(7, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(7, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(7, 4)">Siempre</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-8">
+                <div class="question">¿Le han dicho que ronca?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(8, 0)">No / No sé</div>
+                    <div class="option" onclick="saveAnswer(8, 1)">Sí, ocasionalmente</div>
+                    <div class="option" onclick="saveAnswer(8, 2)">Sí, frecuentemente</div>
+                    <div class="option" onclick="saveAnswer(8, 3)">Sí, muy fuerte</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-9">
+                <div class="question">¿Con qué frecuencia se despertó con falta de aire o con dolor de cabeza?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(9, 0)">Nunca</div>
+                    <div class="option" onclick="saveAnswer(9, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(9, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(9, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(9, 4)">Siempre</div>
+                </div>
+            </div>
+            
+            <div class="card" id="card-10">
+                <div class="question">¿Sintió que durmió lo suficiente para sentirse descansado/a?</div>
+                <div class="options">
+                    <div class="option" onclick="saveAnswer(10, 4)">Siempre</div>
+                    <div class="option" onclick="saveAnswer(10, 3)">Muchas veces</div>
+                    <div class="option" onclick="saveAnswer(10, 2)">A veces</div>
+                    <div class="option" onclick="saveAnswer(10, 1)">Pocas veces</div>
+                    <div class="option" onclick="saveAnswer(10, 0)">Nunca</div>
+                </div>
+            </div>
+            
+            <!-- Resultados -->
+            <div class="card" id="card-results">
+                <h2 style="margin-bottom: 30px; color: #667eea;">Resultados de su Evaluación</h2>
+                <div class="results" id="resultsContainer">
+                    <!-- Los resultados se generarán dinámicamente -->
+                </div>
+                <div class="doctor-notice">
+                    <strong>Por favor, entregue el dispositivo a su médico</strong><br>
+                    para revisar estos resultados juntos.
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentCard = 0;
+        const totalCards = 11;
+        let answers = {};
+        
+        function nextCard() {
+            if (currentCard < totalCards) {
+                document.getElementById(`card-${currentCard}`).classList.remove('active');
+                currentCard++;
+                if (currentCard === totalCards) {
+                    document.getElementById('card-finished').classList.add('active');
+                } else {
+                    document.getElementById(`card-${currentCard}`).classList.add('active');
+                }
+                updateProgress();
+                updateBackButton();
+            }
+        }
+        
+        function previousCard() {
+            if (currentCard > 0) {
+                if (currentCard === totalCards) {
+                    document.getElementById('card-finished').classList.remove('active');
+                } else {
+                    document.getElementById(`card-${currentCard}`).classList.remove('active');
+                }
+                currentCard--;
+                document.getElementById(`card-${currentCard}`).classList.add('active');
+                updateProgress();
+                updateBackButton();
+            }
+        }
+        
+        function showResults() {
+            calculateResults();
+            document.getElementById('card-finished').classList.remove('active');
+            document.getElementById('card-results').classList.add('active');
+            document.getElementById('backButton').style.display = 'none';
+        }
+        
+        function resetEvaluation() {
+            currentCard = 0;
+            answers = {};
+            document.getElementById('card-results').classList.remove('active');
+            document.getElementById('card-0').classList.add('active');
+            updateProgress();
+            updateBackButton();
+        }
+        
+        function updateProgress() {
+            const progress = (currentCard / totalCards) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
+        function updateBackButton() {
+            const backButton = document.getElementById('backButton');
+            if (currentCard > 0) {
+                backButton.style.display = 'block';
+            } else {
+                backButton.style.display = 'none';
+            }
+        }
+        
+        function saveAnswer(question, value) {
+            answers[question] = value;
+            setTimeout(nextCard, 300);
+        }
+        
+        function calculateResults() {
+            // Calcular índices
+            const sleepDisturbance = calculateSleepDisturbance();
+            const sleepAdequacy = calculateSleepAdequacy();
+            const daytimeSomnolence = calculateDaytimeSomnolence();
+            const snoring = answers[8] || 0;
+            const awakening = answers[9] || 0;
+            const hoursOfSleep = answers[2] || 0;
+            
+            // Generar HTML de resultados
+            let resultsHTML = '';
+            
+            // Trastornos del sueño
+            resultsHTML += `
+                <div class="result-section">
+                    <h3>Trastornos del Sueño</h3>
+                    <div class="score">${sleepDisturbance.toFixed(1)} de 100</div>
+                    <p>${interpretSleepDisturbance(sleepDisturbance)}</p>
+                    <div class="interpretation">
+                        <strong>¿Qué significa?</strong><br>
+                        ${explainSleepDisturbance(sleepDisturbance)}
+                    </div>
+                </div>
+            `;
+            
+            // Adecuación del sueño
+            resultsHTML += `
+                <div class="result-section">
+                    <h3>Calidad del Sueño</h3>
+                    <div class="score">${sleepAdequacy.toFixed(1)} de 100</div>
+                    <p>${interpretSleepAdequacy(sleepAdequacy)}</p>
+                    <div class="interpretation">
+                        <strong>¿Qué significa?</strong><br>
+                        ${explainSleepAdequacy(sleepAdequacy)}
+                    </div>
+                </div>
+            `;
+            
+            // Somnolencia diurna
+            resultsHTML += `
+                <div class="result-section">
+                    <h3>Somnolencia Durante el Día</h3>
+                    <div class="score">${daytimeSomnolence.toFixed(1)} de 100</div>
+                    <p>${interpretDaytimeSomnolence(daytimeSomnolence)}</p>
+                </div>
+            `;
+            
+            // Horas de sueño
+            resultsHTML += `
+                <div class="result-section">
+                    <h3>Horas de Sueño</h3>
+                    <div class="score">${hoursOfSleep <= 4.5 ? 'Menos de ' + hoursOfSleep : hoursOfSleep >= 10 ? 'Más de 9' : 'Aproximadamente ' + hoursOfSleep} horas</div>
+                    <p>${interpretHoursOfSleep(hoursOfSleep)}</p>
+                </div>
+            `;
+            
+            // Ronquidos y despertar con falta de aire
+            if (snoring >= 2 || awakening >= 2) {
+                resultsHTML += `
+                    <div class="result-section" style="background: #ffe4e4;">
+                        <h3>⚠️ Señales de Alerta</h3>
+                        ${snoring >= 2 ? '<p>• Ronquidos frecuentes o fuertes</p>' : ''}
+                        ${awakening >= 2 ? '<p>• Despertar con falta de aire o dolor de cabeza</p>' : ''}
+                        <div class="interpretation">
+                            Estos síntomas podrían indicar apnea del sueño u otros trastornos respiratorios durante el sueño. 
+                            Es importante comentarlo con su médico.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Agregar información del paciente
+            const fecha = new Date();
+            resultsHTML = `
+                <div class="result-section" style="background: #f5f7fa; margin-bottom: 20px;">
+                    <p><strong>Fecha de evaluación:</strong> ${fecha.toLocaleDateString('es-MX')}</p>
+                    <p><strong>Hora:</strong> ${fecha.toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'})}</p>
+                </div>
+            ` + resultsHTML;
+            
+            document.getElementById('resultsContainer').innerHTML = resultsHTML;
+        }
+        
+        function exportToPDF() {
+            // Crear contenido para imprimir
+            const printContent = document.getElementById('resultsContainer').innerHTML;
+            const printWindow = window.open('', '', 'height=600,width=800');
+            
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Escala de Sueño MOS - Resultados</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            padding: 20px; 
+                            color: #333;
+                            line-height: 1.6;
+                        }
+                        h1 { 
+                            color: #5c7cfa; 
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        .result-section { 
+                            background: #f5f7fa; 
+                            padding: 15px; 
+                            margin-bottom: 20px; 
+                            border-radius: 8px;
+                            page-break-inside: avoid;
+                        }
+                        .result-section h3 { 
+                            color: #5c7cfa; 
+                            margin-bottom: 10px; 
+                        }
+                        .score { 
+                            font-size: 20px; 
+                            font-weight: bold; 
+                            color: #3949ab; 
+                            margin: 10px 0; 
+                        }
+                        .interpretation { 
+                            background: #e3f2fd; 
+                            padding: 12px; 
+                            margin: 10px 0; 
+                            border-left: 4px solid #5c7cfa;
+                            border-radius: 4px;
+                        }
+                        @media print {
+                            body { margin: 0; }
+                            .result-section { 
+                                background: #f5f7fa !important; 
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Escala de Sueño MOS - Resultados</h1>
+                    ${printContent}
+                    <div style="margin-top: 40px; text-align: center; color: #666;">
+                        <p>Documento generado automáticamente por el sistema de evaluación de sueño</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+        
+        function calculateSleepDisturbance() {
+            // Promedio de preguntas 1, 3, 4, 5, 6
+            const scores = [
+                (answers[1] || 0) * 25, // Tiempo para dormirse
+                (answers[3] || 0) * 25, // Dificultad para quedarse dormido
+                (answers[4] || 0) * 25, // Despertar nocturno
+                (answers[5] || 0) * 25, // Despertar temprano
+                (answers[6] || 0) * 25  // Sueño no reparador
+            ];
+            return scores.reduce((a, b) => a + b, 0) / scores.length;
+        }
+        
+        function calculateSleepAdequacy() {
+            // Pregunta 10 (invertida)
+            return (answers[10] || 0) * 25;
+        }
+        
+        function calculateDaytimeSomnolence() {
+            // Pregunta 7
+            return (answers[7] || 0) * 25;
+        }
+        
+        function interpretSleepDisturbance(score) {
+            if (score <= 25) return "Mínimos trastornos del sueño";
+            if (score <= 50) return "Trastornos del sueño leves";
+            if (score <= 75) return "Trastornos del sueño moderados";
+            return "Trastornos del sueño severos";
+        }
+        
+        function explainSleepDisturbance(score) {
+            if (score <= 25) return "Su sueño es generalmente bueno. Tiene pocas dificultades para dormirse y mantenerse dormido.";
+            if (score <= 50) return "Presenta algunas dificultades ocasionales con el sueño, pero no son graves. Podría beneficiarse de mejorar sus hábitos de sueño.";
+            if (score <= 75) return "Tiene dificultades frecuentes para dormir que afectan su calidad de vida. Es recomendable implementar medidas para mejorar su sueño.";
+            return "Presenta problemas significativos de sueño que requieren atención médica. Es importante buscar ayuda profesional.";
+        }
+        
+        function interpretSleepAdequacy(score) {
+            if (score >= 75) return "Excelente calidad de sueño";
+            if (score >= 50) return "Buena calidad de sueño";
+            if (score >= 25) return "Calidad de sueño regular";
+            return "Calidad de sueño deficiente";
+        }
+        
+        function explainSleepAdequacy(score) {
+            if (score >= 75) return "Se siente descansado y restaurado después de dormir. Su sueño cumple bien su función reparadora.";
+            if (score >= 50) return "Generalmente se siente descansado, aunque hay espacio para mejorar.";
+            if (score >= 25) return "A menudo no se siente completamente descansado después de dormir.";
+            return "Raramente se siente descansado. Su sueño no está cumpliendo su función reparadora.";
+        }
+        
+        function interpretDaytimeSomnolence(score) {
+            if (score <= 25) return "Mínima somnolencia diurna";
+            if (score <= 50) return "Somnolencia diurna leve";
+            if (score <= 75) return "Somnolencia diurna moderada";
+            return "Somnolencia diurna excesiva";
+        }
+        
+        function interpretHoursOfSleep(hours) {
+            if (hours >= 7 && hours <= 9) return "Cantidad óptima de sueño para la mayoría de adultos.";
+            if (hours >= 6 && hours < 7) return "Ligeramente por debajo de lo recomendado. Podría beneficiarse de dormir un poco más.";
+            if (hours > 9) return "Más horas de lo típicamente recomendado. Si aún se siente cansado, podría indicar que la calidad del sueño necesita mejorar.";
+            if (hours >= 5) return "Por debajo de lo recomendado. La falta de sueño puede afectar su salud y bienestar.";
+            return "Significativamente por debajo de lo recomendado. Es importante buscar formas de aumentar sus horas de sueño.";
+        }
+        
+        // No se necesita esta funcionalidad con las nuevas opciones
+    </script>
+</body>
+</html>
