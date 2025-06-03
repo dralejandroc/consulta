@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escalas de Evaluación Clinimetrica</title>
+    <title>Escalas de Evaluación Psicológica</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -21,7 +21,7 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            background: white;
+            background: #FFF8EE;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -70,7 +70,7 @@
         }
 
         .scale-item {
-            background: #f8f9fa;
+            background: white;
             border: 1px solid #e9ecef;
             border-radius: 8px;
             padding: 15px;
@@ -81,7 +81,7 @@
 
         .scale-item:hover {
             background: #29A98C;
-            color: white;
+            color: #FFF8EE;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(41, 169, 140, 0.3);
         }
@@ -98,13 +98,13 @@
         }
 
         .empty-category {
-            color: #999;
+            color: #666;
             font-style: italic;
             text-align: center;
             padding: 20px;
-            background: #f8f9fa;
+            background: white;
             border-radius: 8px;
-            border: 1px dashed #ddd;
+            border: 1px dashed #29A98C;
         }
 
         @media (max-width: 768px) {
@@ -129,11 +129,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 Escalas de Evaluación Clinimetrica</h1>
-            <p>Sistema de evaluación clinimetrica para consulta externa</p>
+            <h1>Escalas de Evaluación Clinimétricas</h1>
+            <p>Sistema para gestión de escalas clinimétricas estandarizadas para consultorio</p>
         </div>
         
         <div class="content">
+            <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: white; border-radius: 12px; color: #666; border: 1px solid #29A98C;">
+                <p>Para aplicación en consulta externa, selecciona la escala a aplicar.</p>
+            </div>
             <!-- DEPRESIÓN -->
             <div class="category">
                 <div class="category-title">
