@@ -6,11 +6,10 @@
     <title>Escala Y-BOCS</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
             margin: 0;
             padding: 20px;
             min-height: 100vh;
@@ -20,32 +19,33 @@
             max-width: 800px;
             margin: 0 auto;
             background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+            border-radius: 32px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
-            color: #2d5a5a;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: white;
             padding: 30px;
             text-align: center;
         }
 
         .header h1 { margin: 0; font-size: 2.2em; font-weight: 300; }
-        .header p { margin: 10px 0 0; opacity: 0.8; font-size: 1.1em; }
+        .header p { margin: 10px 0 0; opacity: 0.9; font-size: 1.1em; }
 
         .card {
             padding: 50px;
             display: none;
             animation: fadeIn 0.5s ease-in;
             min-height: 400px;
+            background: rgba(255, 248, 238, 0.95);
         }
 
         .card.active { display: block; }
 
         .question-number {
-            color: #7fcdcd;
+            color: #29A98C;
             font-size: 1em;
             font-weight: 600;
             margin-bottom: 15px;
@@ -54,40 +54,40 @@
         .question {
             font-size: 1.3em;
             font-weight: 400;
-            color: #2d5a5a;
+            color: #112F33;
             margin-bottom: 30px;
             line-height: 1.5;
         }
 
         .section-title {
-            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
-            color: #2d5a5a;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: white;
             padding: 20px;
             text-align: center;
             font-size: 1.4em;
             font-weight: 500;
             margin: -50px -50px 40px -50px;
-            border-radius: 24px 24px 0 0;
+            border-radius: 32px 32px 0 0;
         }
 
         .definition-card {
-            background: #f8fffe;
-            border: 2px solid #e6f7f1;
-            border-radius: 20px;
+            background: rgba(255, 248, 238, 0.8);
+            border: 2px solid rgba(41, 169, 140, 0.2);
+            border-radius: 24px;
             padding: 30px;
             margin-bottom: 30px;
             text-align: center;
         }
 
         .definition-title {
-            color: #7fcdcd;
+            color: #29A98C;
             font-size: 1.6em;
             font-weight: 600;
             margin-bottom: 20px;
         }
 
         .definition-text {
-            color: #2d5a5a;
+            color: #112F33;
             font-size: 1.2em;
             line-height: 1.6;
         }
@@ -99,9 +99,9 @@
         }
 
         .option {
-            background: #f8fffe;
-            border: 1px solid #e6f7f1;
-            border-radius: 16px;
+            background: rgba(255, 248, 238, 0.9);
+            border: 2px solid rgba(41, 169, 140, 0.2);
+            border-radius: 20px;
             padding: 18px 24px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -109,15 +109,16 @@
         }
 
         .option:hover {
-            background: #e6f7f1;
-            border-color: #7fcdcd;
+            background: rgba(255, 248, 238, 1);
+            border-color: #29A98C;
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(41, 169, 140, 0.15);
         }
 
         .option.selected {
-            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
-            color: #2d5a5a;
-            border-color: #7fcdcd;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: white;
+            border-color: #29A98C;
             transform: translateY(-1px);
         }
 
@@ -128,15 +129,15 @@
 
         .navigation {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             margin-top: 40px;
         }
 
         .btn-back {
             background: transparent;
-            color: #7fcdcd;
-            border: 1px solid #e6f7f1;
+            color: #29A98C;
+            border: 1px solid rgba(41, 169, 140, 0.3);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.9em;
@@ -147,12 +148,13 @@
 
         .btn-back:hover {
             opacity: 1;
-            background: #f8fffe;
+            background: rgba(255, 248, 238, 0.8);
+            border-color: #29A98C;
         }
 
         .btn {
-            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
-            color: #2d5a5a;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 20px;
@@ -164,13 +166,13 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(127, 205, 205, 0.3);
+            box-shadow: 0 5px 15px rgba(41, 169, 140, 0.3);
         }
 
         .progress {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
             overflow: hidden;
             margin: 15px 30px 25px 30px;
             backdrop-filter: blur(10px);
@@ -178,22 +180,23 @@
 
         .progress-bar {
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: linear-gradient(90deg, #29A98C 0%, #112F33 100%);
             transition: width 0.3s ease;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(41, 169, 140, 0.3);
         }
 
         .results {
             text-align: center;
             padding: 40px;
+            background: rgba(255, 248, 238, 0.95);
         }
 
         .score-display {
-            background: linear-gradient(135deg, #a8e6cf 0%, #7fcdcd 100%);
-            color: #2d5a5a;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: white;
             padding: 30px;
-            border-radius: 20px;
+            border-radius: 24px;
             margin: 20px 0;
         }
 
@@ -211,37 +214,45 @@
 
         .subscale {
             flex: 1;
-            background: #f8fffe;
+            background: rgba(255, 248, 238, 0.9);
             padding: 20px;
-            border-radius: 16px;
-            border: 1px solid #e6f7f1;
+            border-radius: 20px;
+            border: 2px solid rgba(41, 169, 140, 0.2);
         }
 
         .subscale-score {
             font-size: 1.8em;
             font-weight: 600;
-            color: #7fcdcd;
+            color: #29A98C;
             margin-bottom: 5px;
         }
 
         .interpretation {
-            background: #f8fffe;
+            background: rgba(255, 248, 238, 0.9);
             padding: 25px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin: 20px 0;
-            border: 1px solid #e6f7f1;
+            border: 2px solid rgba(41, 169, 140, 0.2);
             text-align: left;
         }
 
         .alert {
             padding: 20px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin: 20px 0;
             font-weight: 500;
         }
 
-        .alert-info { background: #e6f7f1; border-left: 4px solid #7fcdcd; color: #2d5a5a; }
-        .alert-warning { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
+        .alert-info { 
+            background: rgba(41, 169, 140, 0.1); 
+            border-left: 4px solid #29A98C; 
+            color: #112F33; 
+        }
+        .alert-warning { 
+            background: rgba(236, 115, 103, 0.1); 
+            border-left: 4px solid #EC7367; 
+            color: #112F33; 
+        }
 
         .export-buttons {
             display: flex;
@@ -254,26 +265,30 @@
             text-align: center;
             font-size: 1.2em;
             line-height: 1.6;
-            color: #2d5a5a;
+            color: #112F33;
             margin-bottom: 30px;
         }
 
         .medical-access {
-            background: #f8fffe;
-            border: 2px solid #7fcdcd;
-            border-radius: 20px;
+            background: rgba(255, 248, 238, 0.9);
+            border: 2px solid #29A98C;
+            border-radius: 24px;
             padding: 30px;
             text-align: center;
             margin-top: 30px;
         }
 
         .cutoff-points {
-            background: #f8fffe;
+            background: rgba(255, 248, 238, 0.9);
             padding: 20px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin: 20px 0;
             text-align: left;
-            border: 1px solid #e6f7f1;
+            border: 2px solid rgba(41, 169, 140, 0.2);
+        }
+
+        .cutoff-points h4 {
+            color: #29A98C;
         }
 
         @keyframes fadeIn {
@@ -282,7 +297,7 @@
         }
 
         @media (max-width: 768px) {
-            .container { margin: 10px; border-radius: 20px; }
+            .container { margin: 10px; border-radius: 24px; }
             .card { padding: 30px; min-height: 300px; }
             .header { padding: 20px; }
             .header h1 { font-size: 1.8em; }
@@ -290,6 +305,7 @@
             .option { padding: 15px 20px; }
             .subscales { flex-direction: column; gap: 15px; }
             .export-buttons { flex-direction: column; }
+            .navigation { flex-direction: column; gap: 15px; }
         }
     </style>
 </head>
@@ -564,7 +580,12 @@
 
                 <div class="export-buttons">
                     <button class="btn" onclick="saveAsImage()">Guardar como Imagen</button>
-                    <button onclick="exportToPDF()">📄 Exportar a PDF</button>
+                    <button class="btn" onclick="saveAsPDF()">Guardar como PDF</button>
+                </div>
+                
+                <div class="navigation">
+                    <button class="btn-back" onclick="previousCard()">← Regresar</button>
+                    <div></div>
                 </div>
             </div>
         </div>
@@ -623,7 +644,7 @@
                     // Avanzar automáticamente después de un breve delay
                     setTimeout(() => {
                         nextCard();
-                    }, 800);
+                    }, 150);
                 }
             }
         });
@@ -718,139 +739,39 @@
             }
         }
 
-        function exportToPDF() {
-    try {
-        // Verificar que jsPDF esté disponible
-        if (typeof window.jsPDF === 'undefined') {
-            alert('Error: jsPDF no está cargado');
-            return;
-        }
-
-        const { jsPDF } = window.jsPDF;
-        const doc = new jsPDF();
-        
-        // Configuración del documento
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const margin = 20;
-        let yPosition = 30;
-        
-        // Título principal
-        doc.setFontSize(18);
-        doc.setFont("helvetica", "bold");
-        doc.text("Resultados de Evaluación", margin, yPosition);
-        yPosition += 15;
-        
-        // Fecha y hora
-        const fecha = new Date();
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Fecha: ${fecha.toLocaleDateString('es-MX')} - ${fecha.toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'})}`, margin, yPosition);
-        yPosition += 20;
-        
-        // Obtener datos del contenedor de resultados
-        const resultsContainer = document.getElementById('resultsContainer');
-        if (!resultsContainer) {
-            alert('No se encontraron resultados para exportar');
-            return;
-        }
-        
-        // Procesar cada sección de resultados
-        const sections = resultsContainer.querySelectorAll('.result-section');
-        
-        sections.forEach((section, index) => {
-            // Verificar si necesitamos nueva página
-            if (yPosition > 250) {
-                doc.addPage();
-                yPosition = 30;
-            }
-            
-            // Título de la sección
-            const title = section.querySelector('h3');
-            if (title) {
-                doc.setFontSize(14);
-                doc.setFont("helvetica", "bold");
-                doc.text(title.textContent.trim(), margin, yPosition);
-                yPosition += 10;
-            }
-            
-            // Puntuación
-            const score = section.querySelector('.score');
-            if (score) {
-                doc.setFontSize(12);
-                doc.setFont("helvetica", "bold");
-                doc.text(`Puntuación: ${score.textContent.trim()}`, margin, yPosition);
-                yPosition += 8;
-            }
-            
-            // Texto descriptivo
-            const paragraphs = section.querySelectorAll('p');
-            paragraphs.forEach(p => {
-                if (p.textContent.trim() && !p.querySelector('.score')) {
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-                    
-                    // Dividir texto largo en líneas
-                    const text = p.textContent.trim();
-                    const lines = doc.splitTextToSize(text, pageWidth - (margin * 2));
-                    
-                    lines.forEach(line => {
-                        if (yPosition > 270) {
-                            doc.addPage();
-                            yPosition = 30;
-                        }
-                        doc.text(line, margin, yPosition);
-                        yPosition += 5;
-                    });
-                    yPosition += 3;
-                }
-            });
-            
-            // Interpretaciones
-            const interpretations = section.querySelectorAll('.interpretation');
-            interpretations.forEach(interp => {
-                if (yPosition > 260) {
-                    doc.addPage();
-                    yPosition = 30;
-                }
-                
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "italic");
-                const text = interp.textContent.trim();
-                const lines = doc.splitTextToSize(text, pageWidth - (margin * 2));
-                
-                lines.forEach(line => {
-                    if (yPosition > 270) {
-                        doc.addPage();
-                        yPosition = 30;
-                    }
-                    doc.text(line, margin, yPosition);
-                    yPosition += 5;
+        async function saveAsPDF() {
+            const resultsCard = document.getElementById('card-results');
+            try {
+                const canvas = await html2canvas(resultsCard, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: false
                 });
-                yPosition += 8;
-            });
-            
-            yPosition += 5; // Espacio entre secciones
-        });
-        
-        // Pie de página en todas las páginas
-        const totalPages = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Página ${i} de ${totalPages}`, pageWidth - 40, doc.internal.pageSize.getHeight() - 10);
-            doc.text('Generado automáticamente por el Sistema de Evaluación', margin, doc.internal.pageSize.getHeight() - 10);
+                
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                const imgWidth = 190;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                
+                let position = 10;
+                
+                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                pdf.save('resultados-ybocs.pdf');
+            } catch (error) {
+                alert('Error al generar el PDF');
+            }
         }
-        
-        // Guardar el PDF
-        const fileName = `resultados-evaluacion-${fecha.toISOString().split('T')[0]}.pdf`;
-        doc.save(fileName);
-        
-    } catch (error) {
-        console.error('Error al generar PDF:', error);
-        alert('Error al generar el PDF. Verifica que todos los elementos estén cargados.');
-    }
-}
 
         // Inicializar
         updateProgress();
