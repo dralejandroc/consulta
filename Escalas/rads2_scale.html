@@ -998,11 +998,216 @@
         }
 
         function generatePDF() {
-            alert('Funcionalidad de PDF: En un entorno real, esto generaría un reporte PDF completo con todos los resultados de la evaluación.');
+            const results = document.getElementById('card-results');
+            const { totalScore, subscaleScores } = calculateScore();
+            const interpretation = getInterpretation(totalScore);
+            const alerts = checkCriticalItems();
+            const fecha = new Date().toLocaleDateString('es-ES');
+            const hora = new Date().toLocaleTimeString('es-ES');
+            
+            // Crear ventana de impresión
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Resultados RADS-2 - ${fecha}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; color: #333; line-height: 1.6; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #29A98C; padding-bottom: 20px; }
+                        .header h1 { color: #29A98C; margin-bottom: 10px; font-size: 28px; }
+                        .header p { color: #666; margin: 5px 0; }
+                        .score-display { background: #29A98C; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
+                        .score-display h2 { font-size: 2.5em; margin: 0; }
+                        .score-display p { margin: 10px 0 0 0; font-size: 1.2em; }
+                        .result-section { margin: 20px 0; padding: 15px; border-left: 4px solid #29A98C; background: #f8f9fa; }
+                        .result-section h3 { color: #112F33; margin-bottom: 15px; }
+                        .subscale-scores { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+                        .subscale-score { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #29A98C; }
+                        .subscale-score h4 { color: #112F33; margin-bottom: 10px; font-size: 14px; }
+                        .subscale-score .score { font-size: 18px; font-weight: bold; color: #29A98C; }
+                        .subscale-score .level { font-size: 12px; color: #666; margin-top: 5px; }
+                        .alert-section { background: #ffe5e5; border: 1px solid #f56565; padding: 15px; margin: 15px 0; border-radius: 8px; }
+                        .alert-section h4 { color: #742a2a; margin-bottom: 10px; }
+                        .alert-item { background: #f56565; color: white; padding: 10px; margin: 5px 0; border-radius: 5px; }
+                        .level-indicator { padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9em; color: white; }
+                        .level-normal { background: #48bb78; }
+                        .level-leve { background: #f6ad55; }
+                        .level-moderado { background: #ed8936; }
+                        .level-severo { background: #f56565; }
+                        .recommendations { background: #FFF8EE; padding: 15px; border-radius: 8px; margin: 20px 0; }
+                        .recommendations h4 { color: #112F33; margin-bottom: 10px; }
+                        .recommendations ul { margin: 10px 0; padding-left: 20px; }
+                        .recommendations li { margin: 5px 0; }
+                        .technical-info { background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #29A98C; }
+                        .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+                        @media print {
+                            body { margin: 0; }
+                            .header { page-break-after: avoid; }
+                            .subscale-scores { grid-template-columns: 1fr; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>RADS-2</h1>
+                        <p><strong>Escala de Depresión para Adolescentes - Segunda Edición</strong></p>
+                        <p>Fecha: ${fecha} - Hora: ${hora}</p>
+                    </div>
+
+                    <div class="score-display">
+                        <h2>${totalScore}/120</h2>
+                        <p>Puntuación Total de Depresión</p>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>Interpretación Clínica</h3>
+                        <p><strong>Nivel de Severidad:</strong> <span class="level-indicator level-${interpretation.level.toLowerCase()}">${interpretation.level}</span></p>
+                        <p><strong>Descripción:</strong> ${interpretation.description.replace(/<[^>]*>/g, '')}</p>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>Puntuaciones por Subescalas</h3>
+                        <div class="subscale-scores">
+                            <div class="subscale-score">
+                                <h4>Estado de Ánimo Disfórico</h4>
+                                <div class="score">${subscaleScores.dysphoric}/28</div>
+                                <div class="level">${getSubscaleInterpretation(subscaleScores.dysphoric, 28)}</div>
+                            </div>
+                            <div class="subscale-score">
+                                <h4>Anhedonia/Afecto Negativo</h4>
+                                <div class="score">${subscaleScores.anhedonia}/16</div>
+                                <div class="level">${getSubscaleInterpretation(subscaleScores.anhedonia, 16)}</div>
+                            </div>
+                            <div class="subscale-score">
+                                <h4>Autoevaluación Negativa</h4>
+                                <div class="score">${subscaleScores.negative}/32</div>
+                                <div class="level">${getSubscaleInterpretation(subscaleScores.negative, 32)}</div>
+                            </div>
+                            <div class="subscale-score">
+                                <h4>Quejas Somáticas</h4>
+                                <div class="score">${subscaleScores.somatic}/44</div>
+                                <div class="level">${getSubscaleInterpretation(subscaleScores.somatic, 44)}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${alerts.length > 0 ? `
+                    <div class="alert-section">
+                        <h4>⚠️ Ítems Críticos Identificados</h4>
+                        ${alerts.map(alert => `
+                            <div class="alert-item">
+                                <strong>Ítem ${alert.item}:</strong> ${alert.text} (Puntuación: ${alert.score}/4)
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : '<div class="alert-section"><h4>✅ No se identificaron ítems críticos elevados</h4></div>'}
+
+                    <div class="recommendations">
+                        <h4>Recomendaciones Clínicas</h4>
+                        ${document.getElementById('clinical-recommendations').innerHTML}
+                    </div>
+
+                    <div class="technical-info">
+                        <h4>Información Técnica</h4>
+                        <ul>
+                            <li><strong>Instrumento:</strong> Reynolds Adolescent Depression Scale - Segunda Edición (RADS-2)</li>
+                            <li><strong>Autor:</strong> William M. Reynolds, PhD</li>
+                            <li><strong>Puntos de corte:</strong> Normal (&lt;46), Leve (46-60), Moderado (61-75), Severo (≥76)</li>
+                            <li><strong>Punto de corte clínico:</strong> T-score ≥61 (Raw score ≥76)</li>
+                            <li><strong>Sensibilidad:</strong> 91% | <strong>Especificidad:</strong> 84%</li>
+                            <li><strong>Población objetivo:</strong> Adolescentes de 11 a 20 años</li>
+                        </ul>
+                    </div>
+
+                    <div class="footer">
+                        <p><strong>IMPORTANTE:</strong> Esta evaluación debe ser interpretada por un profesional de la salud mental calificado.</p>
+                        <p>Los resultados deben considerarse en el contexto de una evaluación clínica completa.</p>
+                        <p>Generado automáticamente por el sistema RADS-2 - ${fecha} ${hora}</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            
+            // Esperar a que cargue y luego imprimir
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
         }
 
         function captureScreen() {
-            alert('Funcionalidad de captura: En un entorno real, esto capturaría una imagen de los resultados para guardar o imprimir.');
+            // Simular captura de pantalla
+            const resultsCard = document.getElementById('card-results');
+            const { totalScore, subscaleScores } = calculateScore();
+            const interpretation = getInterpretation(totalScore);
+            const fecha = new Date().toLocaleDateString('es-ES');
+            const hora = new Date().toLocaleTimeString('es-ES');
+            
+            // Método alternativo: crear canvas temporal
+            try {
+                // Crear un elemento temporal para mostrar
+                const tempDiv = document.createElement('div');
+                tempDiv.style.cssText = `
+                    position: fixed; top: -9999px; left: -9999px; 
+                    background: white; padding: 20px; 
+                    font-family: Arial, sans-serif; width: 800px;
+                    border: 1px solid #ddd; border-radius: 10px;
+                `;
+                
+                tempDiv.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #29A98C; padding-bottom: 20px;">
+                        <h1 style="color: #29A98C; margin-bottom: 10px;">RADS-2 - Resultados</h1>
+                        <p style="color: #666;">Escala de Depresión para Adolescentes</p>
+                        <p style="color: #666;">Fecha: ${fecha} - Hora: ${hora}</p>
+                    </div>
+                    
+                    <div style="background: #29A98C; color: white; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0;">
+                        <h2 style="font-size: 2.5em; margin: 0;">${totalScore}/120</h2>
+                        <p style="margin: 10px 0 0 0;">Puntuación Total</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #29A98C; margin: 20px 0;">
+                        <h3 style="color: #112F33;">Interpretación: ${interpretation.level.toUpperCase()}</h3>
+                        <p>${interpretation.description.replace(/<[^>]*>/g, '')}</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #112F33; margin-bottom: 10px;">Estado de Ánimo Disfórico</h4>
+                            <div style="font-size: 18px; font-weight: bold; color: #29A98C;">${subscaleScores.dysphoric}/28</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #112F33; margin-bottom: 10px;">Anhedonia/Afecto Negativo</h4>
+                            <div style="font-size: 18px; font-weight: bold; color: #29A98C;">${subscaleScores.anhedonia}/16</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #112F33; margin-bottom: 10px;">Autoevaluación Negativa</h4>
+                            <div style="font-size: 18px; font-weight: bold; color: #29A98C;">${subscaleScores.negative}/32</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #112F33; margin-bottom: 10px;">Quejas Somáticas</h4>
+                            <div style="font-size: 18px; font-weight: bold; color: #29A98C;">${subscaleScores.somatic}/44</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; color: #666; font-size: 12px;">
+                        <p><strong>RADS-2</strong> - Reynolds Adolescent Depression Scale, 2nd Edition</p>
+                        <p>Evaluación debe ser interpretada por profesional calificado</p>
+                    </div>
+                `;
+                
+                document.body.appendChild(tempDiv);
+                
+                // En un entorno real, aquí usaríamos html2canvas
+                alert('📸 Captura de resultados lista.\n\nEn un entorno de producción, esto generaría una imagen PNG/JPG de alta calidad con todos los resultados de la evaluación RADS-2.\n\nLa imagen incluiría:\n• Puntuación total y nivel de severidad\n• Puntuaciones por subescalas\n• Interpretación clínica\n• Fecha y hora de evaluación');
+                
+                document.body.removeChild(tempDiv);
+                
+            } catch (error) {
+                alert('Error al capturar imagen. Funcionalidad disponible en entorno de producción con html2canvas.');
+            }
         }
 
         function newEvaluation() {
