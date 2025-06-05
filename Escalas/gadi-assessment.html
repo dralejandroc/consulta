@@ -987,42 +987,71 @@
         }
 
         function exportToPDF() {
-            // Crear contenido para PDF
-            const scores = calculateScore();
-            const interpretation = getInterpretation(scores);
-            const fecha = new Date().toLocaleDateString('es-ES');
+            const results = document.getElementById('card-results');
             
-            const content = `
-                GADI - Inventario de Ansiedad Generalizada
-                Fecha: ${fecha}
-                
-                PUNTUACIÓN TOTAL: ${scores.total}/88 - ${interpretation.level.toUpperCase()}
-                
-                PUNTUACIONES POR FACTOR:
-                • Síntomas Cognitivos: ${scores.cognitive}/${factorItems.cognitive.length * 4}
-                • Síntomas Somáticos: ${scores.somatic}/${factorItems.somatic.length * 4}  
-                • Alteraciones del Sueño: ${scores.sleep}/${factorItems.sleep.length * 4}
-                
-                INTERPRETACIÓN CLÍNICA:
-                ${interpretation.description.replace(/<[^>]*>/g, '')}
-                
-                Evaluación realizada con GADI (α = .928)
-                Escala: 0=En absoluto, 1=Un poco, 2=Algo, 3=Mucho, 4=Extremadamente
-                Este reporte debe ser interpretado por un profesional de la salud mental.
-            `;
+            // Crear ventana de impresión
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Resultados GADI - ${new Date().toLocaleDateString()}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; color: #333; line-height: 1.6; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #29A98C; padding-bottom: 20px; }
+                        .header h1 { color: #29A98C; margin-bottom: 10px; }
+                        .score-display { background: #29A98C; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
+                        .score-display h2 { font-size: 2.5em; margin: 0; }
+                        .result-section { margin: 20px 0; padding: 15px; border-left: 4px solid #29A98C; background: #f8f9fa; }
+                        .result-section h3 { color: #112F33; margin-bottom: 15px; }
+                        .factor-scores { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 20px 0; }
+                        .factor-score { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #29A98C; }
+                        .factor-score h4 { color: #112F33; margin-bottom: 10px; }
+                        .alert { background: #ffe5e5; border: 1px solid #f56565; padding: 15px; margin: 15px 0; border-radius: 8px; }
+                        .alert h4 { color: #742a2a; margin-bottom: 10px; }
+                        .alert ul { margin: 10px 0; padding-left: 20px; }
+                        .level-indicator { padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9em; margin-left: 10px; }
+                        .level-minimal { background: #48bb78; color: white; }
+                        .level-mild { background: #f6ad55; color: white; }
+                        .level-moderate { background: #ed8936; color: white; }
+                        .level-severe { background: #f56565; color: white; }
+                        .technical-info { background: #FFF8EE; padding: 15px; border-radius: 8px; margin: 20px 0; }
+                        .technical-info h4 { color: #112F33; margin-bottom: 10px; }
+                        .technical-info ul { margin: 10px 0; padding-left: 20px; }
+                        @media print {
+                            .buttons-group { display: none !important; }
+                            body { margin: 0; }
+                            .header { page-break-after: avoid; }
+                            .factor-scores { grid-template-columns: 1fr; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Inventario de Ansiedad Generalizada (GADI)</h1>
+                        <p><strong>Fecha de evaluación:</strong> ${new Date().toLocaleDateString()}</p>
+                        <p><strong>Hora:</strong> ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                    ${results.innerHTML.replace(/onclick="[^"]*"/g, '').replace(/class="btn[^"]*"/g, 'style="display:none"')}
+                    
+                    <div class="technical-info">
+                        <h4>Información Técnica de la Evaluación:</h4>
+                        <ul>
+                            <li><strong>Instrumento:</strong> Inventario de Ansiedad Generalizada (GADI)</li>
+                            <li><strong>Número de ítems:</strong> 22</li>
+                            <li><strong>Escala de puntuación:</strong> 0 (En absoluto) a 4 (Extremadamente)</li>
+                            <li><strong>Rango total:</strong> 0-88 puntos</li>
+                            <li><strong>Confiabilidad:</strong> α = .928 (excelente consistencia interna)</li>
+                            <li><strong>Periodo evaluado:</strong> Síntomas en las últimas dos semanas</li>
+                            <li><strong>Factores evaluados:</strong> Síntomas Cognitivos, Síntomas Somáticos, Alteraciones del Sueño</li>
+                        </ul>
+                        <p><strong>Nota importante:</strong> Este reporte debe ser interpretado por un profesional de la salud mental capacitado en el contexto de una evaluación clínica completa.</p>
+                    </div>
+                </body>
+                </html>
+            `);
             
-            // Crear archivo temporal para descarga
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `GADI_Resultados_${fecha.replace(/\//g, '-')}.txt`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            alert('Los resultados se han exportado exitosamente. Nota: La funcionalidad completa de PDF requiere bibliotecas adicionales en entorno de producción.');
+            printWindow.document.close();
+            printWindow.print();
         }
 
         function captureResults() {
