@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala Dimensional Yale-Brown de TOC (DY-BOCS)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #666;
+            -webkit-text-fill-color: #666;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 auto 20px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #112F33;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: #29A98C;
+            background: rgba(41, 169, 140, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 169, 140, 0.3);
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .checkbox-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: #29A98C;
+            background: rgba(41, 169, 140, 0.1);
+        }
+
+        .checkbox-item.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .severity-scale {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .severity-option {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .severity-option:hover {
+            border-color: #29A98C;
+            background: rgba(41, 169, 140, 0.1);
+        }
+
+        .severity-option.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .results-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            border-left: 5px solid #29A98C;
+        }
+
+        .alert-high {
+            background: rgba(245, 101, 101, 0.1);
+            border-left-color: #f56565;
+        }
+
+        .alert-medium {
+            background: rgba(246, 173, 85, 0.1);
+            border-left-color: #f6ad55;
+        }
+
+        .dimension-result {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            border-left: 4px solid #29A98C;
+        }
+
+        .dimension-score {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #29A98C;
+        }
+
+        .export-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #29A98C;
+        }
+
+        .instructions h3 {
+            color: #29A98C;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #112F33;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .severity-scale {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card 0: Bienvenida -->
+        <div class="card active" id="card-0">
+            <div class="header">
+                <h1>Escala Dimensional Yale-Brown</h1>
+                <p>Evaluación de Síntomas Obsesivo-Compulsivos (DY-BOCS)</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>Instrucciones para el paciente:</h3>
+                <ul>
+                    <li><strong>Obsesiones:</strong> Son pensamientos repetitivos o imágenes intrusivas que provocan malestar o ansiedad (ej: preocupación recurrente sobre gérmenes, si se cerró la puerta).</li>
+                    <li><strong>Compulsiones:</strong> Son actos, comportamientos o rituales mentales repetitivos que siente que debe realizar (ej: lavarse las manos repetidamente, comprobar que la puerta esté cerrada).</li>
+                    <li>Responda considerando <strong>la última semana</strong></li>
+                    <li>Sea honesto y preciso en sus respuestas</li>
+                    <li>No hay respuestas correctas o incorrectas</li>
+                    <li>Primero identificaremos qué tipos de síntomas presenta, luego evaluaremos solo esas áreas</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="nextCard()">Comenzar Evaluación</button>
+            </div>
+        </div>
+
+        <!-- Card 1: Screening de Dimensiones -->
+        <div class="card" id="card-1">
+            <div class="header">
+                <h1>Identificación de Síntomas</h1>
+                <p>Seleccione las áreas que han sido problemáticas en la última semana</p>
+            </div>
+            
+            <div class="question-text">
+                Marque todas las categorías que describan obsesiones o compulsiones que haya experimentado:
+            </div>
+            
+            <div class="checkbox-group">
+                <div class="checkbox-item" onclick="toggleDimension(1)" id="dim-1">
+                    <strong>Obsesiones de daño y violencia</strong><br>
+                    <small>Miedo de hacerse daño o herir a otros, pensamientos violentos, imágenes agresivas</small>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleDimension(2)" id="dim-2">
+                    <strong>Obsesiones sexuales y religiosas</strong><br>
+                    <small>Pensamientos sexuales inapropiados, preocupaciones religiosas, blasfemias</small>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleDimension(3)" id="dim-3">
+                    <strong>Simetría, orden y organización</strong><br>
+                    <small>Necesidad de que las cosas estén perfectas, simétricas, en cierto orden</small>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleDimension(4)" id="dim-4">
+                    <strong>Contaminación y limpieza</strong><br>
+                    <small>Miedo a gérmenes, suciedad, necesidad excesiva de lavarse o limpiar</small>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleDimension(5)" id="dim-5">
+                    <strong>Acumulación y coleccionismo</strong><br>
+                    <small>Dificultad para tirar cosas, acumular objetos innecesarios</small>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleDimension(6)" id="dim-6">
+                    <strong>Otros síntomas obsesivo-compulsivos</strong><br>
+                    <small>Supersticiones, rituales diversos, preocupaciones por enfermedades</small>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="processScreening()">Continuar</button>
+            </div>
+        </div>
+
+        <!-- Cards dinámicas para cada dimensión se generarán aquí -->
+
+        <!-- Card final -->
+        <div class="card" id="card-final">
+            <div class="header">
+                <h1>Evaluación Completada</h1>
+                <p>Muchas gracias por su tiempo</p>
+            </div>
+            
+            <div class="question-text">
+                La evaluación ha sido completada exitosamente. Por favor entregue el dispositivo a su médico o profesional de salud mental para la revisión de los resultados.
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="showResults()">Revisar Resultados (Médico)</button>
+            </div>
+        </div>
+
+        <!-- Card de resultados -->
+        <div class="card" id="card-results">
+            <div class="header">
+                <h1>Resultados DY-BOCS</h1>
+                <p>Interpretación Clínica</p>
+            </div>
+            
+            <div id="results-content">
+                <!-- Los resultados se insertarán aquí dinámicamente -->
+            </div>
+            
+            <div class="export-buttons">
+                <button class="button" onclick="exportToPDF()">📄 Exportar PDF</button>
+                <button class="button" onclick="exportToImage()">📸 Capturar Imagen</button>
+                <button class="button" onclick="newAssessment()">🔄 Nueva Evaluación</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" id="backBtn" onclick="previousCard()">←</button>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        let selectedDimensions = [];
+        let dimensionCards = [];
+        let totalQuestions = 2; // Inicial, se actualizará dinámicamente
+
+        const dimensionQuestions = {
+            1: { // Daño y violencia
+                name: "Obsesiones de Daño y Violencia",
+                questions: [
+                    {
+                        text: "¿Con qué frecuencia ha tenido pensamientos sobre hacer daño a usted mismo o a otros en la última semana?",
+                        type: "frequency"
+                    },
+                    {
+                        text: "¿Cuánto malestar le causan estos pensamientos de daño o violencia?",
+                        type: "distress"
+                    },
+                    {
+                        text: "¿En qué medida estos síntomas interfieren con su vida diaria?",
+                        type: "interference"
+                    }
+                ]
+            },
+            2: { // Sexual y religiosa
+                name: "Obsesiones Sexuales y Religiosas",
+                questions: [
+                    {
+                        text: "¿Con qué frecuencia ha tenido pensamientos sexuales inapropiados o preocupaciones religiosas en la última semana?",
+                        type: "frequency"
+                    },
+                    {
+                        text: "¿Cuánto malestar le causan estos pensamientos sexuales o religiosos?",
+                        type: "distress"
+                    },
+                    {
+                        text: "¿En qué medida estos síntomas interfieren con su vida diaria?",
+                        type: "interference"
+                    }
+                ]
+            },
+            3: { // Simetría y orden
+                name: "Simetría, Orden y Organización",
+                questions: [
+                    {
+                        text: "¿Con qué frecuencia siente la necesidad de que las cosas estén perfectas, simétricas o en cierto orden?",
+                        type: "frequency"
+                    },
+                    {
+                        text: "¿Cuánto malestar le causa cuando las cosas no están en el orden correcto?",
+                        type: "distress"
+                    },
+                    {
+                        text: "¿En qué medida estos síntomas interfieren con su vida diaria?",
+                        type: "interference"
+                    }
+                ]
+            },
+            4: { // Contaminación
+                name: "Contaminación y Limpieza",
+                questions: [
+                    {
+                        text: "¿Con qué frecuencia se preocupa por gérmenes, suciedad o contaminación?",
+                        type: "frequency"
+                    },
+                    {
+                        text: "¿Cuánto malestar le causan estos pensamientos sobre contaminación?",
+                        type: "distress"
+                    },
+                    {
+                        text: "¿En qué medida estos síntomas interfieren con su vida diaria?",
+                        type: "interference"
+                    }
+                ]
+            },
+            5: { // Acumulación
+                name: "Acumulación y Coleccionismo",
+                questions: [
+                    {
+                        text: "¿Con qué frecuencia tiene dificultades para tirar cosas o siente necesidad de acumular objetos?",
+                        type: "frequency"
+                    },
+                    {
+                        text: "¿Cuánto malestar le causa la idea de deshacerse de sus pertenencias?",
+                        type: "distress"
+                    },
+                    {
+                        text: "¿En qué medida estos síntomas interfieren con su vida diaria?",
+                        type: "interference"
+                    }
+                ]
+            },
+            6: { // Miscelánea
+                name: "Otros Síntomas Obsesivo-Compulsivos",
+                questions: [
+                    {
+                        text: "¿Con qué frecuencia experimenta supersticiones, rituales diversos o preocupaciones por enfermedades?",
+                        type: "frequency"
+                    },
+                    {
+                        text: "¿Cuánto malestar le causan estos otros síntomas obsesivo-compulsivos?",
+                        type: "distress"
+                    },
+                    {
+                        text: "¿En qué medida estos síntomas interfieren con su vida diaria?",
+                        type: "interference"
+                    }
+                ]
+            }
+        };
+
+        const scaleOptions = {
+            frequency: [
+                { value: 0, text: "Nunca" },
+                { value: 1, text: "Raramente (menos de 3 horas/semana)" },
+                { value: 2, text: "Ocasionalmente (3 horas/semana a 1 hora/día)" },
+                { value: 3, text: "Frecuentemente (1-3 horas/día)" },
+                { value: 4, text: "Casi siempre (3-8 horas/día)" },
+                { value: 5, text: "Constantemente (más de 8 horas/día)" }
+            ],
+            distress: [
+                { value: 0, text: "Sin malestar" },
+                { value: 1, text: "Malestar mínimo" },
+                { value: 2, text: "Malestar leve" },
+                { value: 3, text: "Malestar moderado" },
+                { value: 4, text: "Malestar grave" },
+                { value: 5, text: "Malestar extremo" }
+            ],
+            interference: [
+                { value: 0, text: "Sin interferencia" },
+                { value: 1, text: "Interferencia mínima" },
+                { value: 2, text: "Interferencia leve" },
+                { value: 3, text: "Interferencia moderada" },
+                { value: 4, text: "Interferencia grave" },
+                { value: 5, text: "Interferencia extrema" }
+            ]
+        };
+
+        function updateProgress() {
+            const progress = (currentCard / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function updateBackButton() {
+            const backBtn = document.getElementById('backBtn');
+            if (currentCard === 0 || currentCard === totalQuestions + 1) {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+        }
+
+        function toggleDimension(dimensionId) {
+            const element = document.getElementById(`dim-${dimensionId}`);
+            const index = selectedDimensions.indexOf(dimensionId);
+            
+            if (index > -1) {
+                selectedDimensions.splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                selectedDimensions.push(dimensionId);
+                element.classList.add('selected');
+            }
+        }
+
+        function processScreening() {
+            if (selectedDimensions.length === 0) {
+                alert('Por favor seleccione al menos una categoría de síntomas.');
+                return;
+            }
+            
+            // Crear cards dinámicas para las dimensiones seleccionadas
+            createDimensionCards();
+            nextCard();
+        }
+
+        function createDimensionCards() {
+            const container = document.querySelector('.container');
+            const finalCard = document.getElementById('card-final');
+            
+            let cardIndex = 2;
+            dimensionCards = [];
+            
+            selectedDimensions.forEach(dimId => {
+                const dimension = dimensionQuestions[dimId];
+                
+                dimension.questions.forEach((question, qIndex) => {
+                    const cardHtml = `
+                        <div class="card" id="card-${cardIndex}">
+                            <div class="question-number">${cardIndex - 1}</div>
+                            <div class="header">
+                                <h1>${dimension.name}</h1>
+                            </div>
+                            <div class="question-text">${question.text}</div>
+                            <div class="severity-scale" id="options-${cardIndex}">
+                                ${scaleOptions[question.type].map(option => 
+                                    `<div class="severity-option" onclick="selectOption(${cardIndex}, ${option.value})">
+                                        <strong>${option.value}</strong><br>
+                                        <small>${option.text}</small>
+                                    </div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.insertBefore(createElementFromHTML(cardHtml), finalCard);
+                    dimensionCards.push({
+                        cardId: cardIndex,
+                        dimensionId: dimId,
+                        questionIndex: qIndex,
+                        questionType: question.type
+                    });
+                    cardIndex++;
+                });
+            });
+            
+            totalQuestions = cardIndex;
+        }
+
+        function createElementFromHTML(htmlString) {
+            const div = document.createElement('div');
+            div.innerHTML = htmlString.trim();
+            return div.firstChild;
+        }
+
+        function selectOption(cardId, value) {
+            const options = document.querySelectorAll(`#options-${cardId} .severity-option`);
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            const selectedOption = document.querySelector(`#options-${cardId} .severity-option:nth-child(${value + 1})`);
+            selectedOption.classList.add('selected');
+            
+            const cardInfo = dimensionCards.find(card => card.cardId === cardId);
+            if (!responses[cardInfo.dimensionId]) {
+                responses[cardInfo.dimensionId] = {};
+            }
+            responses[cardInfo.dimensionId][cardInfo.questionType] = value;
+            
+            setTimeout(() => {
+                nextCard();
+            }, 150);
+        }
+
+        function nextCard() {
+            const current = document.getElementById(`card-${currentCard}`);
+            if (current) current.classList.remove('active');
+            
+            currentCard++;
+            
+            let next;
+            if (currentCard >= totalQuestions) {
+                next = document.getElementById('card-final');
+            } else {
+                next = document.getElementById(`card-${currentCard}`);
+            }
+            
+            if (next) next.classList.add('active');
+            
+            updateProgress();
+            updateBackButton();
+        }
+
+        function previousCard() {
+            if (currentCard <= 0) return;
+            
+            const current = document.getElementById(`card-${currentCard}`) || document.getElementById('card-final');
+            if (current) current.classList.remove('active');
+            
+            currentCard--;
+            const previous = document.getElementById(`card-${currentCard}`);
+            if (previous) previous.classList.add('active');
+            
+            updateProgress();
+            updateBackButton();
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            let dimensionScores = {};
+            let alerts = [];
+            
+            selectedDimensions.forEach(dimId => {
+                if (responses[dimId]) {
+                    const frequency = responses[dimId].frequency || 0;
+                    const distress = responses[dimId].distress || 0;
+                    const interference = responses[dimId].interference || 0;
+                    
+                    const dimensionTotal = frequency + distress + interference;
+                    dimensionScores[dimId] = {
+                        frequency,
+                        distress,
+                        interference,
+                        total: dimensionTotal,
+                        name: dimensionQuestions[dimId].name
+                    };
+                    
+                    totalScore += dimensionTotal;
+                    
+                    // Alertas para puntuaciones altas (≥66% del máximo)
+                    if (dimensionTotal >= 10) { // 66% de 15
+                        alerts.push({
+                            dimension: dimensionQuestions[dimId].name,
+                            score: dimensionTotal,
+                            level: 'high'
+                        });
+                    } else if (dimensionTotal >= 7) { // 47% de 15
+                        alerts.push({
+                            dimension: dimensionQuestions[dimId].name,
+                            score: dimensionTotal,
+                            level: 'medium'
+                        });
+                    }
+                }
+            });
+            
+            return {
+                totalScore,
+                dimensionScores,
+                alerts,
+                numberOfDimensions: selectedDimensions.length
+            };
+        }
+
+        function getInterpretation(results) {
+            const { totalScore, numberOfDimensions, alerts } = results;
+            let severity = 'Mínima';
+            let recommendations = [];
+            
+            // Interpretación basada en la puntuación total promedio por dimensión
+            const averageScore = totalScore / numberOfDimensions;
+            
+            if (averageScore >= 12) {
+                severity = 'Grave';
+                recommendations.push('Síntomas obsesivo-compulsivos graves que requieren intervención intensiva');
+                recommendations.push('Considerar terapia cognitivo-conductual especializada y evaluación farmacológica');
+                recommendations.push('Interferencia significativa en el funcionamiento diario');
+            } else if (averageScore >= 8) {
+                severity = 'Moderada';
+                recommendations.push('Síntomas obsesivo-compulsivos clínicamente significativos');
+                recommendations.push('Indicada terapia cognitivo-conductual especializada en TOC');
+                recommendations.push('Evaluación para tratamiento farmacológico si no hay respuesta a TCC');
+            } else if (averageScore >= 4) {
+                severity = 'Leve';
+                recommendations.push('Síntomas obsesivo-compulsivos presentes pero manejables');
+                recommendations.push('Psicoeducación sobre TOC y técnicas de manejo de ansiedad');
+                recommendations.push('Monitoreo regular de la evolución de los síntomas');
+            } else {
+                severity = 'Mínima o Subclínica';
+                recommendations.push('Síntomas obsesivo-compulsivos mínimos o subclínicos');
+                recommendations.push('Estrategias preventivas y manejo del estrés');
+            }
+            
+            return { severity, recommendations };
+        }
+
+        function showResults() {
+            const results = calculateScore();
+            const interpretation = getInterpretation(results);
+            
+            document.getElementById('card-final').classList.remove('active');
+            document.getElementById('card-results').classList.add('active');
+            
+            let resultsHTML = `
+                <div class="results-section">
+                    <h3>Puntuación Total: ${results.totalScore}</h3>
+                    <p><strong>Severidad Global:</strong> ${interpretation.severity}</p>
+                    <p><strong>Dimensiones Evaluadas:</strong> ${results.numberOfDimensions}</p>
+                </div>
+            `;
+            
+            // Puntuaciones por dimensión
+            resultsHTML += '<div class="results-section"><h3>Puntuaciones por Dimensión:</h3>';
+            Object.values(results.dimensionScores).forEach(dim => {
+                const alertClass = dim.total >= 10 ? 'alert-high' : dim.total >= 7 ? 'alert-medium' : '';
+                resultsHTML += `
+                    <div class="dimension-result ${alertClass}">
+                        <div class="dimension-score">${dim.name}: ${dim.total}/15</div>
+                        <small>Frecuencia: ${dim.frequency} | Malestar: ${dim.distress} | Interferencia: ${dim.interference}</small>
+                    </div>
+                `;
+            });
+            resultsHTML += '</div>';
+            
+            // Alertas
+            if (results.alerts.length > 0) {
+                resultsHTML += '<div class="results-section alert-high"><h3>⚠️ Alertas Clínicas:</h3>';
+                results.alerts.forEach(alert => {
+                    resultsHTML += `<p><strong>${alert.dimension}:</strong> Puntuación ${alert.score}/15 - Requiere atención clínica</p>`;
+                });
+                resultsHTML += '</div>';
+            }
+            
+            // Recomendaciones
+            resultsHTML += '<div class="results-section"><h3>Interpretación Clínica:</h3>';
+            interpretation.recommendations.forEach(rec => {
+                resultsHTML += `<p>• ${rec}</p>`;
+            });
+            resultsHTML += '</div>';
+            
+            // Información técnica adicional
+            resultsHTML += `
+                <div class="results-section">
+                    <h3>Información Técnica:</h3>
+                    <p>• <strong>Escala:</strong> Dimensional Yale-Brown Obsessive-Compulsive Scale (DY-BOCS)</p>
+                    <p>• <strong>Rango por dimensión:</strong> 0-15 puntos</p>
+                    <p>• <strong>Puntos de corte orientativos:</strong> 0-3 (Mínima), 4-7 (Leve), 8-11 (Moderada), 12-15 (Grave)</p>
+                    <p>• <strong>Fecha de evaluación:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+                </div>
+            `;
+            
+            document.getElementById('results-content').innerHTML = resultsHTML;
+            updateBackButton();
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function exportToImage() {
+            html2canvas(document.getElementById('card-results')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `DY-BOCS_Resultados_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function newAssessment() {
+            location.reload();
+        }
+
+        // Inicialización
+        updateProgress();
+        updateBackButton();
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
