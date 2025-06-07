@@ -10,652 +10,970 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            color: #333;
         }
-
+        
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
             width: 100%;
-            max-width: 900px;
-            overflow: hidden;
-            animation: slideIn 0.5s ease-out;
+            position: relative;
         }
-
-        @keyframes slideIn {
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .card.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-        .header {
-            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
-            color: #FFF8EE;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-
-        .progress-container {
-            background: rgba(255,248,238,0.2);
-            border-radius: 10px;
-            height: 8px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            background: #FFF8EE;
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        .question-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .question-intro {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .question-number {
-            font-size: 0.9rem;
-            font-weight: 500;
+        
+        h1 {
             color: #29A98C;
-            margin-bottom: 25px;
-            opacity: 0.8;
-        }
-
-        .question-text {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 30px;
-            line-height: 1.4;
-        }
-
-        .options {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 30px;
-            text-align: left;
-        }
-
-        .option-button {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 22px 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            font-weight: 500;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            line-height: 1.5;
-        }
-
-        .option-button:hover {
-            border-color: #29A98C;
-            background: #f0fff8;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(41, 169, 140, 0.2);
-        }
-
-        .option-button.selected {
-            background: #29A98C;
-            color: #FFF8EE;
-            border-color: #29A98C;
-        }
-
-        .score-display {
-            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
-            color: #FFF8EE;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 24px;
             text-align: center;
         }
-
-        .score-number {
-            font-size: 3rem;
-            font-weight: bold;
+        
+        h2 {
+            color: #112F33;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .instructions {
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .instructions h3 {
+            color: #29A98C;
             margin-bottom: 10px;
         }
-
-        .score-interpretation {
-            font-size: 1.3rem;
-            opacity: 0.9;
+        
+        .instructions p {
+            margin-bottom: 10px;
         }
-
-        .subscales-section {
-            background: #f0fff8;
-            border: 2px solid #29A98C;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
+        
+        .instructions ul {
+            margin-left: 20px;
+            margin-top: 10px;
         }
-
-        .subscales-title {
-            color: #112F33;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .subscale-item {
-            background: white;
-            border: 1px solid #29A98C;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .subscale-info {
-            flex: 1;
-        }
-
-        .subscale-name {
-            font-weight: bold;
-            color: #112F33;
-            font-size: 1.1rem;
+        
+        .instructions li {
             margin-bottom: 5px;
         }
-
-        .subscale-description {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .subscale-score {
-            background: #29A98C;
-            color: #FFF8EE;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 1.1rem;
-            font-weight: bold;
+        
+        .question-header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 15px;
+            margin: -30px -30px 20px;
+            border-radius: 20px 20px 0 0;
+            font-size: 16px;
             text-align: center;
-            min-width: 80px;
         }
-
-        .red-flags-section {
-            background: #fff5f5;
-            border: 2px solid #EC7367;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: left;
-        }
-
-        .red-flags-title {
-            color: #EC7367;
-            font-size: 1.3rem;
-            font-weight: bold;
+        
+        .question-text {
+            font-size: 18px;
             margin-bottom: 20px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .options {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 10px;
         }
-
-        .red-flag-item {
-            background: white;
-            border: 1px solid #EC7367;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        .red-flag-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .red-flag-text {
-            flex: 1;
-            color: #2d3748;
-            line-height: 1.5;
-        }
-
-        .red-flag-score {
-            background: #FFF8EE;
-            color: #EC7367;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            white-space: nowrap;
-            border: 1px solid #EC7367;
-        }
-
-        .no-red-flags {
-            background: #f0fff8;
-            border: 2px solid #29A98C;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #112F33;
-        }
-
-        .button {
-            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
-            color: #FFF8EE;
-            border: none;
-            border-radius: 12px;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
+        
+        .option {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(41, 169, 140, 0.3);
-        }
-
-        .patient-view-message {
             text-align: center;
-            padding: 40px;
+            font-size: 16px;
         }
-
-        .checkmark {
-            width: 80px;
-            height: 80px;
+        
+        .option:hover {
+            background: #e8f5f2;
+            border-color: #29A98C;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(41, 169, 140, 0.2);
+        }
+        
+        .option:active {
+            transform: translateY(0);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(41, 169, 140, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             background: #29A98C;
+            color: white;
+            border: none;
             border-radius: 50%;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
-            color: #FFF8EE;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-            }
-            
-            .content {
+        
+        .back-btn:hover {
+            background: #112F33;
+            transform: translateY(-2px);
+        }
+        
+        .back-btn.hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .results {
+            line-height: 1.6;
+        }
+        
+        .score-section {
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .score-section h3 {
+            color: #29A98C;
+            margin-bottom: 10px;
+        }
+        
+        .score-total {
+            font-size: 36px;
+            color: #112F33;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .severity-level {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .severity-none {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .severity-mild {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .severity-moderate {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .severity-severe {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .severity-very-severe {
+            background: #742a2a;
+            color: white;
+        }
+        
+        .subscale-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .subscale-item {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .subscale-item h4 {
+            color: #29A98C;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .subscale-item .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #112F33;
+        }
+        
+        .alert-items {
+            background: #f56565;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-items h4 {
+            margin-bottom: 10px;
+        }
+        
+        .alert-items ul {
+            margin-left: 20px;
+        }
+        
+        .alert-items li {
+            margin-bottom: 5px;
+        }
+        
+        .interpretation {
+            background: #e8f5f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .interpretation h3 {
+            color: #29A98C;
+            margin-bottom: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        @media (max-width: 600px) {
+            .card {
                 padding: 20px;
             }
             
-            .header {
-                padding: 20px;
+            .question-header {
+                margin: -20px -20px 20px;
+                padding: 10px;
+                font-size: 14px;
             }
             
-            .header h1 {
-                font-size: 1.5rem;
+            .question-text {
+                font-size: 16px;
             }
             
-            .option-button {
-                padding: 15px;
-                font-size: 0.95rem;
+            .option {
+                padding: 12px;
+                font-size: 14px;
             }
-
-            .subscale-item {
+            
+            .action-buttons {
                 flex-direction: column;
-                text-align: center;
-                gap: 15px;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                min-height: auto;
+                padding: 0;
+            }
+            
+            .container {
+                max-width: 100%;
+            }
+            
+            .card {
+                background: white;
+                box-shadow: none;
+                break-inside: avoid;
+                padding: 20px;
+            }
+            
+            .back-btn, .progress-bar, .action-buttons {
+                display: none !important;
+            }
+            
+            .question-header {
+                background: none;
+                color: #29A98C;
+                border-bottom: 2px solid #29A98C;
+                margin: 0 0 20px 0;
+            }
+            
+            .score-section, .interpretation {
+                background: #f7f7f7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1 id="headerTitle">Inventario de Fobia Social (SPIN)</h1>
-            <p id="headerSubtitle">Evaluación de ansiedad social</p>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
+        <!-- Card 0: Bienvenida e instrucciones -->
+        <div class="card active" id="card-0">
+            <h1>Inventario de Fobia Social (SPIN)</h1>
+            <div class="instructions">
+                <h3>Instrucciones:</h3>
+                <p>Por favor lea cuidadosamente cada afirmación y responda qué tanto le ha molestado cada uno de los siguientes problemas durante las <strong>últimas semanas</strong>.</p>
+                
+                <p><strong>Opciones de respuesta:</strong></p>
+                <ul>
+                    <li><strong>NADA</strong>: No me ha pasado</li>
+                    <li><strong>UN POCO</strong>: Me pasa ocasionalmente</li>
+                    <li><strong>ALGO</strong>: Me pasa la mitad de las veces</li>
+                    <li><strong>MUCHO</strong>: Me pasa la mayoría de las veces</li>
+                    <li><strong>EXTREMO</strong>: Me pasa todo el tiempo</li>
+                </ul>
+                
+                <p>Marque sólo una opción por cada problema y asegúrese de contestar todos los ítems.</p>
+                
+                <p>Esta evaluación consta de <strong>17 preguntas</strong> y toma aproximadamente 5-10 minutos completarla.</p>
+            </div>
+            <button class="btn" onclick="nextCard()">Comenzar evaluación</button>
+        </div>
+        
+        <!-- Cards 1-17: Preguntas -->
+        <div class="card" id="card-1">
+            <div class="question-header">Pregunta 1 de 17</div>
+            <div class="question-text">Tengo miedo a las personas con autoridad</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0)">NADA</div>
+                <div class="option" onclick="selectOption(1, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(1, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(1, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(1, 4)">EXTREMO</div>
             </div>
         </div>
         
-        <div class="content" id="mainContent">
-            <!-- El contenido se generará dinámicamente -->
+        <div class="card" id="card-2">
+            <div class="question-header">Pregunta 2 de 17</div>
+            <div class="question-text">Me molesta ruborizarme delante de la gente</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 0)">NADA</div>
+                <div class="option" onclick="selectOption(2, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(2, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(2, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(2, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-3">
+            <div class="question-header">Pregunta 3 de 17</div>
+            <div class="question-text">Las fiestas y acontecimientos sociales me dan miedo</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 0)">NADA</div>
+                <div class="option" onclick="selectOption(3, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(3, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(3, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(3, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-4">
+            <div class="question-header">Pregunta 4 de 17</div>
+            <div class="question-text">Evito hablar con desconocidos</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 0)">NADA</div>
+                <div class="option" onclick="selectOption(4, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(4, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(4, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(4, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-5">
+            <div class="question-header">Pregunta 5 de 17</div>
+            <div class="question-text">Me da mucho miedo ser criticado</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 0)">NADA</div>
+                <div class="option" onclick="selectOption(5, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(5, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(5, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(5, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-6">
+            <div class="question-header">Pregunta 6 de 17</div>
+            <div class="question-text">Por temor al ridículo evito hacer cosas o hablar con la gente</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 0)">NADA</div>
+                <div class="option" onclick="selectOption(6, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(6, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(6, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(6, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-7">
+            <div class="question-header">Pregunta 7 de 17</div>
+            <div class="question-text">Sudar en público me produce malestar</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 0)">NADA</div>
+                <div class="option" onclick="selectOption(7, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(7, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(7, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(7, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-8">
+            <div class="question-header">Pregunta 8 de 17</div>
+            <div class="question-text">Evito ir a fiestas</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0)">NADA</div>
+                <div class="option" onclick="selectOption(8, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(8, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(8, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(8, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-9">
+            <div class="question-header">Pregunta 9 de 17</div>
+            <div class="question-text">Evito actividades en las que soy el centro de atención</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 0)">NADA</div>
+                <div class="option" onclick="selectOption(9, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(9, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(9, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(9, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-10">
+            <div class="question-header">Pregunta 10 de 17</div>
+            <div class="question-text">Hablar con extraños me atemoriza</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0)">NADA</div>
+                <div class="option" onclick="selectOption(10, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(10, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(10, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(10, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-11">
+            <div class="question-header">Pregunta 11 de 17</div>
+            <div class="question-text">Evito dar discursos</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 0)">NADA</div>
+                <div class="option" onclick="selectOption(11, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(11, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(11, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(11, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-12">
+            <div class="question-header">Pregunta 12 de 17</div>
+            <div class="question-text">Haría cualquier cosa para evitar ser criticado</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 0)">NADA</div>
+                <div class="option" onclick="selectOption(12, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(12, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(12, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(12, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-13">
+            <div class="question-header">Pregunta 13 de 17</div>
+            <div class="question-text">Me dan miedo las palpitaciones cuando estoy con gente</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 0)">NADA</div>
+                <div class="option" onclick="selectOption(13, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(13, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(13, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(13, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-14">
+            <div class="question-header">Pregunta 14 de 17</div>
+            <div class="question-text">Temo hacer las cosas cuando la gente puede estar mirándome</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 0)">NADA</div>
+                <div class="option" onclick="selectOption(14, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(14, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(14, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(14, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-15">
+            <div class="question-header">Pregunta 15 de 17</div>
+            <div class="question-text">Entre mis mayores miedos están hacer el ridículo o parecer estúpido</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 0)">NADA</div>
+                <div class="option" onclick="selectOption(15, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(15, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(15, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(15, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-16">
+            <div class="question-header">Pregunta 16 de 17</div>
+            <div class="question-text">Evito hablar con cualquiera que tenga autoridad</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(16, 0)">NADA</div>
+                <div class="option" onclick="selectOption(16, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(16, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(16, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(16, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <div class="card" id="card-17">
+            <div class="question-header">Pregunta 17 de 17</div>
+            <div class="question-text">Temblar o presentar sacudidadas delante de otros me produce malestar</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(17, 0)">NADA</div>
+                <div class="option" onclick="selectOption(17, 1)">UN POCO</div>
+                <div class="option" onclick="selectOption(17, 2)">ALGO</div>
+                <div class="option" onclick="selectOption(17, 3)">MUCHO</div>
+                <div class="option" onclick="selectOption(17, 4)">EXTREMO</div>
+            </div>
+        </div>
+        
+        <!-- Card final -->
+        <div class="card" id="card-final">
+            <h1>Escala completada</h1>
+            <p style="text-align: center; font-size: 18px; margin: 20px 0;">
+                Muchas gracias por completar la evaluación.
+            </p>
+            <p style="text-align: center; font-size: 16px; margin: 20px 0;">
+                Por favor pase el dispositivo a su médico o profesional para su revisión.
+            </p>
+            <button class="btn" onclick="showResults()">Revisar resultados (Médico)</button>
+        </div>
+        
+        <!-- Card resultados -->
+        <div class="card" id="card-results">
+            <h1>Resultados del Inventario de Fobia Social (SPIN)</h1>
+            <div class="results" id="results-content">
+                <!-- Los resultados se insertarán aquí dinámicamente -->
+            </div>
+            <div class="action-buttons" id="action-buttons">
+                <button class="btn" onclick="window.print()">Imprimir resultados</button>
+                <button class="btn" onclick="exportResults()">Exportar resultados</button>
+                <button class="btn" onclick="startNewEvaluation()">Nueva evaluación</button>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Botón de regresar -->
+    <button class="back-btn" id="back-btn" onclick="previousCard()">←</button>
+    
+    <!-- Barra de progreso -->
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+    
     <script>
-        class SPINAssessment {
-            constructor() {
-                this.currentQuestion = 0;
-                this.responses = {};
-                this.showResults = false;
-                this.showDoctorView = false;
-                
-                this.questions = [
-                    "Tengo miedo a las personas con autoridad",
-                    "Me molesta ruborizarme delante de la gente",
-                    "Las fiestas y acontecimientos sociales me dan miedo",
-                    "Evito hablar con desconocidos",
-                    "Me da mucho miedo ser criticado",
-                    "Por temor al ridículo evito hacer cosas o hablar con la gente",
-                    "Sudar en público me produce malestar",
-                    "Evito ir a fiestas",
-                    "Evito actividades en las que soy el centro de atención",
-                    "Hablar con extraños me atemoriza",
-                    "Evito dar discursos",
-                    "Haría cualquier cosa para evitar ser criticado",
-                    "Me dan miedo las palpitaciones cuando estoy con gente",
-                    "Temo hacer las cosas cuando la gente puede estar mirándome",
-                    "Entre mis mayores miedos están hacer el ridículo o parecer estúpido",
-                    "Evito hablar con cualquiera que tenga autoridad",
-                    "Temblar o presentar sacudidadas delante de otros me produce malestar"
-                ];
-                
-                this.options = [
-                    { value: 0, label: "Nada" },
-                    { value: 1, label: "Un poco" },
-                    { value: 2, label: "Algo" },
-                    { value: 3, label: "Mucho" },
-                    { value: 4, label: "Extremo" }
-                ];
-
-                // Clasificación por subescalas según literatura científica
-                this.fearItems = [0, 2, 4, 9, 13, 14]; // Ítems 1,3,5,10,14,15
-                this.avoidanceItems = [3, 5, 7, 8, 10, 11, 15]; // Ítems 4,6,8,9,11,12,16
-                this.physiologicalItems = [1, 6, 12, 16]; // Ítems 2,7,13,17
-                
-                this.init();
-            }
-            
-            init() {
-                this.updateProgress();
-                this.renderCurrentState();
-            }
-            
-            updateProgress() {
-                const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
-                document.getElementById('progressBar').style.width = progress + '%';
-            }
-            
-            renderCurrentState() {
-                if (!this.showResults) {
-                    this.renderQuestion();
-                } else if (!this.showDoctorView) {
-                    this.renderPatientResults();
+        let currentCard = 0;
+        let responses = {};
+        const totalQuestions = 17;
+        
+        const questions = [
+            "Tengo miedo a las personas con autoridad",
+            "Me molesta ruborizarme delante de la gente",
+            "Las fiestas y acontecimientos sociales me dan miedo",
+            "Evito hablar con desconocidos",
+            "Me da mucho miedo ser criticado",
+            "Por temor al ridículo evito hacer cosas o hablar con la gente",
+            "Sudar en público me produce malestar",
+            "Evito ir a fiestas",
+            "Evito actividades en las que soy el centro de atención",
+            "Hablar con extraños me atemoriza",
+            "Evito dar discursos",
+            "Haría cualquier cosa para evitar ser criticado",
+            "Me dan miedo las palpitaciones cuando estoy con gente",
+            "Temo hacer las cosas cuando la gente puede estar mirándome",
+            "Entre mis mayores miedos están hacer el ridículo o parecer estúpido",
+            "Evito hablar con cualquiera que tenga autoridad",
+            "Temblar o presentar sacudidadas delante de otros me produce malestar"
+        ];
+        
+        // Subescalas del SPIN
+        const subscales = {
+            fear: [1, 3, 5, 10, 14, 15], // Miedo
+            avoidance: [4, 6, 8, 9, 11, 12, 16], // Evitación
+            physiological: [2, 7, 13, 17] // Síntomas fisiológicos
+        };
+        
+        function selectOption(questionNumber, value) {
+            responses[questionNumber] = value;
+            setTimeout(() => {
+                nextCard();
+            }, 150);
+        }
+        
+        function nextCard() {
+            if (currentCard < totalQuestions + 1) {
+                document.getElementById(`card-${currentCard}`).classList.remove('active');
+                currentCard++;
+                if (currentCard <= totalQuestions) {
+                    document.getElementById(`card-${currentCard}`).classList.add('active');
                 } else {
-                    this.renderDoctorResults();
+                    document.getElementById('card-final').classList.add('active');
                 }
-            }
-            
-            renderQuestion() {
-                const content = document.getElementById('mainContent');
-                
-                content.innerHTML = `
-                    <div class="question-container">
-                        <p class="question-intro">
-                            ¿Cuánto le han molestado los siguientes problemas durante las últimas semanas?
-                        </p>
-                        <div class="question-number">
-                            ${this.currentQuestion + 1}
-                        </div>
-                        <div class="question-text">
-                            ${this.questions[this.currentQuestion]}
-                        </div>
-                    </div>
-                    
-                    <div class="options">
-                        ${this.options.map(option => `
-                            <button class="option-button" onclick="assessment.handleResponse(${option.value})">
-                                ${option.label}
-                            </button>
-                        `).join('')}
-                    </div>
-                `;
-                
-                document.getElementById('headerSubtitle').textContent = 
-                    `Pregunta ${this.currentQuestion + 1} de ${this.questions.length}`;
-            }
-            
-            renderPatientResults() {
-                document.getElementById('headerTitle').textContent = 'Cuestionario Completado';
-                document.getElementById('headerSubtitle').textContent = 'Gracias por completar el SPIN';
-                
-                const content = document.getElementById('mainContent');
-                content.innerHTML = `
-                    <div class="patient-view-message">
-                        <div class="checkmark">✓</div>
-                        <h2 style="font-size: 1.5rem; margin-bottom: 15px; color: #2d3748;">
-                            Por favor, pase el dispositivo al médico para su revisión
-                        </h2>
-                        <p style="color: #666; margin-bottom: 30px; font-size: 1.1rem;">
-                            Su información ha sido registrada correctamente
-                        </p>
-                        <button class="button" onclick="assessment.showDoctorResults()">
-                            🩺 Revisar Resultados (Médico)
-                        </button>
-                    </div>
-                `;
-            }
-            
-            renderDoctorResults() {
-                document.getElementById('headerTitle').textContent = 'Resultados SPIN - Vista Médica';
-                document.getElementById('headerSubtitle').textContent = 'Análisis profesional de ansiedad social';
-                
-                const totalScore = this.calculateTotal();
-                const fearScore = this.calculateFearScore();
-                const avoidanceScore = this.calculateAvoidanceScore();
-                const physiologicalScore = this.calculatePhysiologicalScore();
-                const interpretation = this.getInterpretation(totalScore);
-                const redFlags = this.getRedFlags();
-                
-                const content = document.getElementById('mainContent');
-                content.innerHTML = `
-                    <div class="score-display">
-                        <div class="score-number">${totalScore}/68</div>
-                        <div class="score-interpretation">${interpretation}</div>
-                    </div>
-                    
-                    <div class="subscales-section">
-                        <h3 class="subscales-title">📊 Análisis por Subescalas</h3>
-                        
-                        <div class="subscale-item">
-                            <div class="subscale-info">
-                                <div class="subscale-name">Miedo Social</div>
-                                <div class="subscale-description">Temores específicos en situaciones sociales</div>
-                            </div>
-                            <div class="subscale-score">${fearScore}/24</div>
-                        </div>
-                        
-                        <div class="subscale-item">
-                            <div class="subscale-info">
-                                <div class="subscale-name">Evitación</div>
-                                <div class="subscale-description">Conductas de evitación de situaciones sociales</div>
-                            </div>
-                            <div class="subscale-score">${avoidanceScore}/28</div>
-                        </div>
-                        
-                        <div class="subscale-item">
-                            <div class="subscale-info">
-                                <div class="subscale-name">Síntomas Fisiológicos</div>
-                                <div class="subscale-description">Manifestaciones físicas de ansiedad social</div>
-                            </div>
-                            <div class="subscale-score">${physiologicalScore}/16</div>
-                        </div>
-                    </div>
-                    
-                    ${redFlags.length > 0 ? `
-                        <div class="red-flags-section">
-                            <h3 class="red-flags-title">
-                                🚩 Síntomas Significativos (Puntuación ≥ 3)
-                            </h3>
-                            ${redFlags.map(item => `
-                                <div class="red-flag-item">
-                                    <div class="red-flag-header">
-                                        <div class="red-flag-text">
-                                            <strong>${item.category}:</strong><br>
-                                            ${item.text}
-                                        </div>
-                                        <div class="red-flag-score">
-                                            ${this.getScoreLabel(item.score)}
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : `
-                        <div class="no-red-flags">
-                            <p><strong>✅ No hay síntomas reportados como significativos (puntuación ≥ 3)</strong></p>
-                        </div>
-                    `}
-                    
-                    <div style="text-align: center;">
-                        <button class="button" onclick="assessment.resetTest()">
-                            🔄 Nuevo Cuestionario
-                        </button>
-                    </div>
-                `;
-            }
-            
-            handleResponse(value) {
-                this.responses[this.currentQuestion] = value;
-                
-                const buttons = document.querySelectorAll('.option-button');
-                buttons.forEach((btn, index) => {
-                    if (index === value) {
-                        btn.classList.add('selected');
-                    }
-                });
-                
-                setTimeout(() => {
-                    if (this.currentQuestion < this.questions.length - 1) {
-                        this.currentQuestion++;
-                        this.updateProgress();
-                        this.renderCurrentState();
-                    } else {
-                        this.showResults = true;
-                        this.renderCurrentState();
-                    }
-                }, 800);
-            }
-            
-            showDoctorResults() {
-                this.showDoctorView = true;
-                this.renderCurrentState();
-            }
-            
-            resetTest() {
-                this.currentQuestion = 0;
-                this.responses = {};
-                this.showResults = false;
-                this.showDoctorView = false;
-                
-                document.getElementById('headerTitle').textContent = 'Inventario de Fobia Social (SPIN)';
-                document.getElementById('headerSubtitle').textContent = 'Evaluación de ansiedad social';
-                
-                this.init();
-            }
-            
-            calculateTotal() {
-                return Object.values(this.responses).reduce((sum, value) => sum + value, 0);
-            }
-            
-            calculateFearScore() {
-                return this.fearItems.reduce((sum, itemIndex) => {
-                    return sum + (this.responses[itemIndex] || 0);
-                }, 0);
-            }
-            
-            calculateAvoidanceScore() {
-                return this.avoidanceItems.reduce((sum, itemIndex) => {
-                    return sum + (this.responses[itemIndex] || 0);
-                }, 0);
-            }
-            
-            calculatePhysiologicalScore() {
-                return this.physiologicalItems.reduce((sum, itemIndex) => {
-                    return sum + (this.responses[itemIndex] || 0);
-                }, 0);
-            }
-            
-            getInterpretation(score) {
-                if (score >= 0 && score <= 20) return "Sin ansiedad social";
-                if (score >= 21 && score <= 30) return "Ansiedad social leve";
-                if (score >= 31 && score <= 40) return "Ansiedad social moderada";
-                if (score >= 41 && score <= 50) return "Ansiedad social grave";
-                if (score >= 51) return "Ansiedad social muy grave";
-                return "";
-            }
-            
-            getRedFlags() {
-                const redFlags = [];
-                
-                Object.keys(this.responses).forEach(questionIndex => {
-                    const score = this.responses[questionIndex];
-                    if (score >= 3) {
-                        const questionNum = parseInt(questionIndex);
-                        let category = "";
-                        
-                        if (this.fearItems.includes(questionNum)) {
-                            category = "Miedo Social";
-                        } else if (this.avoidanceItems.includes(questionNum)) {
-                            category = "Evitación";
-                        } else if (this.physiologicalItems.includes(questionNum)) {
-                            category = "Síntomas Fisiológicos";
-                        }
-                        
-                        redFlags.push({
-                            text: this.questions[questionNum],
-                            score: score,
-                            category: category
-                        });
-                    }
-                });
-                
-                return redFlags.sort((a, b) => b.score - a.score);
-            }
-            
-            getScoreLabel(score) {
-                const labels = ["Nada", "Un poco", "Algo", "Mucho", "Extremo"];
-                return labels[score] || "";
+                updateProgress();
+                updateBackButton();
             }
         }
         
-        const assessment = new SPINAssessment();
+        function previousCard() {
+            if (currentCard > 0 && currentCard <= totalQuestions) {
+                if (currentCard === totalQuestions + 1) {
+                    document.getElementById('card-final').classList.remove('active');
+                } else {
+                    document.getElementById(`card-${currentCard}`).classList.remove('active');
+                }
+                currentCard--;
+                document.getElementById(`card-${currentCard}`).classList.add('active');
+                updateProgress();
+                updateBackButton();
+            }
+        }
+        
+        function updateProgress() {
+            const progress = Math.min((currentCard / totalQuestions) * 100, 100);
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+        
+        function updateBackButton() {
+            const backBtn = document.getElementById('back-btn');
+            if (currentCard === 0 || currentCard > totalQuestions) {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+        }
+        
+        function calculateScore() {
+            let total = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                total += responses[i] || 0;
+            }
+            return total;
+        }
+        
+        function calculateSubscaleScores() {
+            const scores = {
+                fear: 0,
+                avoidance: 0,
+                physiological: 0
+            };
+            
+            for (const [subscale, items] of Object.entries(subscales)) {
+                for (const item of items) {
+                    scores[subscale] += responses[item] || 0;
+                }
+            }
+            
+            return scores;
+        }
+        
+        function getInterpretation(score) {
+            if (score >= 0 && score <= 20) {
+                return {
+                    level: "Sin ansiedad social",
+                    class: "severity-none",
+                    description: "El puntaje indica ausencia de síntomas significativos de ansiedad social. El paciente no presenta criterios para fobia social según esta evaluación."
+                };
+            } else if (score >= 21 && score <= 30) {
+                return {
+                    level: "Ansiedad social leve",
+                    class: "severity-mild",
+                    description: "El puntaje sugiere presencia de síntomas leves de ansiedad social. Puede existir cierto malestar en situaciones sociales específicas, pero con impacto limitado en el funcionamiento diario."
+                };
+            } else if (score >= 31 && score <= 40) {
+                return {
+                    level: "Ansiedad social moderada",
+                    class: "severity-moderate",
+                    description: "El puntaje indica síntomas moderados de ansiedad social. Existe un impacto significativo en múltiples áreas del funcionamiento social y/o laboral del paciente."
+                };
+            } else if (score >= 41 && score <= 50) {
+                return {
+                    level: "Ansiedad social grave",
+                    class: "severity-severe",
+                    description: "El puntaje refleja síntomas graves de ansiedad social. Hay una interferencia marcada en el funcionamiento social, laboral y/o académico del paciente."
+                };
+            } else if (score >= 51 && score <= 68) {
+                return {
+                    level: "Ansiedad social muy grave",
+                    class: "severity-very-severe",
+                    description: "El puntaje indica síntomas muy graves de ansiedad social. Existe una incapacidad significativa en múltiples áreas vitales, con evitación extrema de situaciones sociales."
+                };
+            }
+        }
+        
+        function getHighAlertItems() {
+            const alerts = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] >= 3) { // Mucho (3) o Extremo (4)
+                    alerts.push({
+                        item: i,
+                        text: questions[i-1],
+                        score: responses[i]
+                    });
+                }
+            }
+            return alerts;
+        }
+        
+        function showResults() {
+            document.getElementById('card-final').classList.remove('active');
+            document.getElementById('card-results').classList.add('active');
+            document.getElementById('back-btn').classList.add('hidden');
+            document.getElementById('progress').style.width = '100%';
+            
+            const totalScore = calculateScore();
+            const subscaleScores = calculateSubscaleScores();
+            const interpretation = getInterpretation(totalScore);
+            const alertItems = getHighAlertItems();
+            
+            let resultsHTML = `
+                <div class="score-section">
+                    <h3>Puntuación Total</h3>
+                    <div class="score-total">${totalScore} / 68</div>
+                </div>
+                
+                <div class="severity-level ${interpretation.class}">
+                    ${interpretation.level}
+                </div>
+                
+                <div class="subscale-scores">
+                    <div class="subscale-item">
+                        <h4>Miedo</h4>
+                        <div class="score">${subscaleScores.fear}/24</div>
+                    </div>
+                    <div class="subscale-item">
+                        <h4>Evitación</h4>
+                        <div class="score">${subscaleScores.avoidance}/28</div>
+                    </div>
+                    <div class="subscale-item">
+                        <h4>Síntomas Fisiológicos</h4>
+                        <div class="score">${subscaleScores.physiological}/16</div>
+                    </div>
+                </div>
+            `;
+            
+            if (alertItems.length > 0) {
+                resultsHTML += `
+                    <div class="alert-items">
+                        <h4>⚠️ Ítems con puntuación elevada (≥3)</h4>
+                        <ul>
+                `;
+                alertItems.forEach(item => {
+                    resultsHTML += `<li>Ítem ${item.item}: "${item.text}" (Puntuación: ${item.score})</li>`;
+                });
+                resultsHTML += `
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            resultsHTML += `
+                <div class="interpretation">
+                    <h3>Interpretación Clínica</h3>
+                    <p>${interpretation.description}</p>
+                    
+                    <h4>Análisis por Subescalas:</h4>
+                    <ul>
+                        <li><strong>Miedo (${subscaleScores.fear}/24):</strong> Evalúa temores específicos en situaciones sociales. ${subscaleScores.fear > 12 ? 'Puntuación elevada sugiere temores significativos.' : 'Puntuación dentro de rangos esperados.'}</li>
+                        <li><strong>Evitación (${subscaleScores.avoidance}/28):</strong> Mide conductas de evitación social. ${subscaleScores.avoidance > 14 ? 'Puntuación elevada indica patrones de evitación marcados.' : 'Evitación mínima o ausente.'}</li>
+                        <li><strong>Síntomas Fisiológicos (${subscaleScores.physiological}/16):</strong> Evalúa manifestaciones somáticas de ansiedad. ${subscaleScores.physiological > 8 ? 'Presencia significativa de síntomas físicos.' : 'Síntomas físicos mínimos.'}</li>
+                    </ul>
+                    
+                    <h4>Consideraciones Clínicas:</h4>
+                    <ul>
+            `;
+            
+            if (totalScore >= 19) {
+                resultsHTML += `
+                        <li>El puntaje supera el punto de corte de 19, sugiriendo presencia de fobia social clínicamente significativa.</li>
+                `;
+            }
+            
+            if (totalScore >= 31) {
+                resultsHTML += `
+                        <li>Se recomienda evaluación comprehensiva de comorbilidades, especialmente trastornos del estado de ánimo y otros trastornos de ansiedad.</li>
+                        <li>Considerar intervención psicoterapéutica (TCC, terapia de exposición) y/o farmacológica según severidad.</li>
+                `;
+            }
+            
+            if (subscaleScores.avoidance >= 20) {
+                resultsHTML += `
+                        <li>El patrón de evitación marcado puede requerir técnicas específicas de exposición gradual.</li>
+                `;
+            }
+            
+            resultsHTML += `
+                        <li>Una reducción del 40-55% en el puntaje total indica mejoría clínica significativa en tratamiento.</li>
+                        <li>Reducción mayor al 55% sugiere remisión sustancial de síntomas.</li>
+                    </ul>
+                </div>
+            `;
+            
+            document.getElementById('results-content').innerHTML = resultsHTML;
+        }
+        
+        function exportResults() {
+            const resultsContent = document.getElementById('results-content').innerHTML;
+            const currentDate = new Date().toLocaleDateString('es-MX');
+            
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Resultados SPIN - ${currentDate}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; }
+                        .score-section { background: #f7f7f7; padding: 20px; margin-bottom: 20px; }
+                        .score-total { font-size: 36px; font-weight: bold; text-align: center; margin: 20px 0; }
+                        .severity-level { padding: 15px; text-align: center; font-weight: bold; margin-bottom: 20px; }
+                        .severity-none { background: #d4edda; color: #155724; }
+                        .severity-mild { background: #fff3cd; color: #856404; }
+                        .severity-moderate { background: #f8d7da; color: #721c24; }
+                        .severity-severe { background: #f5c6cb; color: #721c24; }
+                        .severity-very-severe { background: #742a2a; color: white; }
+                        .subscale-scores { display: flex; gap: 15px; margin-bottom: 20px; }
+                        .subscale-item { background: #f0f0f0; padding: 15px; flex: 1; text-align: center; }
+                        .subscale-item h4 { margin-bottom: 5px; }
+                        .subscale-item .score { font-size: 24px; font-weight: bold; }
+                        .alert-items { background: #f56565; color: white; padding: 15px; margin-bottom: 20px; }
+                        .interpretation { background: #e8f5f2; padding: 20px; }
+                        h3 { color: #29A98C; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Resultados del Inventario de Fobia Social (SPIN)</h1>
+                    <p>Fecha: ${currentDate}</p>
+                    ${resultsContent}
+                </body>
+                </html>
+            `;
+            
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SPIN_Resultados_${currentDate.replace(/\//g, '-')}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function startNewEvaluation() {
+            if (confirm('¿Está seguro de que desea iniciar una nueva evaluación? Se perderán los resultados actuales.')) {
+                currentCard = 0;
+                responses = {};
+                document.getElementById('card-results').classList.remove('active');
+                document.getElementById('card-0').classList.add('active');
+                updateProgress();
+                updateBackButton();
+            }
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            updateBackButton();
+        });
     </script>
 </body>
 </html>
