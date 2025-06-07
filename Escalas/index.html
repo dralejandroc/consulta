@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escalas de Evaluación Psicológica</title>
+    <title>Escalas de Evaluación Clinimétricas</title>
     <style>
         * {
             margin: 0;
@@ -29,7 +29,7 @@
 
         .header {
             background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
-            color: white;
+            color: #FFF8EE;
             padding: 25px;
             text-align: center;
         }
@@ -41,10 +41,97 @@
 
         .header p {
             opacity: 0.9;
+            font-size: 1.1rem;
         }
 
         .content {
             padding: 30px;
+        }
+
+        .instruction-box {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            color: #666;
+            border: 1px solid #29A98C;
+            font-size: 0.9rem;
+        }
+
+        .switch-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .switch-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .switch-label {
+            font-weight: 600;
+            color: #112F33;
+            font-size: 0.9rem;
+        }
+
+        .switch-label.active {
+            color: #29A98C;
+        }
+
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #e9ecef;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .switch.active {
+            background: #29A98C;
+        }
+
+        .switch-toggle {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+        .switch.active .switch-toggle {
+            transform: translateX(24px);
+        }
+
+        .scales-type-indicator {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            color: #FFF8EE;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .scales-type-indicator .subtitle {
+            font-size: 0.85rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 2px;
         }
 
         .category {
@@ -123,6 +210,11 @@
             .header h1 {
                 font-size: 1.5rem;
             }
+
+            .switch-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
@@ -134,271 +226,230 @@
         </div>
         
         <div class="content">
-            <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: white; border-radius: 12px; color: #666; border: 1px solid #29A98C;">
-                <p>Para aplicación en consulta externa, selecciona la escala a aplicar.</p>
+            <div class="instruction-box">
+                <p>Selecciona el tipo de escala y la escala a aplicar.</p>
             </div>
-            <!-- DEPRESIÓN -->
-            <div class="category">
-                <div class="category-title">
-                    Depresión
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('bdi-13-assessment.html', '_blank')">
-                        <div class="scale-name">BDI-13</div>
-                        <div class="scale-desc">Inventario de Depresión de Beck (Versión Abreviada)</div>
+
+            <div class="switch-container">
+                <div class="switch-wrapper">
+                    <span class="switch-label" id="autoLabel">AUTOAPLICADAS</span>
+                    <div class="switch" id="scaleSwitch" onclick="toggleScales()">
+                        <div class="switch-toggle"></div>
                     </div>
-                    <div class="scale-item" onclick="window.open('beck-21-assessment.html', '_blank')">
-                        <div class="scale-name">BDI-21</div>
-                        <div class="scale-desc">Inventario de Depresión de Beck (Versión Completa)</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('rads2_scale.html', '_blank')">
-                        <div class="scale-name">RADS-2</div>
-                        <div class="scale-desc">Escala de Depresión para Adolescentes</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('phq9-scale.html', '_blank')">
-                        <div class="scale-name">PHQ-9</div>
-                        <div class="scale-desc">Cuestionario de Salud del Paciente</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('cdi_covex_escala.html', '_blank')">
-                        <div class="scale-name">CDI-KOVACS</div>
-                        <div class="scale-desc">Cuestionario de Depresión Infantil</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('esadfun_scale.html', '_blank')">
-                        <div class="scale-name">EsADFUN</div>
-                        <div class="scale-desc">Escala de Autoevaluación para Depresión y Funcionalidad</div>
-                    </div>
+                    <span class="switch-label" id="heteroLabel">HETEROAPLICADAS</span>
                 </div>
             </div>
 
-            <!-- ANSIEDAD -->
-            <div class="category">
-                <div class="category-title">
-                    Ansiedad
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('gadi-assessment.html', '_blank')">
-                        <div class="scale-name">GADI</div>
-                        <div class="scale-desc">Trastorno de Ansiedad Generalizada</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('stai_scale.html', '_blank')">
-                        <div class="scale-name">STAI</div>
-                        <div class="scale-desc">Inventario de Ansiedad Estado-Rasgo</div>
-                    </div>
-                </div>
+            <div class="scales-type-indicator" id="typeIndicator">
+                📝 ESCALAS AUTOAPLICADAS (Completadas por el paciente)
             </div>
 
-            <!-- TOC -->
-            <div class="category">
-                <div class="category-title">
-                    TOC (Trastorno Obsesivo-Compulsivo)
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('ybocs_scale.html', '_blank')">
-                        <div class="scale-name">Y-BOCS</div>
-                        <div class="scale-desc">Escala Yale-Brown para TOC</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('YaleBrown-OCD.html', '_blank')">
-                        <div class="scale-name">DY-BOCS</div>
-                        <div class="scale-desc">Escala Dimensional Yale-Brown</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FOBIA SOCIAL -->
-            <div class="category">
-                <div class="category-title">
-                    Fobia Social
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('spin-assessment.html', '_blank')">
-                        <div class="scale-name">SPIN</div>
-                        <div class="scale-desc">Inventario de Fobia Social</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PERSONALIDAD -->
-            <div class="category">
-                <div class="category-title">
-                    Trastornos de Personalidad
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('bls-23-assessment.html', '_blank')">
-                        <div class="scale-name">BLS-23</div>
-                        <div class="scale-desc">Borderline Symptoms List</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('IPDE_Scale.html', '_blank')">
-                        <div class="scale-name">IPDE</div>
-                        <div class="scale-desc">Examen Internacional de los Trastornos de Personalidad</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('salamanca_personality_scale.html', '_blank')">
-                        <div class="scale-name">CSP</div>
-                        <div class="scale-desc">Cuestionario de Salamanca de la Personalidad</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TRASTORNOS DE LA CONDUCTA -->
-            <div class="category">
-                <div class="category-title">
-                    Trastornos de la Conducta
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('plutchik_impulsivity_scale.html', '_blank')">
-                        <div class="scale-name">Plutchik Imp.</div>
-                        <div class="scale-desc">Escala de Impulsividad de Plutchik</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('sss-v-scale (2).html', '_blank')">
-                        <div class="scale-name">SSS-V</div>
-                        <div class="scale-desc">Escala de Búsqueda de Sensaciones</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUSTANCIAS -->
-            <div class="category">
-                <div class="category-title">
-                    Trastornos por Sustancias
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('audit_interactive_scale.html', '_blank')">
-                        <div class="scale-name">AUDIT</div>
-                        <div class="scale-desc">Test de Identificación de Trastornos por Alcohol</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('dast-spanish-scale.html', '_blank')">
-                        <div class="scale-name">DAST</div>
-                        <div class="scale-desc">Screening de Abuso de Drogas</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TDAH -->
-            <div class="category">
-                <div class="category-title">
-                    TDAH
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('tdah-assessment.html', '_blank')">
-                        <div class="scale-name">ADHD-RS</div>
-                        <div class="scale-desc">Escala de Autoevaluación del TDAH</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('vanderbilt_adhd_scale.html', '_blank')">
-                        <div class="scale-name">VANDERBILT</div>
-                        <div class="scale-desc">Escala de Evaluación de TDAH para Padres</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUEÑO -->
-            <div class="category">
-                <div class="category-title">
-                    Trastornos del Sueño
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('escala-sueno-mos-v2.html', '_blank')">
-                        <div class="scale-name">MOS</div>
-                        <div class="scale-desc">Escala de Sueño MOS</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TRASTORNO DEL ESPECTRO AUTISTA -->
-            <div class="category">
-                <div class="category-title">
-                    Trastorno del Espectro Autista
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('aq_child_scale.html', '_blank')">
-                        <div class="scale-name">AQ-CHILD</div>
-                        <div class="scale-desc">Cociente de Espectro Autista - Niños</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('aq_adolescent_scale.html', '_blank')">
-                        <div class="scale-name">AQ-ADOLESCENT</div>
-                        <div class="scale-desc">Cociente de Espectro Autista - Adolescentes</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TRASTORNOS ALIMENTARIOS -->
-            <div class="category">
-                <div class="category-title">
-                    Trastornos Alimentarios
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('edi_scale.html', '_blank')">
-                        <div class="scale-name">EDI</div>
-                        <div class="scale-desc">Inventario de Trastornos de la Alimentación</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('eat26_scale.html', '_blank')">
-                        <div class="scale-name">EAT-26</div>
-                        <div class="scale-desc">Test de Actitudes hacia la Alimentación</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TRAUMA Y ESTRÉS -->
-            <div class="category">
-                <div class="category-title">
-                    Trauma y Estrés
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('dts_interactive_scale.html', '_blank')">
-                        <div class="scale-name">DTS</div>
-                        <div class="scale-desc">Escala de Trauma de Davidson</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('ctq-sf-interactive.html', '_blank')">
-                        <div class="scale-name">CTQ-SF</div>
-                        <div class="scale-desc">Cuestionario de Acontecimientos Traumáticos en la Infancia</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PSICOSIS -->
-            <div class="category">
-                <div class="category-title">
-                    Síntomas Psicóticos
-                </div>
-                <div class="empty-category">
-                    Próximamente...
-                </div>
-            </div>
-
-            <!-- OTROS -->
-            <div class="category">
-                <div class="category-title">
-                    Otros
-                </div>
-                <div class="scales-list">
-                    <div class="scale-item" onclick="window.open('iief_scale.html', '_blank')">
-                        <div class="scale-name">IIEF</div>
-                        <div class="scale-desc">Índice Internacional de Función Eréctil</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('remixed-bd968641 (1).html', '_blank')">
-                        <div class="scale-name">DASH-II</div>
-                        <div class="scale-desc">Evaluación Diagnóstica para Discapacitados Graves</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('yale_tics_scale.html', '_blank')">
-                        <div class="scale-name">YGTSS</div>
-                        <div class="scale-desc">Escala Global de Tics de Yale</div>
-                    </div>
-                    <div class="scale-item" onclick="window.open('escala_emun_ar_interactiva.html', '_blank')">
-                        <div class="scale-name">EMUN-AR</div>
-                        <div class="scale-desc">Auto-reporte para Medición de Síntomas Maníacos</div>
-                    </div>
-                </div>
+            <div id="scalesContainer">
+                <!-- Las escalas se cargarán dinámicamente aquí -->
             </div>
         </div>
     </div>
 
     <script>
-        // Efecto simple al hacer clic
-        document.querySelectorAll('.scale-item').forEach(item => {
-            item.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'translateY(-2px)';
-                }, 100);
+        let isHeteroaplicadas = false;
+
+        // Escalas autoaplicadas (completadas por el paciente)
+        const autoaplicadas = {
+            depresion: [
+                { name: "BDI-13", desc: "Inventario de Depresión de Beck (Versión Abreviada)", file: "autoaplicadas/bdi-13-assessment.html" },
+                { name: "BDI-21", desc: "Inventario de Depresión de Beck (Versión Completa)", file: "autoaplicadas/beck-21-assessment.html" },
+                { name: "RADS-2", desc: "Escala de Depresión para Adolescentes", file: "autoaplicadas/rads2_scale.html" },
+                { name: "PHQ-9", desc: "Cuestionario de Salud del Paciente", file: "autoaplicadas/phq9-scale.html" },
+                { name: "CDI-KOVACS", desc: "Cuestionario de Depresión Infantil", file: "autoaplicadas/cdi_covex_escala.html" },
+                { name: "EsADFUN", desc: "Escala de Autoevaluación para Depresión y Funcionalidad", file: "autoaplicadas/esadfun_scale.html" }
+            ],
+            ansiedad: [
+                { name: "GADI", desc: "Trastorno de Ansiedad Generalizada", file: "autoaplicadas/gadi-assessment.html" },
+                { name: "STAI", desc: "Inventario de Ansiedad Estado-Rasgo", file: "autoaplicadas/stai_scale.html" }
+            ],
+            toc: [
+                { name: "Y-BOCS", desc: "Escala Yale-Brown para TOC", file: "autoaplicadas/ybocs_scale.html" },
+                { name: "DY-BOCS", desc: "Escala Dimensional Yale-Brown", file: "autoaplicadas/YaleBrown-OCD.html" }
+            ],
+            fobiaSocial: [
+                { name: "SPIN", desc: "Inventario de Fobia Social", file: "autoaplicadas/spin-assessment.html" }
+            ],
+            personalidad: [
+                { name: "BLS-23", desc: "Borderline Symptoms List", file: "autoaplicadas/bls-23-assessment.html" },
+                { name: "IPDE", desc: "Examen Internacional de los Trastornos de Personalidad", file: "autoaplicadas/IPDE_Scale.html" },
+                { name: "CSP", desc: "Cuestionario de Salamanca de la Personalidad", file: "autoaplicadas/salamanca_personality_scale.html" }
+            ],
+            conducta: [
+                { name: "Plutchik Imp.", desc: "Escala de Impulsividad de Plutchik", file: "autoaplicadas/plutchik_impulsivity_scale.html" },
+                { name: "SSS-V", desc: "Escala de Búsqueda de Sensaciones", file: "autoaplicadas/sss-v-scale (2).html" }
+            ],
+            sustancias: [
+                { name: "AUDIT", desc: "Test de Identificación de Trastornos por Alcohol", file: "autoaplicadas/audit_interactive_scale.html" },
+                { name: "DAST", desc: "Screening de Abuso de Drogas", file: "autoaplicadas/dast-spanish-scale.html" }
+            ],
+            tdah: [
+                { name: "ADHD-RS", desc: "Escala de Autoevaluación del TDAH", file: "autoaplicadas/tdah-assessment.html" },
+                { name: "VANDERBILT", desc: "Escala de Evaluación de TDAH para Padres", file: "autoaplicadas/vanderbilt_adhd_scale.html" }
+            ],
+            sueno: [
+                { name: "MOS", desc: "Escala de Sueño MOS", file: "autoaplicadas/escala-sueno-mos-v2.html" }
+            ],
+            tea: [
+                { name: "AQ-CHILD", desc: "Cociente de Espectro Autista - Niños", file: "autoaplicadas/aq_child_scale.html" },
+                { name: "AQ-ADOLESCENT", desc: "Cociente de Espectro Autista - Adolescentes", file: "autoaplicadas/aq_adolescent_scale.html" }
+            ],
+            alimentarios: [
+                { name: "EDI", desc: "Inventario de Trastornos de la Alimentación", file: "autoaplicadas/edi_scale.html" },
+                { name: "EAT-26", desc: "Test de Actitudes hacia la Alimentación", file: "autoaplicadas/eat26_scale.html" }
+            ],
+            trauma: [
+                { name: "DTS", desc: "Escala de Trauma de Davidson", file: "autoaplicadas/dts_interactive_scale.html" },
+                { name: "CTQ-SF", desc: "Cuestionario de Acontecimientos Traumáticos en la Infancia", file: "autoaplicadas/ctq-sf-interactive.html" }
+            ],
+            delirium: [],
+            demencia: [],
+            sexualidad: [
+                { name: "IIEF", desc: "Índice Internacional de Función Eréctil", file: "autoaplicadas/iief_scale.html" }
+            ],
+            bipolar: [],
+            pediatrico: [
+                { name: "CDI-KOVACS", desc: "Cuestionario de Depresión Infantil", file: "autoaplicadas/cdi_covex_escala.html" },
+                { name: "AQ-CHILD", desc: "Cociente de Espectro Autista - Niños", file: "autoaplicadas/aq_child_scale.html" },
+                { name: "AQ-ADOLESCENT", desc: "Cociente de Espectro Autista - Adolescentes", file: "autoaplicadas/aq_adolescent_scale.html" }
+            ],
+            otros: [
+                { name: "DASH-II", desc: "Evaluación Diagnóstica para Discapacitados Graves", file: "autoaplicadas/remixed-bd968641 (1).html" },
+                { name: "YGTSS", desc: "Escala Global de Tics de Yale", file: "autoaplicadas/yale_tics_scale.html" },
+                { name: "EMUN-AR", desc: "Auto-reporte para Medición de Síntomas Maníacos", file: "autoaplicadas/escala_emun_ar_interactiva.html" }
+            ]
+        };
+
+        // Escalas heteroaplicadas (aplicadas por el médico)
+        const heteroaplicadas = {
+            depresion: [],
+            ansiedad: [],
+            toc: [],
+            fobiaSocial: [],
+            personalidad: [],
+            conducta: [],
+            sustancias: [],
+            tdah: [],
+            sueno: [],
+            tea: [],
+            alimentarios: [],
+            trauma: [],
+            delirium: [],
+            demencia: [],
+            sexualidad: [],
+            bipolar: [],
+            pediatrico: [],
+            otros: []
+        };
+
+        const categories = {
+            depresion: "Depresión",
+            ansiedad: "Ansiedad", 
+            toc: "TOC (Trastorno Obsesivo-Compulsivo)",
+            fobiaSocial: "Fobia Social",
+            personalidad: "Trastornos de Personalidad",
+            conducta: "Trastornos de la Conducta",
+            sustancias: "Trastornos por Sustancias",
+            tdah: "TDAH",
+            sueno: "Trastornos del Sueño",
+            tea: "Trastorno del Espectro Autista",
+            alimentarios: "Trastornos Alimentarios",
+            trauma: "Trauma y Estrés",
+            delirium: "Delirium",
+            demencia: "Demencia/Memoria",
+            sexualidad: "Sexualidad",
+            bipolar: "Trastorno Bipolar",
+            pediatrico: "Pediátrico",
+            otros: "Otros"
+        };
+
+        function toggleScales() {
+            isHeteroaplicadas = !isHeteroaplicadas;
+            const switchElement = document.getElementById('scaleSwitch');
+            const typeIndicator = document.getElementById('typeIndicator');
+            const autoLabel = document.getElementById('autoLabel');
+            const heteroLabel = document.getElementById('heteroLabel');
+
+            if (isHeteroaplicadas) {
+                switchElement.classList.add('active');
+                typeIndicator.innerHTML = `
+                    👨‍⚕️ ESCALAS HETEROAPLICADAS
+                    <div class="subtitle">(Aplicadas por el médico)</div>
+                `;
+                autoLabel.classList.remove('active');
+                heteroLabel.classList.add('active');
+            } else {
+                switchElement.classList.remove('active');
+                typeIndicator.innerHTML = `
+                    📝 ESCALAS AUTOAPLICADAS
+                    <div class="subtitle">(Completadas por el paciente)</div>
+                `;
+                autoLabel.classList.add('active');
+                heteroLabel.classList.remove('active');
+            }
+
+            renderScales();
+        }
+
+        function renderScales() {
+            const container = document.getElementById('scalesContainer');
+            const currentScales = isHeteroaplicadas ? heteroaplicadas : autoaplicadas;
+            
+            let html = '';
+
+            Object.keys(categories).forEach(categoryKey => {
+                const categoryName = categories[categoryKey];
+                const scales = currentScales[categoryKey] || [];
+
+                html += `
+                    <div class="category">
+                        <div class="category-title">
+                            ${categoryName}
+                        </div>
+                `;
+
+                if (scales.length === 0) {
+                    html += `
+                        <div class="empty-category">
+                            Próximamente...
+                        </div>
+                    `;
+                } else {
+                    html += '<div class="scales-list">';
+                    scales.forEach(scale => {
+                        if (scale.file === "#" || scale.name === "Próximamente") {
+                            html += `
+                                <div class="scale-item" style="opacity: 0.5; cursor: not-allowed;">
+                                    <div class="scale-name">${scale.name}</div>
+                                    <div class="scale-desc">${scale.desc}</div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="scale-item" onclick="window.open('${scale.file}', '_blank')">
+                                    <div class="scale-name">${scale.name}</div>
+                                    <div class="scale-desc">${scale.desc}</div>
+                                </div>
+                            `;
+                        }
+                    });
+                    html += '</div>';
+                }
+
+                html += '</div>';
             });
+
+            container.innerHTML = html;
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('autoLabel').classList.add('active');
+            renderScales();
         });
     </script>
 </body>
