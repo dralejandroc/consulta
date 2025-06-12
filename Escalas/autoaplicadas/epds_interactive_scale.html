@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Depresión Postnatal de Edimburgo (EPDS)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            color: #112F33;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            text-align: center;
+            margin-bottom: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .card.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h1 {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card h2 {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #112F33;
+            font-weight: 500;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid #29A98C;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #29A98C;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .instructions p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #112F33;
+        }
+
+        .instructions strong {
+            color: #29A98C;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .option-button {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #29A98C;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #112F33;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-button:hover {
+            background: rgba(41, 169, 140, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(41, 169, 140, 0.2);
+        }
+
+        .option-button:active {
+            transform: translateY(0);
+        }
+
+        .option-button.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #112F33;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(41, 169, 140, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(41, 169, 140, 0.4);
+        }
+
+        .back-button.show {
+            display: block;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.5s ease;
+            z-index: 1000;
+        }
+
+        .results-section {
+            text-align: left;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .score-display h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .score-display .score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .interpretation {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #29A98C;
+        }
+
+        .interpretation h4 {
+            color: #29A98C;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .interpretation p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .alert-high {
+            background: rgba(245, 101, 101, 0.1);
+            border-left: 4px solid #f56565;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .alert-high h5 {
+            color: #742a2a;
+            margin-bottom: 10px;
+        }
+
+        .subscales {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .subscale {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #29A98C;
+        }
+
+        .subscale h5 {
+            color: #29A98C;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .subscale .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #112F33;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(41, 169, 140, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #EC7367, #d63031);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(236, 115, 103, 0.3);
+        }
+
+        .professional-note {
+            background: rgba(41, 169, 140, 0.1);
+            border: 2px solid #29A98C;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .professional-note h4 {
+            color: #29A98C;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 25px;
+                margin-bottom: 80px;
+            }
+
+            .card h1 {
+                font-size: 1.8rem;
+            }
+
+            .card h2 {
+                font-size: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option-button {
+                padding: 15px;
+            }
+
+            .back-button {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .subscales {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Card 0: Bienvenida -->
+    <div class="container">
+        <div class="card active" id="card-0">
+            <h1>Escala de Depresión Postnatal de Edimburgo</h1>
+            <h2>(EPDS)</h2>
+            
+            <div class="instructions">
+                <h3>Instrucciones para la evaluación</h3>
+                <p><strong>¿Cómo responder?</strong></p>
+                <p>Como usted ha tenido un bebé recientemente, nos gustaría conocer cómo se siente ahora. Por favor, seleccione la respuesta que considere más adecuada a cómo se ha sentido durante la semana pasada.</p>
+                
+                <p><strong>Período de evaluación:</strong> EN LOS ÚLTIMOS 7 DÍAS</p>
+                
+                <p><strong>Tiempo estimado:</strong> 5-10 minutos</p>
+                
+                <p><strong>Importante:</strong></p>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>No hay respuestas correctas o incorrectas</li>
+                    <li>Seleccione la opción que mejor describe su experiencia</li>
+                    <li>Piense en cómo se ha sentido la mayor parte del tiempo durante los últimos 7 días</li>
+                    <li>Responda de forma honesta y espontánea</li>
+                </ul>
+            </div>
+            
+            <button class="btn" onclick="nextCard()">Comenzar Evaluación</button>
+        </div>
+
+        <!-- Preguntas 1-10 -->
+        <div class="card" id="card-1">
+            <div class="question-number">Pregunta 1 de 10</div>
+            <div class="question-text">He sido capaz de reírme y ver el lado divertido de las cosas</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(1, 0)">Igual que siempre</button>
+                <button class="option-button" onclick="selectOption(1, 1)">Ahora, no tanto como siempre</button>
+                <button class="option-button" onclick="selectOption(1, 2)">Ahora, mucho menos</button>
+                <button class="option-button" onclick="selectOption(1, 3)">No, nada en absoluto</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-2">
+            <div class="question-number">Pregunta 2 de 10</div>
+            <div class="question-text">He mirado las cosas con ilusión</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(2, 0)">Igual que siempre</button>
+                <button class="option-button" onclick="selectOption(2, 1)">Algo menos de lo que es habitual en mí</button>
+                <button class="option-button" onclick="selectOption(2, 2)">Bastante menos de lo que es habitual en mí</button>
+                <button class="option-button" onclick="selectOption(2, 3)">Mucho menos que antes</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-3">
+            <div class="question-number">Pregunta 3 de 10</div>
+            <div class="question-text">Me he culpado innecesariamente cuando las cosas han salido mal</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(3, 3)">Sí, la mayor parte del tiempo</button>
+                <button class="option-button" onclick="selectOption(3, 2)">Sí, a veces</button>
+                <button class="option-button" onclick="selectOption(3, 1)">No muy a menudo</button>
+                <button class="option-button" onclick="selectOption(3, 0)">No, en ningún momento</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-4">
+            <div class="question-number">Pregunta 4 de 10</div>
+            <div class="question-text">Me he sentido nerviosa o preocupada sin tener motivo</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(4, 0)">No, en ningún momento</button>
+                <button class="option-button" onclick="selectOption(4, 1)">Casi nunca</button>
+                <button class="option-button" onclick="selectOption(4, 2)">Sí, algunas veces</button>
+                <button class="option-button" onclick="selectOption(4, 3)">Sí, con mucha frecuencia</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-5">
+            <div class="question-number">Pregunta 5 de 10</div>
+            <div class="question-text">He sentido miedo o he estado asustada sin motivo</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(5, 3)">Sí, bastante</button>
+                <button class="option-button" onclick="selectOption(5, 2)">Sí, a veces</button>
+                <button class="option-button" onclick="selectOption(5, 1)">No, no mucho</button>
+                <button class="option-button" onclick="selectOption(5, 0)">No, en absoluto</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-6">
+            <div class="question-number">Pregunta 6 de 10</div>
+            <div class="question-text">Las cosas me han agobiado</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(6, 3)">Sí, la mayoría de las veces no he sido capaz de afrontarlas</button>
+                <button class="option-button" onclick="selectOption(6, 2)">Sí, a veces no he sido capaz de afrontarlas tan bien como siempre</button>
+                <button class="option-button" onclick="selectOption(6, 1)">No, la mayor parte de las veces las he afrontado bastante bien</button>
+                <button class="option-button" onclick="selectOption(6, 0)">No, he afrontado las cosas tan bien como siempre</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-7">
+            <div class="question-number">Pregunta 7 de 10</div>
+            <div class="question-text">Me he sentido tan infeliz que he tenido dificultades para dormir</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(7, 3)">Sí, la mayor parte del tiempo</button>
+                <button class="option-button" onclick="selectOption(7, 2)">Sí, a veces</button>
+                <button class="option-button" onclick="selectOption(7, 1)">No muy a menudo</button>
+                <button class="option-button" onclick="selectOption(7, 0)">No, en ningún momento</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-8">
+            <div class="question-number">Pregunta 8 de 10</div>
+            <div class="question-text">Me he sentido triste o desgraciada</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(8, 3)">Sí, la mayor parte del tiempo</button>
+                <button class="option-button" onclick="selectOption(8, 2)">Sí, bastante a menudo</button>
+                <button class="option-button" onclick="selectOption(8, 1)">No con mucha frecuencia</button>
+                <button class="option-button" onclick="selectOption(8, 0)">No, en ningún momento</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-9">
+            <div class="question-number">Pregunta 9 de 10</div>
+            <div class="question-text">Me he sentido tan infeliz que he estado llorando</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(9, 3)">Sí, la mayor parte del tiempo</button>
+                <button class="option-button" onclick="selectOption(9, 2)">Sí, bastante a menudo</button>
+                <button class="option-button" onclick="selectOption(9, 1)">Sólo en alguna ocasión</button>
+                <button class="option-button" onclick="selectOption(9, 0)">No, en ningún momento</button>
+            </div>
+        </div>
+
+        <div class="card" id="card-10">
+            <div class="question-number">Pregunta 10 de 10</div>
+            <div class="question-text">He tenido pensamientos de hacerme daño</div>
+            <div class="options">
+                <button class="option-button" onclick="selectOption(10, 3)">Sí, bastante a menudo</button>
+                <button class="option-button" onclick="selectOption(10, 2)">A veces</button>
+                <button class="option-button" onclick="selectOption(10, 1)">Casi nunca</button>
+                <button class="option-button" onclick="selectOption(10, 0)">En ningún momento</button>
+            </div>
+        </div>
+
+        <!-- Card final -->
+        <div class="card" id="card-final">
+            <h2>Evaluación Completada</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px;">
+                Muchas gracias por completar la escala. 
+            </p>
+            <div class="professional-note">
+                <h4>Para el profesional de la salud</h4>
+                <p>Por favor, proceda a revisar los resultados para completar la evaluación clínica.</p>
+            </div>
+            <button class="btn" onclick="showResults()">Revisar Resultados (Profesional)</button>
+        </div>
+
+        <!-- Card de resultados -->
+        <div class="card" id="card-results">
+            <h2>Resultados de la Evaluación EPDS</h2>
+            <div class="results-section">
+                <div class="score-display">
+                    <h3>Puntuación Total</h3>
+                    <div class="score" id="total-score">0</div>
+                    <div>/ 30 puntos</div>
+                </div>
+
+                <div class="subscales">
+                    <div class="subscale">
+                        <h5>Ansiedad</h5>
+                        <div class="value" id="anxiety-score">0</div>
+                    </div>
+                    <div class="subscale">
+                        <h5>Depresión</h5>
+                        <div class="value" id="depression-score">0</div>
+                    </div>
+                    <div class="subscale">
+                        <h5>Anhedonia</h5>
+                        <div class="value" id="anhedonia-score">0</div>
+                    </div>
+                </div>
+
+                <div class="interpretation" id="interpretation-text">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+
+                <div id="alerts-section">
+                    <!-- Se llenará dinámicamente con alertas -->
+                </div>
+
+                <div class="interpretation">
+                    <h4>Información para el profesional</h4>
+                    <p><strong>Estructura factorial:</strong> La EPDS evalúa tres dimensiones principales: ansiedad (ítems 3, 4, 5, 6), depresión (ítems 7, 8, 9, 10) y anhedonia (ítems 1, 2).</p>
+                    <p><strong>Puntos de corte validados:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>≥10: Posible depresión postnatal (sensibilidad 86%, especificidad 78%)</li>
+                        <li>≥13: Mayor probabilidad de depresión (especificidad aumentada)</li>
+                    </ul>
+                    <p><strong>Consideraciones clínicas:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>El ítem 10 (pensamientos de daño) requiere evaluación inmediata independientemente del puntaje total</li>
+                        <li>La escala no detecta trastornos de ansiedad, fobias o trastornos de personalidad</li>
+                        <li>Validada para uso desde una semana postparto, con mayor sensibilidad entre 4-6 semanas</li>
+                        <li>Puede re-administrarse después de 2 semanas en casos dudosos</li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn" onclick="exportToPDF()">📄 Exportar PDF</button>
+                    <button class="btn" onclick="captureResults()">📸 Capturar Imagen</button>
+                    <button class="btn btn-secondary" onclick="resetScale()">🔄 Nueva Evaluación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" id="back-btn" onclick="goBack()">← Regresar</button>
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <script>
+        let currentCard = 0;
+        const totalQuestions = 10;
+        let responses = {};
+
+        // Definir qué ítems pertenecen a cada subescala según la literatura
+        const subscales = {
+            anhedonia: [1, 2],
+            anxiety: [3, 4, 5, 6], 
+            depression: [7, 8, 9, 10]
+        };
+
+        function updateProgress() {
+            const progress = (currentCard / (totalQuestions + 2)) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function showBackButton() {
+            const backBtn = document.getElementById('back-btn');
+            if (currentCard > 0 && currentCard <= totalQuestions + 2) {
+                backBtn.classList.add('show');
+            } else {
+                backBtn.classList.remove('show');
+            }
+        }
+
+        function nextCard() {
+            document.getElementById(`card-${currentCard}`).classList.remove('active');
+            currentCard++;
+            
+            // Manejar el caso especial del card final
+            if (currentCard === totalQuestions + 1) {
+                document.getElementById('card-final').classList.add('active');
+            } else {
+                document.getElementById(`card-${currentCard}`).classList.add('active');
+            }
+            
+            updateProgress();
+            showBackButton();
+        }
+
+        function goBack() {
+            if (currentCard > 0) {
+                // Ocultar card actual
+                if (currentCard === totalQuestions + 1) {
+                    document.getElementById('card-final').classList.remove('active');
+                } else if (currentCard === totalQuestions + 2) {
+                    document.getElementById('card-results').classList.remove('active');
+                } else {
+                    document.getElementById(`card-${currentCard}`).classList.remove('active');
+                }
+                
+                currentCard--;
+                
+                // Mostrar card anterior
+                if (currentCard === totalQuestions + 1) {
+                    document.getElementById('card-final').classList.add('active');
+                } else {
+                    document.getElementById(`card-${currentCard}`).classList.add('active');
+                }
+                
+                updateProgress();
+                showBackButton();
+            }
+        }
+
+        function selectOption(question, value) {
+            responses[question] = value;
+            
+            // Marcar la opción seleccionada
+            const card = document.getElementById(`card-${currentCard}`);
+            const buttons = card.querySelectorAll('.option-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            // Auto-avance después de 150ms
+            setTimeout(() => {
+                nextCard();
+            }, 150);
+        }
+
+        function calculateScore() {
+            let total = 0;
+            let subscaleScores = {
+                anhedonia: 0,
+                anxiety: 0,
+                depression: 0
+            };
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const score = responses[i] || 0;
+                total += score;
+                
+                // Calcular subescalas
+                for (const [subscale, items] of Object.entries(subscales)) {
+                    if (items.includes(i)) {
+                        subscaleScores[subscale] += score;
+                    }
+                }
+            }
+
+            return { total, subscaleScores };
+        }
+
+        function getInterpretation(totalScore, subscaleScores) {
+            let interpretation = '';
+            let riskLevel = '';
+            
+            if (totalScore < 10) {
+                riskLevel = 'Bajo';
+                interpretation = `
+                    <h4>Riesgo Bajo de Depresión Postnatal</h4>
+                    <p><strong>Puntuación total:</strong> ${totalScore}/30 (< 10)</p>
+                    <p><strong>Interpretación:</strong> Los resultados sugieren un riesgo bajo de depresión postnatal. Sin embargo, esto no excluye la presencia de otros trastornos del ánimo o ansiedad que no son detectados por esta escala.</p>
+                    <p><strong>Seguimiento:</strong> Seguimiento rutinario según protocolo estándar de atención postnatal.</p>
+                `;
+            } else if (totalScore >= 10 && totalScore < 13) {
+                riskLevel = 'Moderado';
+                interpretation = `
+                    <h4>Riesgo Moderado de Depresión Postnatal</h4>
+                    <p><strong>Puntuación total:</strong> ${totalScore}/30 (10-12)</p>
+                    <p><strong>Interpretación:</strong> Los resultados sugieren posible presencia de depresión postnatal. Se recomienda evaluación clínica más detallada para confirmar diagnóstico.</p>
+                    <p><strong>Sensibilidad:</strong> Aproximadamente 86% de sensibilidad en este rango.</p>
+                    <p><strong>Seguimiento:</strong> Considerar re-evaluación en 2 semanas y valoración clínica estructurada.</p>
+                `;
+            } else {
+                riskLevel = 'Alto';
+                interpretation = `
+                    <h4>Riesgo Alto de Depresión Postnatal</h4>
+                    <p><strong>Puntuación total:</strong> ${totalScore}/30 (≥ 13)</p>
+                    <p><strong>Interpretación:</strong> Los resultados sugieren alta probabilidad de depresión postnatal. Se requiere evaluación clínica inmediata y consideración de intervención terapéutica.</p>
+                    <p><strong>Especificidad:</strong> Aproximadamente 78% de especificidad en este rango.</p>
+                    <p><strong>Seguimiento:</strong> Evaluación clínica urgente y consideración de intervención especializada.</p>
+                `;
+            }
+
+            // Análisis de subescalas
+            interpretation += `
+                <p><strong>Análisis dimensional:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Anhedonia:</strong> ${subscaleScores.anhedonia} puntos (pérdida de placer/ilusión)</li>
+                    <li><strong>Ansiedad:</strong> ${subscaleScores.anxiety} puntos (preocupación/nerviosismo/miedo)</li>
+                    <li><strong>Depresión:</strong> ${subscaleScores.depression} puntos (tristeza/llanto/desesperanza)</li>
+                </ul>
+            `;
+
+            return { interpretation, riskLevel };
+        }
+
+        function checkAlerts() {
+            let alerts = [];
+            
+            // Alerta crítica por ítem 10 (pensamientos de daño)
+            if (responses[10] >= 1) {
+                alerts.push({
+                    type: 'critical',
+                    title: 'ALERTA CRÍTICA: Pensamientos de Autolesión',
+                    message: `La paciente reporta pensamientos de hacerse daño (Ítem 10: ${responses[10]} puntos). Se requiere evaluación inmediata del riesgo suicida y medidas de protección apropiadas.`
+                });
+            }
+
+            // Alertas por ítems individuales ≥66% del máximo (≥2 puntos)
+            const itemTexts = {
+                1: 'Capacidad de reír/humor',
+                2: 'Mirar las cosas con ilusión', 
+                3: 'Autoculpabilización',
+                4: 'Nerviosismo/preocupación',
+                5: 'Miedo sin motivo',
+                6: 'Sentirse agobiada',
+                7: 'Infelicidad/problemas de sueño',
+                8: 'Tristeza',
+                9: 'Llanto por infelicidad'
+            };
+
+            for (let i = 1; i <= 9; i++) {
+                if (responses[i] >= 2) {
+                    alerts.push({
+                        type: 'high',
+                        title: `Síntoma Significativo - Ítem ${i}`,
+                        message: `${itemTexts[i]}: ${responses[i]} puntos (≥66% del máximo). Requiere atención clínica.`
+                    });
+                }
+            }
+
+            return alerts;
+        }
+
+        function showResults() {
+            document.getElementById('card-final').classList.remove('active');
+            currentCard = totalQuestions + 2; // Ir a card-results
+            document.getElementById('card-results').classList.add('active');
+            
+            const { total, subscaleScores } = calculateScore();
+            const { interpretation } = getInterpretation(total, subscaleScores);
+            const alerts = checkAlerts();
+
+            // Mostrar puntuaciones
+            document.getElementById('total-score').textContent = total;
+            document.getElementById('anxiety-score').textContent = subscaleScores.anxiety;
+            document.getElementById('depression-score').textContent = subscaleScores.depression;
+            document.getElementById('anhedonia-score').textContent = subscaleScores.anhedonia;
+
+            // Mostrar interpretación
+            document.getElementById('interpretation-text').innerHTML = interpretation;
+
+            // Mostrar alertas
+            const alertsSection = document.getElementById('alerts-section');
+            alertsSection.innerHTML = '';
+            
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert-high';
+                alertDiv.innerHTML = `
+                    <h5>${alert.title}</h5>
+                    <p>${alert.message}</p>
+                `;
+                alertsSection.appendChild(alertDiv);
+            });
+
+            updateProgress();
+            showBackButton();
+        }
+
+        function exportToPDF() {
+            const { total, subscaleScores } = calculateScore();
+            const { interpretation } = getInterpretation(total, subscaleScores);
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Resultados EPDS</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .score-box { background: #f5f5f5; padding: 15px; margin: 15px 0; border-radius: 8px; }
+                        .alert { background: #ffe6e6; border: 1px solid #ff9999; padding: 10px; margin: 10px 0; border-radius: 5px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Escala de Depresión Postnatal de Edimburgo (EPDS)</h1>
+                        <p>Fecha: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    
+                    <div class="score-box">
+                        <h2>Puntuación Total: ${total}/30</h2>
+                        <p>Ansiedad: ${subscaleScores.anxiety} | Depresión: ${subscaleScores.depression} | Anhedonia: ${subscaleScores.anhedonia}</p>
+                    </div>
+                    
+                    <div>${interpretation}</div>
+                    
+                    <table>
+                        <tr><th>Ítem</th><th>Respuesta</th><th>Puntuación</th></tr>
+                        ${Object.entries(responses).map(([q, score]) => 
+                            `<tr><td>Pregunta ${q}</td><td>-</td><td>${score}</td></tr>`
+                        ).join('')}
+                    </table>
+                    
+                    ${checkAlerts().map(alert => 
+                        `<div class="alert"><strong>${alert.title}:</strong> ${alert.message}</div>`
+                    ).join('')}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function captureResults() {
+            const resultsCard = document.getElementById('card-results');
+            
+            // Crear canvas para captura
+            html2canvas(resultsCard).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'resultados-epds.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            }).catch(() => {
+                // Fallback: abrir ventana con resultados para captura manual
+                alert('Para capturar la imagen, use la función de captura de pantalla de su dispositivo en la ventana que se abrirá.');
+                exportToPDF();
+            });
+        }
+
+        function resetScale() {
+            currentCard = 0;
+            responses = {};
+            
+            // Ocultar todas las cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Mostrar card inicial
+            document.getElementById('card-0').classList.add('active');
+            
+            // Reset botones
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            updateProgress();
+            showBackButton();
+        }
+
+        // Inicializar
+        updateProgress();
+        showBackButton();
+    </script>
+</body>
+</html>

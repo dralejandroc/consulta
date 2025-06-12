@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escalas de Evaluación Clinimétricas</title>
+    <title>Mindhub - Clinimetrix</title>
     <style>
         * {
             margin: 0;
@@ -221,7 +221,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Escalas de Evaluación Clinimétricas</h1>
+            <h1>Mindhub - Clinimetrix</h1>
             <p>Sistema para gestión de escalas clinimétricas estandarizadas para consultorio</p>
         </div>
         
@@ -241,7 +241,8 @@
             </div>
 
             <div class="scales-type-indicator" id="typeIndicator">
-                📝 ESCALAS AUTOAPLICADAS (Completadas por el paciente)
+                📝 ESCALAS AUTOAPLICADAS
+                <div class="subtitle">(Completadas por el paciente)</div>
             </div>
 
             <div id="scalesContainer">
@@ -256,13 +257,14 @@
         // Escalas autoaplicadas (completadas por el paciente)
         const autoaplicadas = {
             depresion: [
-<<<<<<< HEAD
                 { name: "BDI-13", desc: "Inventario de Depresión de Beck (Versión Abreviada)", file: "../autoaplicadas/bdi-13-assessment.html" },
                 { name: "BDI-21", desc: "Inventario de Depresión de Beck (Versión Completa)", file: "../autoaplicadas/beck-21-assessment.html" },
                 { name: "RADS-2", desc: "Escala de Depresión para Adolescentes", file: "../autoaplicadas/rads2_scale.html" },
                 { name: "PHQ-9", desc: "Cuestionario de Salud del Paciente", file: "../autoaplicadas/phq9-scale.html" },
                 { name: "CDI-KOVACS", desc: "Cuestionario de Depresión Infantil", file: "../autoaplicadas/cdi_covex_escala.html" },
-                { name: "EsADFUN", desc: "Escala de Autoevaluación para Depresión y Funcionalidad", file: "../autoaplicadas/esadfun_scale.html" }
+                { name: "EsADFUN", desc: "Escala de Autoevaluación para Depresión y Funcionalidad", file: "../autoaplicadas/esadfun_scale.html" },
+                { name: "GDS", desc: "Escala de Depresión Geriátrica (3 versiones)", file: "../heteroaplicadas/gds_interactive_scale.html" },
+                { name: "EPDS", desc: "Escala de Depresión Postnatal de Edimburgo", file: "../autoaplicadas/epds_interactive_scale.html" }
             ],
             ansiedad: [
                 { name: "GADI", desc: "Trastorno de Ansiedad Generalizada", file: "../autoaplicadas/gadi-assessment.html" },
@@ -286,7 +288,8 @@
             ],
             sustancias: [
                 { name: "AUDIT", desc: "Test de Identificación de Trastornos por Alcohol", file: "../autoaplicadas/audit_interactive_scale.html" },
-                { name: "DAST", desc: "Screening de Abuso de Drogas", file: "../autoaplicadas/dast-spanish-scale.html" }
+                { name: "DAST", desc: "Screening de Abuso de Drogas", file: "../autoaplicadas/dast-spanish-scale.html" },
+                { name: "CPQ-A", desc: "Cuestionario de Problemas con el Cannabis para Adolescentes", file: "../autoaplicadas/cpq-a-interactive.html" }
             ],
             tdah: [
                 { name: "ADHD-RS", desc: "Escala de Autoevaluación del TDAH", file: "../autoaplicadas/tdah-assessment.html" },
@@ -306,62 +309,11 @@
             trauma: [
                 { name: "DTS", desc: "Escala de Trauma de Davidson", file: "../autoaplicadas/dts_interactive_scale.html" },
                 { name: "CTQ-SF", desc: "Cuestionario de Acontecimientos Traumáticos en la Infancia", file: "../autoaplicadas/ctq-sf-interactive.html" }
-=======
-                { name: "BDI-13", desc: "Inventario de Depresión de Beck (Versión Abreviada)", file: "autoaplicadas/bdi-13-assessment.html" },
-                { name: "BDI-21", desc: "Inventario de Depresión de Beck (Versión Completa)", file: "autoaplicadas/beck-21-assessment.html" },
-                { name: "RADS-2", desc: "Escala de Depresión para Adolescentes", file: "autoaplicadas/rads2_scale.html" },
-                { name: "PHQ-9", desc: "Cuestionario de Salud del Paciente", file: "autoaplicadas/phq9-scale.html" },
-                { name: "CDI-KOVACS", desc: "Cuestionario de Depresión Infantil", file: "autoaplicadas/cdi_covex_escala.html" },
-                { name: "EsADFUN", desc: "Escala de Autoevaluación para Depresión y Funcionalidad", file: "autoaplicadas/esadfun_scale.html" }
-            ],
-            ansiedad: [
-                { name: "GADI", desc: "Trastorno de Ansiedad Generalizada", file: "autoaplicadas/gadi-assessment.html" },
-                { name: "STAI", desc: "Inventario de Ansiedad Estado-Rasgo", file: "autoaplicadas/stai_scale.html" }
-            ],
-            toc: [
-                { name: "Y-BOCS", desc: "Escala Yale-Brown para TOC", file: "autoaplicadas/ybocs_scale.html" },
-                { name: "DY-BOCS", desc: "Escala Dimensional Yale-Brown", file: "autoaplicadas/YaleBrown-OCD.html" }
-            ],
-            fobiaSocial: [
-                { name: "SPIN", desc: "Inventario de Fobia Social", file: "autoaplicadas/spin-assessment.html" }
-            ],
-            personalidad: [
-                { name: "BLS-23", desc: "Borderline Symptoms List", file: "autoaplicadas/bls-23-assessment.html" },
-                { name: "IPDE", desc: "Examen Internacional de los Trastornos de Personalidad", file: "autoaplicadas/IPDE_Scale.html" },
-                { name: "CSP", desc: "Cuestionario de Salamanca de la Personalidad", file: "autoaplicadas/salamanca_personality_scale.html" }
-            ],
-            conducta: [
-                { name: "Plutchik Imp.", desc: "Escala de Impulsividad de Plutchik", file: "autoaplicadas/plutchik_impulsivity_scale.html" },
-                { name: "SSS-V", desc: "Escala de Búsqueda de Sensaciones", file: "autoaplicadas/sss-v-scale (2).html" }
-            ],
-            sustancias: [
-                { name: "AUDIT", desc: "Test de Identificación de Trastornos por Alcohol", file: "autoaplicadas/audit_interactive_scale.html" },
-                { name: "DAST", desc: "Screening de Abuso de Drogas", file: "autoaplicadas/dast-spanish-scale.html" }
-            ],
-            tdah: [
-                { name: "ADHD-RS", desc: "Escala de Autoevaluación del TDAH", file: "autoaplicadas/tdah-assessment.html" },
-                { name: "VANDERBILT", desc: "Escala de Evaluación de TDAH para Padres", file: "autoaplicadas/vanderbilt_adhd_scale.html" }
-            ],
-            sueno: [
-                { name: "MOS", desc: "Escala de Sueño MOS", file: "autoaplicadas/escala-sueno-mos-v2.html" }
-            ],
-            tea: [
-                { name: "AQ-CHILD", desc: "Cociente de Espectro Autista - Niños", file: "autoaplicadas/aq_child_scale.html" },
-                { name: "AQ-ADOLESCENT", desc: "Cociente de Espectro Autista - Adolescentes", file: "autoaplicadas/aq_adolescent_scale.html" }
-            ],
-            alimentarios: [
-                { name: "EDI", desc: "Inventario de Trastornos de la Alimentación", file: "autoaplicadas/edi_scale.html" },
-                { name: "EAT-26", desc: "Test de Actitudes hacia la Alimentación", file: "autoaplicadas/eat26_scale.html" }
-            ],
-            trauma: [
-                { name: "DTS", desc: "Escala de Trauma de Davidson", file: "autoaplicadas/dts_interactive_scale.html" },
-                { name: "CTQ-SF", desc: "Cuestionario de Acontecimientos Traumáticos en la Infancia", file: "autoaplicadas/ctq-sf-interactive.html" }
->>>>>>> 83531dbaaf841f44e4bada9166be47c76b285dbc
             ],
             delirium: [],
             demencia: [],
+            esquizofrenia: [],
             sexualidad: [
-<<<<<<< HEAD
                 { name: "IIEF", desc: "Índice Internacional de Función Eréctil", file: "../autoaplicadas/iief_scale.html" }
             ],
             bipolar: [],
@@ -374,27 +326,18 @@
                 { name: "DASH-II", desc: "Evaluación Diagnóstica para Discapacitados Graves", file: "../autoaplicadas/remixed-bd968641 (1).html" },
                 { name: "YGTSS", desc: "Escala Global de Tics de Yale", file: "../autoaplicadas/yale_tics_scale.html" },
                 { name: "EMUN-AR", desc: "Auto-reporte para Medición de Síntomas Maníacos", file: "../autoaplicadas/escala_emun_ar_interactiva.html" }
-=======
-                { name: "IIEF", desc: "Índice Internacional de Función Eréctil", file: "autoaplicadas/iief_scale.html" }
-            ],
-            bipolar: [],
-            pediatrico: [
-                { name: "CDI-KOVACS", desc: "Cuestionario de Depresión Infantil", file: "autoaplicadas/cdi_covex_escala.html" },
-                { name: "AQ-CHILD", desc: "Cociente de Espectro Autista - Niños", file: "autoaplicadas/aq_child_scale.html" },
-                { name: "AQ-ADOLESCENT", desc: "Cociente de Espectro Autista - Adolescentes", file: "autoaplicadas/aq_adolescent_scale.html" }
-            ],
-            otros: [
-                { name: "DASH-II", desc: "Evaluación Diagnóstica para Discapacitados Graves", file: "autoaplicadas/remixed-bd968641 (1).html" },
-                { name: "YGTSS", desc: "Escala Global de Tics de Yale", file: "autoaplicadas/yale_tics_scale.html" },
-                { name: "EMUN-AR", desc: "Auto-reporte para Medición de Síntomas Maníacos", file: "autoaplicadas/escala_emun_ar_interactiva.html" }
->>>>>>> 83531dbaaf841f44e4bada9166be47c76b285dbc
             ]
         };
 
         // Escalas heteroaplicadas (aplicadas por el médico)
         const heteroaplicadas = {
-            depresion: [],
-            ansiedad: [],
+            depresion: [
+                { name: "GDS", desc: "Escala de Depresión Geriátrica (3 versiones)", file: "../heteroaplicadas/gds_interactive_scale.html" },
+                { name: "HDRS-17", desc: "Escala de Hamilton para la Depresión", file: "../heteroaplicadas/hdrs_clinical_scale.html" }
+            ],
+            ansiedad: [
+                { name: "HARS", desc: "Escala de Hamilton para la Ansiedad", file: "../heteroaplicadas/hars_scale.html" }
+            ],
             toc: [],
             fobiaSocial: [],
             personalidad: [],
@@ -405,8 +348,14 @@
             tea: [],
             alimentarios: [],
             trauma: [],
-            delirium: [],
+            delirium: [
+                { name: "DRS-R-98", desc: "Escala para la Evaluación del Delirium Revisada-98", file: "../heteroaplicadas/drs_r98_scale.html" }
+            ],
             demencia: [],
+            esquizofrenia: [
+                { name: "SOPS", desc: "Escala de Síntomas Prodrómicos", file: "../heteroaplicadas/sops_interactive.html" },
+                { name: "PANSS", desc: "Escala de Síntomas Positivos y Negativos", file: "../heteroaplicadas/panss_clinical_scale.html" }
+            ],
             sexualidad: [],
             bipolar: [],
             pediatrico: [],
@@ -428,6 +377,7 @@
             trauma: "Trauma y Estrés",
             delirium: "Delirium",
             demencia: "Demencia/Memoria",
+            esquizofrenia: "Esquizofrenia y Psicosis",
             sexualidad: "Sexualidad",
             bipolar: "Trastorno Bipolar",
             pediatrico: "Pediátrico",

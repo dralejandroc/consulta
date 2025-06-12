@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPQ-A - Cuestionario de Problemas con el Cannabis para Adolescentes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .question-header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option {
+            background: rgba(41, 169, 140, 0.1);
+            border: 2px solid rgba(41, 169, 140, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(41, 169, 140, 0.2);
+            border-color: #29A98C;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            border-left: 4px solid #29A98C;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .instructions h3 {
+            color: #112F33;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .instructions p {
+            color: #112F33;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            color: #112F33;
+            margin-left: 20px;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(41, 169, 140, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 169, 140, 0.6);
+        }
+
+        .back-button.hidden {
+            display: none;
+        }
+
+        .completion-message {
+            text-align: center;
+            color: #112F33;
+            margin-bottom: 25px;
+        }
+
+        .completion-message h2 {
+            color: #29A98C;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .completion-message p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .results-button {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .results-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 169, 140, 0.4);
+        }
+
+        .results-container {
+            max-width: 800px;
+        }
+
+        .results-header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-display {
+            background: rgba(41, 169, 140, 0.1);
+            border: 2px solid #29A98C;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .score-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #29A98C;
+            margin-bottom: 10px;
+        }
+
+        .score-label {
+            font-size: 1.2em;
+            color: #112F33;
+            font-weight: 600;
+        }
+
+        .interpretation {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #29A98C;
+        }
+
+        .interpretation h3 {
+            color: #29A98C;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .interpretation p {
+            color: #112F33;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .alert-item {
+            background: #f56565;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .alert-item.moderate {
+            background: #f6ad55;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(41, 169, 140, 0.2);
+            color: #112F33;
+            border: 2px solid #29A98C;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .clinical-info {
+            background: rgba(41, 169, 140, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .clinical-info h4 {
+            color: #29A98C;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .clinical-info p {
+            color: #112F33;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .back-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Progreso -->
+        <div class="progress-bar" id="progressBar"></div>
+        
+        <!-- Botón regresar -->
+        <button class="back-button" id="backButton" onclick="goBack()">← Regresar</button>
+
+        <!-- Card 0: Bienvenida -->
+        <div class="card active" id="card-0">
+            <div class="header">
+                <h1>CPQ-A</h1>
+                <p>Cuestionario de Problemas con el Cannabis para Adolescentes</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>Instrucciones</h3>
+                <p><strong>A continuación figuran una serie de problemas que a menudo experimentan las personas que consumen cannabis.</strong></p>
+                <p>Por favor, lee atentamente cada pregunta e indica si en los <strong>últimos 3 meses</strong> has experimentado alguna de estas situaciones.</p>
+                <p><strong>Para cada pregunta, responde con "Sí" o "No" según corresponda a tu experiencia personal.</strong></p>
+                
+                <h3>Información importante:</h3>
+                <ul>
+                    <li>Este cuestionario es confidencial y anónimo</li>
+                    <li>No hay respuestas correctas o incorrectas</li>
+                    <li>Es importante que respondas con honestidad</li>
+                    <li>El período de referencia son los últimos 3 meses</li>
+                    <li>El cuestionario toma aproximadamente 5-10 minutos</li>
+                </ul>
+            </div>
+            
+            <button class="results-button" onclick="nextCard()">Comenzar Evaluación</button>
+        </div>
+
+        <!-- Cards 1-27: Preguntas -->
+        <div class="card" id="card-1">
+            <div class="question-header">
+                <div class="question-number">Pregunta 1 de 27</div>
+                <div class="question-text">¿Has fumado cannabis con más frecuencia que antes estando solo?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0)">No</div>
+                <div class="option" onclick="selectOption(1, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-2">
+            <div class="question-header">
+                <div class="question-number">Pregunta 2 de 27</div>
+                <div class="question-text">¿Te ha preocupado estar con gente que no conoces cuando estabas "colocado"?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 0)">No</div>
+                <div class="option" onclick="selectOption(2, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-3">
+            <div class="question-header">
+                <div class="question-number">Pregunta 3 de 27</div>
+                <div class="question-text">¿Has pasado más tiempo con amigos que fuman cannabis que con otros amigos?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 0)">No</div>
+                <div class="option" onclick="selectOption(3, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-4">
+            <div class="question-header">
+                <div class="question-number">Pregunta 4 de 27</div>
+                <div class="question-text">¿Te han criticado tus amigos por fumar cannabis en exceso?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 0)">No</div>
+                <div class="option" onclick="selectOption(4, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-5">
+            <div class="question-header">
+                <div class="question-number">Pregunta 5 de 27</div>
+                <div class="question-text">¿Has contraído alguna deuda por consumir cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 0)">No</div>
+                <div class="option" onclick="selectOption(5, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-6">
+            <div class="question-header">
+                <div class="question-number">Pregunta 6 de 27</div>
+                <div class="question-text">¿Has empeñado alguna de tus pertenencias para comprar cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 0)">No</div>
+                <div class="option" onclick="selectOption(6, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-7">
+            <div class="question-header">
+                <div class="question-number">Pregunta 7 de 27</div>
+                <div class="question-text">¿Has tenido que poner excusas sobre tu gasto de dinero?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 0)">No</div>
+                <div class="option" onclick="selectOption(7, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-8">
+            <div class="question-header">
+                <div class="question-number">Pregunta 8 de 27</div>
+                <div class="question-text">¿Te ha preocupado la cantidad de dinero que has estado gastando en cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0)">No</div>
+                <div class="option" onclick="selectOption(8, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-9">
+            <div class="question-header">
+                <div class="question-number">Pregunta 9 de 27</div>
+                <div class="question-text">¿Te han pillado mintiendo sobre el dinero que gastas?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 0)">No</div>
+                <div class="option" onclick="selectOption(9, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-10">
+            <div class="question-header">
+                <div class="question-number">Pregunta 10 de 27</div>
+                <div class="question-text">¿Has tenido problemas con la policía debido a tu consumo de cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0)">No</div>
+                <div class="option" onclick="selectOption(10, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-11">
+            <div class="question-header">
+                <div class="question-number">Pregunta 11 de 27</div>
+                <div class="question-text">¿Te has encontrado físicamente mal tras haber fumado cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 0)">No</div>
+                <div class="option" onclick="selectOption(11, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-12">
+            <div class="question-header">
+                <div class="question-number">Pregunta 12 de 27</div>
+                <div class="question-text">¿Te has desmayado alguna vez después de haber fumado cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 0)">No</div>
+                <div class="option" onclick="selectOption(12, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-13">
+            <div class="question-header">
+                <div class="question-number">Pregunta 13 de 27</div>
+                <div class="question-text">¿Has sentido dolor en el pecho o en los pulmones tras haber estado fumando cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 0)">No</div>
+                <div class="option" onclick="selectOption(13, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-14">
+            <div class="question-header">
+                <div class="question-number">Pregunta 14 de 27</div>
+                <div class="question-text">¿Has tenido bronquitis o tos persistente?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 0)">No</div>
+                <div class="option" onclick="selectOption(14, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-15">
+            <div class="question-header">
+                <div class="question-number">Pregunta 15 de 27</div>
+                <div class="question-text">¿Te has sentido paranoico o antisocial tras haber estado fumando cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 0)">No</div>
+                <div class="option" onclick="selectOption(15, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-16">
+            <div class="question-header">
+                <div class="question-number">Pregunta 16 de 27</div>
+                <div class="question-text">¿Has perdido peso sin habértelo propuesto?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(16, 0)">No</div>
+                <div class="option" onclick="selectOption(16, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-17">
+            <div class="question-header">
+                <div class="question-number">Pregunta 17 de 27</div>
+                <div class="question-text">¿Te has descuidado físicamente?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(17, 0)">No</div>
+                <div class="option" onclick="selectOption(17, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-18">
+            <div class="question-header">
+                <div class="question-number">Pregunta 18 de 27</div>
+                <div class="question-text">¿Te has sentido deprimido durante más de una semana?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(18, 0)">No</div>
+                <div class="option" onclick="selectOption(18, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-19">
+            <div class="question-header">
+                <div class="question-number">Pregunta 19 de 27</div>
+                <div class="question-text">¿Te has sentido tan deprimido como para pensar en suicidarte?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(19, 0)">No</div>
+                <div class="option" onclick="selectOption(19, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-20">
+            <div class="question-header">
+                <div class="question-number">Pregunta 20 de 27</div>
+                <div class="question-text">¿Has dejado de hacer alguna actividad de la que antes disfrutabas por tu consumo de cannabis?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(20, 0)">No</div>
+                <div class="option" onclick="selectOption(20, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-21">
+            <div class="question-header">
+                <div class="question-number">Pregunta 21 de 27</div>
+                <div class="question-text">¿Te has sentido con menos energía de lo habitual?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(21, 0)">No</div>
+                <div class="option" onclick="selectOption(21, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-22">
+            <div class="question-header">
+                <div class="question-number">Pregunta 22 de 27</div>
+                <div class="question-text">¿Te ha resultado difícil disfrutar como siempre de tus aficiones habituales?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(22, 0)">No</div>
+                <div class="option" onclick="selectOption(22, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-23">
+            <div class="question-header">
+                <div class="question-number">Pregunta 23 de 27</div>
+                <div class="question-text">¿Tu salud general ha estado peor de lo habitual?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(23, 0)">No</div>
+                <div class="option" onclick="selectOption(23, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-24">
+            <div class="question-header">
+                <div class="question-number">Pregunta 24 de 27</div>
+                <div class="question-text">¿Te ha preocupado perder el contacto con amigos o familiares?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(24, 0)">No</div>
+                <div class="option" onclick="selectOption(24, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-25">
+            <div class="question-header">
+                <div class="question-number">Pregunta 25 de 27</div>
+                <div class="question-text">¿Te ha preocupado la falta de motivación para hacer cosas?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(25, 0)">No</div>
+                <div class="option" onclick="selectOption(25, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-26">
+            <div class="question-header">
+                <div class="question-number">Pregunta 26 de 27</div>
+                <div class="question-text">¿Te ha resultado más difícil de lo habitual concentrarte?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(26, 0)">No</div>
+                <div class="option" onclick="selectOption(26, 1)">Sí</div>
+            </div>
+        </div>
+
+        <div class="card" id="card-27">
+            <div class="question-header">
+                <div class="question-number">Pregunta 27 de 27</div>
+                <div class="question-text">¿Has estado preocupado por sentimientos de aislamiento o de desapego?</div>
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(27, 0)">No</div>
+                <div class="option" onclick="selectOption(27, 1)">Sí</div>
+            </div>
+        </div>
+
+        <!-- Card Final -->
+        <div class="card" id="card-final">
+            <div class="completion-message">
+                <h2>✓ Evaluación Completada</h2>
+                <p>Has completado exitosamente el Cuestionario de Problemas con el Cannabis para Adolescentes (CPQ-A).</p>
+                <p><strong>Muchas gracias por tu tiempo y honestidad.</strong></p>
+                <p>Por favor, pasa el dispositivo a tu médico o profesional de salud mental para la revisión de los resultados.</p>
+            </div>
+            <button class="results-button" onclick="showResults()">Revisar Resultados (Profesional)</button>
+        </div>
+
+        <!-- Card Resultados -->
+        <div class="card" id="card-results">
+            <div class="results-header">
+                <h1>Resultados CPQ-A</h1>
+                <p>Análisis Profesional - Solo para Personal Clínico</p>
+            </div>
+
+            <div class="score-display">
+                <div class="score-number" id="totalScore">0</div>
+                <div class="score-label">Puntuación Total (0-27)</div>
+            </div>
+
+            <div class="interpretation" id="interpretationBox">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <div class="clinical-info">
+                <h4>Información Técnica del Instrumento</h4>
+                <p><strong>Fiabilidad:</strong> α = 0.86 (validación española). Test-retest r = 0.91</p>
+                <p><strong>Validez:</strong> Estructura unidimensional en población española. Correlación significativa con frecuencia de consumo y criterios DSM-IV</p>
+                <p><strong>Población objetivo:</strong> Adolescentes y jóvenes 14-20 años con consumo de cannabis</p>
+                <p><strong>Marco temporal:</strong> Últimos 3 meses</p>
+            </div>
+
+            <div id="alertsContainer">
+                <!-- Alertas dinámicas -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="exportToPDF()">📄 Exportar PDF</button>
+                <button class="btn btn-secondary" onclick="resetEvaluation()">🔄 Nueva Evaluación</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        const totalQuestions = 27;
+
+        // Función para actualizar la barra de progreso
+        function updateProgress() {
+            const progress = (currentCard / (totalQuestions + 2)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Función para mostrar la tarjeta actual
+        function showCard(cardNumber) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`card-${cardNumber}`).classList.add('active');
+            
+            // Actualizar botón regresar
+            const backButton = document.getElementById('backButton');
+            if (cardNumber === 0 || cardNumber === 'final' || cardNumber === 'results') {
+                backButton.classList.add('hidden');
+            } else {
+                backButton.classList.remove('hidden');
+            }
+            
+            updateProgress();
+        }
+
+        // Función para avanzar a la siguiente tarjeta
+        function nextCard() {
+            currentCard++;
+            showCard(currentCard);
+        }
+
+        // Función para regresar
+        function goBack() {
+            if (currentCard > 1) {
+                currentCard--;
+                showCard(currentCard);
+            }
+        }
+
+        // Función para seleccionar opción
+        function selectOption(question, value) {
+            responses[question] = value;
+            
+            // Marcar la opción seleccionada
+            const currentCardElement = document.getElementById(`card-${question}`);
+            const options = currentCardElement.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[value].classList.add('selected');
+            
+            // Auto-avance después de 150ms
+            setTimeout(() => {
+                if (question < totalQuestions) {
+                    currentCard = question + 1;
+                    showCard(currentCard);
+                } else {
+                    showCard('final');
+                }
+            }, 150);
+        }
+
+        // Función para calcular el puntaje
+        function calculateScore() {
+            let total = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                total += responses[i] || 0;
+            }
+            return total;
+        }
+
+        // Función para obtener interpretación
+        function getInterpretation(score) {
+            if (score >= 0 && score <= 4) {
+                return {
+                    level: "Sin problemas significativos",
+                    color: "#48bb78",
+                    description: "La puntuación obtenida indica un consumo de cannabis sin problemas significativos asociados en los últimos 3 meses. Los resultados sugieren un patrón de consumo que no presenta criterios clínicos de preocupación según los estándares del CPQ-A.",
+                    clinical: "Consumo recreacional sin indicadores de problemática clínica. Continuar con seguimiento preventivo y educación sobre riesgos.",
+                    recommendations: "Mantener estrategias de consumo responsable y monitoreo periódico. Reforzar factores protectores y habilidades de afrontamiento."
+                };
+            } else if (score >= 5 && score <= 9) {
+                return {
+                    level: "Problemas leves-moderados",
+                    color: "#f6ad55",
+                    description: "Puntuación indicativa de problemas relacionados con el consumo de cannabis según el punto de corte de la validación española (≥5). Se identifican algunas consecuencias negativas asociadas al uso que requieren atención clínica.",
+                    clinical: "Indicativo de uso problemático según criterios del CPQ-A. Probable cumplimiento de criterios de abuso según DSM-IV-TR. Intervención temprana recomendada.",
+                    recommendations: "Evaluación especializada para determinar criterios diagnósticos. Considerar intervención breve, psicoeducación y desarrollo de estrategias de reducción de riesgos."
+                };
+            } else if (score >= 10 && score <= 15) {
+                return {
+                    level: "Problemas moderados-severos",
+                    color: "#ed8936",
+                    description: "Puntuación que sugiere un patrón problemático significativo de consumo de cannabis con múltiples consecuencias negativas en diferentes áreas de funcionamiento (social, económico, físico, psicológico).",
+                    clinical: "Patrón de uso asociado con deterioro funcional significativo. Alta probabilidad de criterios de dependencia. Requiere intervención especializada inmediata.",
+                    recommendations: "Evaluación comprehensiva para dependencia. Tratamiento estructurado con terapia cognitivo-conductual, manejo de contingencias y abordaje familiar. Considerar programas de tratamiento intensivo."
+                };
+            } else { // score >= 16
+                return {
+                    level: "Problemas severos",
+                    color: "#f56565",
+                    description: "Puntuación elevada que indica un patrón severo de problemas relacionados con el cannabis, con múltiples consecuencias graves que afectan significativamente el funcionamiento psicosocial del adolescente.",
+                    clinical: "Indicadores de dependencia severa con deterioro funcional importante. Presencia probable de comorbilidad psiquiátrica. Requiere intervención especializada urgente y seguimiento intensivo.",
+                    recommendations: "Evaluación psiquiátrica completa para comorbilidad. Tratamiento especializado en adicciones con componente médico. Considerar programas residenciales o de hospital de día. Involucrar red de apoyo familiar y social."
+                };
+            }
+        }
+
+        // Función para mostrar resultados
+        function showResults() {
+            const score = calculateScore();
+            const interpretation = getInterpretation(score);
+            
+            document.getElementById('totalScore').textContent = score;
+            document.getElementById('totalScore').style.color = interpretation.color;
+            
+            const interpretationBox = document.getElementById('interpretationBox');
+            interpretationBox.innerHTML = `
+                <h3 style="color: ${interpretation.color}">${interpretation.level}</h3>
+                <p><strong>Interpretación Clínica:</strong> ${interpretation.description}</p>
+                <p><strong>Significado Diagnóstico:</strong> ${interpretation.clinical}</p>
+                <p><strong>Recomendaciones:</strong> ${interpretation.recommendations}</p>
+            `;
+            
+            // Mostrar alertas específicas
+            showAlerts(score);
+            
+            // Cambiar a contenedor de resultados más ancho
+            document.querySelector('.container').classList.add('results-container');
+            showCard('results');
+        }
+
+        // Función para mostrar alertas
+        function showAlerts(score) {
+            const alertsContainer = document.getElementById('alertsContainer');
+            let alerts = [];
+            
+            // Alertas por ítems específicos críticos
+            const criticalItems = [
+                {item: 19, text: "Ideación suicida reportada - Requiere evaluación inmediata de riesgo"},
+                {item: 10, text: "Problemas legales relacionados con cannabis - Considerar implicaciones judiciales"},
+                {item: 12, text: "Episodios de pérdida de conciencia - Evaluación médica recomendada"},
+                {item: 18, text: "Síntomas depresivos prolongados - Screening de comorbilidad psiquiátrica"}
+            ];
+            
+            criticalItems.forEach(critical => {
+                if (responses[critical.item] === 1) {
+                    alerts.push(`<div class="alert-item">${critical.text}</div>`);
+                }
+            });
+            
+            // Alertas por áreas problemáticas
+            const economicProblems = [5, 6, 7, 8, 9].filter(item => responses[item] === 1).length;
+            if (economicProblems >= 3) {
+                alerts.push(`<div class="alert-item moderate">Problemas económicos significativos (${economicProblems}/5 ítems) - Evaluar impacto familiar</div>`);
+            }
+            
+            const physicalProblems = [11, 12, 13, 14, 16, 17].filter(item => responses[item] === 1).length;
+            if (physicalProblems >= 3) {
+                alerts.push(`<div class="alert-item moderate">Múltiples problemas físicos (${physicalProblems}/6 ítems) - Considerar evaluación médica</div>`);
+            }
+            
+            const psychologicalProblems = [15, 18, 19, 21, 22, 25, 26, 27].filter(item => responses[item] === 1).length;
+            if (psychologicalProblems >= 4) {
+                alerts.push(`<div class="alert-item moderate">Sintomatología psicológica significativa (${psychologicalProblems}/8 ítems) - Evaluación especializada</div>`);
+            }
+            
+            // Mostrar alertas
+            if (alerts.length > 0) {
+                alertsContainer.innerHTML = `
+                    <div class="clinical-info">
+                        <h4>⚠️ Alertas Clínicas</h4>
+                        ${alerts.join('')}
+                    </div>
+                `;
+            } else {
+                alertsContainer.innerHTML = '';
+            }
+        }
+
+        // Función para exportar a PDF
+        function exportToPDF() {
+            const score = calculateScore();
+            const interpretation = getInterpretation(score);
+            const date = new Date().toLocaleDateString('es-ES');
+            
+            const printContent = `
+                <div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #29A98C; padding-bottom: 20px;">
+                        <h1 style="color: #29A98C; margin-bottom: 10px;">CPQ-A - Resultados</h1>
+                        <p style="color: #112F33; font-size: 1.1em;">Cuestionario de Problemas con el Cannabis para Adolescentes</p>
+                        <p style="color: #666;">Fecha: ${date}</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center;">
+                        <h2 style="color: ${interpretation.color}; font-size: 2.5em; margin: 0;">${score}/27</h2>
+                        <p style="color: #112F33; font-weight: bold; margin: 10px 0 0 0;">${interpretation.level}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #29A98C; border-bottom: 2px solid #29A98C; padding-bottom: 10px;">Interpretación Clínica</h3>
+                        <p style="line-height: 1.6; margin-bottom: 15px;"><strong>Interpretación:</strong> ${interpretation.description}</p>
+                        <p style="line-height: 1.6; margin-bottom: 15px;"><strong>Significado Diagnóstico:</strong> ${interpretation.clinical}</p>
+                        <p style="line-height: 1.6;"><strong>Recomendaciones:</strong> ${interpretation.recommendations}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #29A98C; border-bottom: 2px solid #29A98C; padding-bottom: 10px;">Información Técnica</h3>
+                        <p style="line-height: 1.6;"><strong>Instrumento:</strong> CPQ-A (Cannabis Problems Questionnaire - Adolescents)</p>
+                        <p style="line-height: 1.6;"><strong>Fiabilidad:</strong> α = 0.86 (validación española)</p>
+                        <p style="line-height: 1.6;"><strong>Marco temporal:</strong> Últimos 3 meses</p>
+                        <p style="line-height: 1.6;"><strong>Punto de corte:</strong> ≥5 indicativo de problemas por cannabis</p>
+                    </div>
+                    
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 0.9em;">
+                        <p>Documento generado automáticamente por el sistema CPQ-A</p>
+                        <p>Solo para uso profesional en contexto clínico</p>
+                    </div>
+                </div>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>CPQ-A Resultados</title>
+                        <style>
+                            body { margin: 0; padding: 20px; }
+                            @media print { body { margin: 0; } }
+                        </style>
+                    </head>
+                    <body>${printContent}</body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Función para reiniciar evaluación
+        function resetEvaluation() {
+            if (confirm('¿Está seguro de que desea iniciar una nueva evaluación? Se perderán los datos actuales.')) {
+                currentCard = 0;
+                responses = {};
+                document.querySelector('.container').classList.remove('results-container');
+                
+                // Limpiar selecciones
+                document.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                showCard(0);
+            }
+        }
+
+        // Inicializar
+        updateProgress();
+    </script>
+</body>
+</html>

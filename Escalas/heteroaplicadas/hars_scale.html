@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Hamilton para la Ansiedad (HARS)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #112F33;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .description {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: rgba(41, 169, 140, 0.1);
+            border-radius: 10px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option:hover {
+            border-color: #29A98C;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(41, 169, 140, 0.2);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .option-value {
+            background: rgba(41, 169, 140, 0.1);
+            color: #29A98C;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .option.selected .option-value {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .instructions {
+            color: #112F33;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .instructions h3 {
+            color: #29A98C;
+            margin: 20px 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .instructions li {
+            margin: 8px 0;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button.hidden {
+            display: none;
+        }
+
+        .results {
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .score-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .interpretation {
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .interpretation h3 {
+            color: #29A98C;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .level-normal { background: rgba(72, 187, 120, 0.1); border-left: 4px solid #48bb78; }
+        .level-mild { background: rgba(246, 173, 85, 0.1); border-left: 4px solid #f6ad55; }
+        .level-moderate { background: rgba(237, 137, 54, 0.1); border-left: 4px solid #ed8936; }
+        .level-severe { background: rgba(245, 101, 101, 0.1); border-left: 4px solid #f56565; }
+
+        .alerts {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(245, 101, 101, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #f56565;
+        }
+
+        .alerts h4 {
+            color: #742a2a;
+            margin-bottom: 10px;
+        }
+
+        .alerts ul {
+            color: #742a2a;
+            padding-left: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(41, 169, 140, 0.3);
+        }
+
+        .clinical-details {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(41, 169, 140, 0.05);
+            border-radius: 10px;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .clinical-details h4 {
+            color: #29A98C;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+                max-width: 100%;
+            }
+            
+            .card {
+                padding: 20px;
+                margin: 10px auto;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .question-text {
+                font-size: 1em;
+            }
+            
+            .option {
+                padding: 12px 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Instrucciones -->
+        <div class="card active" id="card-0">
+            <div class="header">
+                <h1>Escala de Hamilton para la Ansiedad (HARS)</h1>
+                <p>Instrucciones para el Profesional - Aplicación Heteroaplicada</p>
+            </div>
+            <div class="instructions">
+                <h3>Información General</h3>
+                <p>La HARS es una escala heteroaplicada de 14 ítems diseñada para evaluar la severidad de síntomas de ansiedad. Cada ítem se puntúa de 0 a 4 puntos.</p>
+                
+                <h3>Instrucciones de Aplicación</h3>
+                <ul>
+                    <li>Realice la entrevista en un ambiente tranquilo y privado</li>
+                    <li>Observe al paciente durante toda la evaluación para el ítem 14</li>
+                    <li>Base su puntuación en la información de la última semana</li>
+                    <li>Para cada ítem, seleccione la puntuación que mejor refleje la severidad</li>
+                    <li>Considere tanto la frecuencia como la intensidad de los síntomas</li>
+                </ul>
+
+                <h3>Criterios de Puntuación</h3>
+                <ul>
+                    <li><strong>0:</strong> No presente</li>
+                    <li><strong>1:</strong> Intensidad ligera (presente ocasionalmente)</li>
+                    <li><strong>2:</strong> Intensidad media (presente frecuentemente)</li>
+                    <li><strong>3:</strong> Intensidad elevada (presente casi siempre)</li>
+                    <li><strong>4:</strong> Intensidad máxima/incapacitante</li>
+                </ul>
+
+                <h3>Notas Importantes</h3>
+                <ul>
+                    <li>El ítem 14 requiere observación directa durante la entrevista</li>
+                    <li>Considere síntomas tanto psíquicos como somáticos</li>
+                    <li>La escala total puede oscilar entre 0-56 puntos</li>
+                </ul>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="action-button" onclick="startEvaluation()" style="font-size: 1.1em; padding: 15px 30px;">
+                        🎯 Iniciar Evaluación
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 1 -->
+        <div class="card" id="card-1">
+            <div class="question-number">Ítem 1 de 14</div>
+            <div class="question-text">Humor ansioso</div>
+            <div class="description">Inquietud, espera de lo peor, aprensión (anticipación temerosa), irritabilidad</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 2 -->
+        <div class="card" id="card-2">
+            <div class="question-number">Ítem 2 de 14</div>
+            <div class="question-text">Tensión</div>
+            <div class="description">Sensación de tensión, fatigabilidad, imposibilidad de relajarse, llanto fácil, temblor, sensación de no poder quedarse en un lugar</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 3 -->
+        <div class="card" id="card-3">
+            <div class="question-number">Ítem 3 de 14</div>
+            <div class="question-text">Miedos</div>
+            <div class="description">A la oscuridad, a la gente desconocida, a quedarse solo, a los animales grandes, a las multitudes, etc.</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 4 -->
+        <div class="card" id="card-4">
+            <div class="question-number">Ítem 4 de 14</div>
+            <div class="question-text">Insomnio</div>
+            <div class="description">Dificultad para conciliar el sueño, sueño interrumpido, sueño no satisfactorio con cansancio al despertar, malos sueños, pesadillas, terrores nocturnos</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 5 -->
+        <div class="card" id="card-5">
+            <div class="question-number">Ítem 5 de 14</div>
+            <div class="question-text">Funciones intelectuales</div>
+            <div class="description">Dificultad de concentración, mala memoria</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 6 -->
+        <div class="card" id="card-6">
+            <div class="question-number">Ítem 6 de 14</div>
+            <div class="question-text">Humor deprimido</div>
+            <div class="description">Falta de interés, no disfruta con sus pasatiempos, depresión, despertar precoz, variaciones del humor a lo largo del día</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 7 -->
+        <div class="card" id="card-7">
+            <div class="question-number">Ítem 7 de 14</div>
+            <div class="question-text">Síntomas somáticos generales (musculares)</div>
+            <div class="description">Dolores y molestias musculares, rigidez muscular, sacudidas clónicas, rechinar de dientes, voz poco firme o insegura</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 8 -->
+        <div class="card" id="card-8">
+            <div class="question-number">Ítem 8 de 14</div>
+            <div class="question-text">Síntomas somáticos generales (sensoriales)</div>
+            <div class="description">Zumbidos de oídos, visión borrosa, sofocos o escalofríos, sensación de debilidad, sensación de hormigueo</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 9 -->
+        <div class="card" id="card-9">
+            <div class="question-number">Ítem 9 de 14</div>
+            <div class="question-text">Síntomas cardiovasculares</div>
+            <div class="description">Taquicardia, palpitaciones, dolores en el pecho, latidos vasculares, extrasístoles</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 10 -->
+        <div class="card" id="card-10">
+            <div class="question-number">Ítem 10 de 14</div>
+            <div class="question-text">Síntomas respiratorios</div>
+            <div class="description">Peso en el pecho o sensación de opresión torácica, sensación de ahogo, suspiros, falta de aire</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 11 -->
+        <div class="card" id="card-11">
+            <div class="question-number">Ítem 11 de 14</div>
+            <div class="question-text">Síntomas gastrointestinales</div>
+            <div class="description">Dificultad para tragar, meteorismo, dispepsia, dolor antes o después de comer, sensación de ardor, distensión abdominal, pirosis, náuseas, vómitos, sensación de estómago vacío, cólicos abdominales, borborigmos, diarrea, estreñimiento</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 12 -->
+        <div class="card" id="card-12">
+            <div class="question-number">Ítem 12 de 14</div>
+            <div class="question-text">Síntomas genitourinarios</div>
+            <div class="description">Amenorrea, metrorragia, micciones frecuentes, urgencia de la micción, desarrollo de frigidez, eyaculación precoz, impotencia</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 13 -->
+        <div class="card" id="card-13">
+            <div class="question-number">Ítem 13 de 14</div>
+            <div class="question-text">Síntomas del sistema nervioso autónomo</div>
+            <div class="description">Sequedad de boca, enrojecimiento, palidez, sudoración excesiva, vértigos, cefaleas de tensión, piloerección</div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ítem 14 -->
+        <div class="card" id="card-14">
+            <div class="question-number">Ítem 14 de 14</div>
+            <div class="question-text">Comportamiento durante la entrevista</div>
+            <div class="description">
+                <strong>General:</strong> El sujeto se muestra tenso, incómodo, agitación nerviosa de las manos, se frota los dedos, aprieta los puños, inestabilidad, postura cambiante, temblor de manos, ceño fruncido, facies tensa, aumento del tono muscular, respiración jadeante, palidez facial<br><br>
+                <strong>Fisiológico:</strong> Traga saliva, eructa, taquicardia de reposo, frecuencia respiratoria superior a 20 resp./min, reflejos tendinosos vivos, temblor, dilatación pupilar, exoftalmía, mioclonías palpebrales
+            </div>
+            <div class="options">
+                <div class="option" data-value="0">
+                    <span>No presente</span>
+                    <span class="option-value">0</span>
+                </div>
+                <div class="option" data-value="1">
+                    <span>Intensidad ligera</span>
+                    <span class="option-value">1</span>
+                </div>
+                <div class="option" data-value="2">
+                    <span>Intensidad media</span>
+                    <span class="option-value">2</span>
+                </div>
+                <div class="option" data-value="3">
+                    <span>Intensidad elevada</span>
+                    <span class="option-value">3</span>
+                </div>
+                <div class="option" data-value="4">
+                    <span>Intensidad máxima/incapacitante</span>
+                    <span class="option-value">4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="card" id="card-results">
+            <div class="header">
+                <h1>Resultados HARS</h1>
+                <p>Escala de Hamilton para la Ansiedad</p>
+            </div>
+            
+            <div class="results">
+                <div class="score-display">
+                    <div class="score-value" id="total-score">0</div>
+                    <div>Puntuación Total (0-56)</div>
+                </div>
+                
+                <div class="interpretation" id="interpretation">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                
+                <div class="clinical-details">
+                    <h4>Información Clínica Relevante</h4>
+                    <div id="clinical-info">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+                
+                <div class="alerts" id="alerts" style="display: none;">
+                    <h4>⚠️ Alertas Clínicas</h4>
+                    <ul id="alerts-list">
+                        <!-- Se llenará dinámicamente -->
+                    </ul>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-button" onclick="exportToPDF()">
+                        📄 Exportar PDF
+                    </button>
+                    <button class="action-button" onclick="exportToImage()">
+                        📷 Capturar Imagen
+                    </button>
+                    <button class="action-button" onclick="newEvaluation()">
+                        🔄 Nueva Evaluación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-bar" id="progress-bar"></div>
+    <button class="back-button" id="back-button" onclick="goBack()">
+        ← Regresar
+    </button>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        const totalQuestions = 14;
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            showCard(0);
+            updateProgress();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Configurar eventos para todas las opciones
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const cardId = this.closest('.card').id;
+                    const questionNumber = parseInt(cardId.split('-')[1]);
+                    const value = parseInt(this.dataset.value);
+                    
+                    if (questionNumber >= 1 && questionNumber <= totalQuestions) {
+                        selectOption(questionNumber, value, this);
+                    }
+                });
+            });
+        }
+
+        function startEvaluation() {
+            showCard(1);
+        }
+
+        function selectOption(questionNumber, value, element) {
+            // Remover selección anterior
+            const card = element.closest('.card');
+            card.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Agregar selección actual
+            element.classList.add('selected');
+            
+            // Guardar respuesta
+            responses[questionNumber] = value;
+            
+            // Auto-avance después de 150ms
+            setTimeout(() => {
+                if (currentCard < totalQuestions) {
+                    nextCard();
+                } else {
+                    showResults();
+                }
+            }, 150);
+        }
+
+        function showCard(index) {
+            // Ocultar todas las tarjetas
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Mostrar tarjeta actual
+            document.getElementById('card-' + index).classList.add('active');
+            currentCard = index;
+            
+            // Actualizar botón de regreso
+            const backButton = document.getElementById('back-button');
+            if (index === 0 || index === 'results') {
+                backButton.classList.add('hidden');
+            } else {
+                backButton.classList.remove('hidden');
+            }
+            
+            updateProgress();
+        }
+
+        function nextCard() {
+            if (currentCard < totalQuestions) {
+                showCard(currentCard + 1);
+            }
+        }
+
+        function goBack() {
+            if (currentCard > 1) {
+                showCard(currentCard - 1);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentCard / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function calculateScore() {
+            let total = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] !== undefined) {
+                    total += responses[i];
+                }
+            }
+            return total;
+        }
+
+        function getInterpretation(score) {
+            if (score >= 0 && score <= 7) {
+                return {
+                    level: 'normal',
+                    title: 'Sin ansiedad o ansiedad muy leve',
+                    description: 'Los síntomas de ansiedad están ausentes o son mínimos. El paciente presenta un funcionamiento normal en las áreas evaluadas.',
+                    clinical: 'No se requiere intervención específica para ansiedad. Mantener seguimiento rutinario.',
+                    class: 'level-normal'
+                };
+            } else if (score >= 8 && score <= 14) {
+                return {
+                    level: 'mild',
+                    title: 'Ansiedad leve',
+                    description: 'Presencia de síntomas ansiosos de intensidad leve que pueden interferir mínimamente con el funcionamiento diario.',
+                    clinical: 'Considerar intervenciones psicoeducativas, técnicas de relajación y seguimiento regular.',
+                    class: 'level-mild'
+                };
+            } else if (score >= 15 && score <= 23) {
+                return {
+                    level: 'moderate',
+                    title: 'Ansiedad moderada',
+                    description: 'Síntomas ansiosos de intensidad moderada que interfieren significativamente con el funcionamiento personal, social o laboral.',
+                    clinical: 'Se recomienda intervención terapéutica específica. Evaluar necesidad de tratamiento farmacológico y psicoterapia.',
+                    class: 'level-moderate'
+                };
+            } else {
+                return {
+                    level: 'severe',
+                    title: 'Ansiedad severa',
+                    description: 'Síntomas ansiosos de alta intensidad que causan deterioro significativo en múltiples áreas del funcionamiento.',
+                    clinical: 'Requiere intervención inmediata. Considerar tratamiento farmacológico intensivo y psicoterapia especializada. Evaluar riesgo y necesidad de seguimiento frecuente.',
+                    class: 'level-severe'
+                };
+            }
+        }
+
+        function getAlerts() {
+            const alerts = [];
+            const alertThreshold = 3; // 66% del máximo (4 puntos)
+            
+            const itemNames = [
+                '', // índice 0 vacío
+                'Humor ansioso',
+                'Tensión',
+                'Miedos',
+                'Insomnio',
+                'Funciones intelectuales',
+                'Humor deprimido',
+                'Síntomas musculares',
+                'Síntomas sensoriales',
+                'Síntomas cardiovasculares',
+                'Síntomas respiratorios',
+                'Síntomas gastrointestinales',
+                'Síntomas genitourinarios',
+                'Síntomas del sistema nervioso autónomo',
+                'Comportamiento durante la entrevista'
+            ];
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] >= alertThreshold) {
+                    alerts.push(itemNames[i] + ' (Puntuación: ' + responses[i] + ')');
+                }
+            }
+            
+            return alerts;
+        }
+
+        function showResults() {
+            const score = calculateScore();
+            const interpretation = getInterpretation(score);
+            const alerts = getAlerts();
+            
+            // Mostrar puntuación
+            document.getElementById('total-score').textContent = score;
+            
+            // Mostrar interpretación
+            const interpretationDiv = document.getElementById('interpretation');
+            interpretationDiv.className = 'interpretation ' + interpretation.class;
+            interpretationDiv.innerHTML = `
+                <h3>${interpretation.title}</h3>
+                <p><strong>Descripción:</strong> ${interpretation.description}</p>
+                <p><strong>Consideraciones clínicas:</strong> ${interpretation.clinical}</p>
+            `;
+            
+            // Mostrar información clínica adicional
+            const clinicalInfo = document.getElementById('clinical-info');
+            let additionalInfo = `
+                <p><strong>Distribución de síntomas evaluados:</strong></p>
+                <ul>
+                    <li>Síntomas psíquicos (ítems 1-6, 14): ${(responses[1] || 0) + (responses[2] || 0) + (responses[3] || 0) + (responses[4] || 0) + (responses[5] || 0) + (responses[6] || 0) + (responses[14] || 0)} puntos</li>
+                    <li>Síntomas somáticos (ítems 7-13): ${(responses[7] || 0) + (responses[8] || 0) + (responses[9] || 0) + (responses[10] || 0) + (responses[11] || 0) + (responses[12] || 0) + (responses[13] || 0)} puntos</li>
+                </ul>
+            `;
+            
+            if (score >= 15) {
+                additionalInfo += `<p><strong>Recomendación:</strong> Se sugiere evaluación comprensiva de factores precipitantes, comorbilidades médicas y psiquiátricas, y planificación de intervención terapéutica.</p>`;
+            }
+            
+            clinicalInfo.innerHTML = additionalInfo;
+            
+            // Mostrar alertas si las hay
+            if (alerts.length > 0) {
+                document.getElementById('alerts').style.display = 'block';
+                const alertsList = document.getElementById('alerts-list');
+                alertsList.innerHTML = alerts.map(alert => `<li>${alert}</li>`).join('');
+            }
+            
+            // Mostrar tarjeta de resultados
+            showCard('results');
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function exportToImage() {
+            const resultsCard = document.getElementById('card-results');
+            
+            // Usar html2canvas si está disponible, sino usar captura básica
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(resultsCard).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'HARS_Resultados.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            } else {
+                // Fallback: crear canvas manualmente
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 600;
+                canvas.height = 800;
+                
+                // Fondo blanco
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Título
+                ctx.fillStyle = '#29A98C';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText('Resultados HARS', 50, 50);
+                
+                // Puntuación
+                ctx.fillStyle = '#112F33';
+                ctx.font = 'bold 48px Arial';
+                const score = calculateScore();
+                ctx.fillText(score.toString(), 50, 120);
+                
+                ctx.font = '16px Arial';
+                ctx.fillText('Puntuación Total (0-56)', 50, 150);
+                
+                // Interpretación
+                const interpretation = getInterpretation(score);
+                ctx.font = 'bold 18px Arial';
+                ctx.fillText(interpretation.title, 50, 200);
+                
+                // Descargar
+                const link = document.createElement('a');
+                link.download = 'HARS_Resultados.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        }
+
+        function newEvaluation() {
+            // Reiniciar variables
+            currentCard = 0;
+            responses = {};
+            
+            // Limpiar selecciones
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Volver al inicio
+            showCard(0);
+        }
+
+        // Estilos para impresión
+        const printStyles = `
+            @media print {
+                body * { visibility: hidden; }
+                #card-results, #card-results * { visibility: visible; }
+                #card-results { position: absolute; left: 0; top: 0; width: 100%; }
+                .back-button, .progress-bar { display: none !important; }
+                .action-buttons { display: none !important; }
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = printStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

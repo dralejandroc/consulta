@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Hamilton para la Depresión (HDRS-17)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            color: #112F33;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: rgba(41, 169, 140, 0.1);
+            border: 2px solid rgba(41, 169, 140, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #112F33;
+        }
+
+        .option:hover {
+            background: rgba(41, 169, 140, 0.2);
+            border-color: #29A98C;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            border-left: 4px solid #29A98C;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #112F33;
+            line-height: 1.6;
+        }
+
+        .results-section {
+            margin: 20px 0;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-display h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .score-display .score {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .interpretation {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #29A98C;
+        }
+
+        .interpretation h3 {
+            color: #112F33;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .interpretation p {
+            color: #112F33;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .alert-box {
+            background: rgba(245, 101, 101, 0.1);
+            border: 2px solid #f56565;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #742a2a;
+        }
+
+        .alert-box h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .clinical-recommendations {
+            background: rgba(72, 187, 120, 0.1);
+            border-left: 4px solid #48bb78;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .clinical-recommendations h3 {
+            color: #112F33;
+            margin-bottom: 15px;
+        }
+
+        .clinical-recommendations ul {
+            color: #112F33;
+            margin-left: 20px;
+        }
+
+        .clinical-recommendations li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .severity-low { border-left-color: #48bb78; }
+        .severity-mild { border-left-color: #f6ad55; }
+        .severity-moderate { border-left-color: #ed8936; }
+        .severity-severe { border-left-color: #f56565; }
+        .severity-very-severe { border-left-color: #742a2a; }
+
+        @media (max-width: 600px) {
+            .container {
+                max-width: 100%;
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .card-header h1 {
+                font-size: 20px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+            
+            .option {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 80%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card 0: Bienvenida -->
+        <div class="card active" id="card-0">
+            <div class="card-header">
+                <h1>Escala de Hamilton para la Depresión</h1>
+                <p>HDRS-17 | Versión Heteroaplicada</p>
+            </div>
+            
+            <div class="instructions">
+                <h3 style="color: #112F33; margin-bottom: 15px;">Instrucciones para el Profesional</h3>
+                <p><strong>Tiempo de aplicación:</strong> 15-20 minutos</p>
+                <p><strong>Tipo de aplicación:</strong> Heteroaplicada (evaluador entrenado)</p>
+                <p><strong>Población:</strong> Adultos con sospecha o diagnóstico de trastorno depresivo</p>
+                
+                <h4 style="color: #112F33; margin-top: 20px; margin-bottom: 10px;">Indicaciones:</h4>
+                <ul style="margin-left: 20px; color: #112F33;">
+                    <li>Base la puntuación en la entrevista clínica y observación del paciente</li>
+                    <li>Considere la información de los últimos 7 días</li>
+                    <li>Evalúe tanto manifestaciones verbales como no verbales</li>
+                    <li>Requiere experiencia clínica para una aplicación adecuada</li>
+                    <li>Los ítems evalúan severidad, no frecuencia</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="nextCard()">Iniciar Evaluación</button>
+            </div>
+        </div>
+
+        <!-- Cards 1-17: Ítems -->
+        <!-- Ítem 1 -->
+        <div class="card" id="card-1">
+            <div class="question-number">Ítem 1 de 17</div>
+            <div class="question-text">Humor deprimido (tristeza, depresión, desamparo, inutilidad)</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(1, 1, this)">Estas sensaciones se indican solamente al ser preguntado</div>
+                <div class="option" onclick="selectOption(1, 2, this)">Estas sensaciones se relatan oral y espontáneamente</div>
+                <div class="option" onclick="selectOption(1, 3, this)">Sensaciones no comunicadas verbalmente (expresión facial, postura, voz, tendencia al llanto)</div>
+                <div class="option" onclick="selectOption(1, 4, this)">El paciente manifiesta estas sensaciones en su comunicación verbal y no verbal de forma espontánea</div>
+            </div>
+        </div>
+
+        <!-- Ítem 2 -->
+        <div class="card" id="card-2">
+            <div class="question-number">Ítem 2 de 17</div>
+            <div class="question-text">Sensación de culpabilidad</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(2, 1, this)">Se culpa a sí mismo, cree haber decepcionado a la gente</div>
+                <div class="option" onclick="selectOption(2, 2, this)">Ideas de culpabilidad, o meditación sobre errores pasados o malas acciones</div>
+                <div class="option" onclick="selectOption(2, 3, this)">La enfermedad actual es un castigo. Ideas delirantes de culpabilidad</div>
+                <div class="option" onclick="selectOption(2, 4, this)">Oye voces acusatorias o de denuncia y/o experimenta alucinaciones visuales amenazadoras</div>
+            </div>
+        </div>
+
+        <!-- Ítem 3 -->
+        <div class="card" id="card-3">
+            <div class="question-number">Ítem 3 de 17</div>
+            <div class="question-text">Suicidio</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(3, 1, this)">Le parece que la vida no merece la pena ser vivida</div>
+                <div class="option" onclick="selectOption(3, 2, this)">Desearía estar muerto o tiene pensamientos sobre la posibilidad de morirse</div>
+                <div class="option" onclick="selectOption(3, 3, this)">Ideas de suicidio o amenazas</div>
+                <div class="option" onclick="selectOption(3, 4, this)">Intentos de suicidio (cualquier intento serio se califica 4)</div>
+            </div>
+        </div>
+
+        <!-- Ítem 4 -->
+        <div class="card" id="card-4">
+            <div class="question-number">Ítem 4 de 17</div>
+            <div class="question-text">Insomnio precoz</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(4, 1, this)">Dificultades ocasionales para dormirse (más de media hora)</div>
+                <div class="option" onclick="selectOption(4, 2, this)">Dificultades para dormirse cada noche</div>
+            </div>
+        </div>
+
+        <!-- Ítem 5 -->
+        <div class="card" id="card-5">
+            <div class="question-number">Ítem 5 de 17</div>
+            <div class="question-text">Insomnio medio</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(5, 1, this)">El paciente se queja de estar inquieto durante la noche</div>
+                <div class="option" onclick="selectOption(5, 2, this)">Está despierto durante la noche; cualquier ocasión de levantarse de la cama se califica 2 (excepto si está justificada)</div>
+            </div>
+        </div>
+
+        <!-- Ítem 6 -->
+        <div class="card" id="card-6">
+            <div class="question-number">Ítem 6 de 17</div>
+            <div class="question-text">Insomnio tardío</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(6, 1, this)">Se despierta a primeras horas de la madrugada pero vuelve a dormirse</div>
+                <div class="option" onclick="selectOption(6, 2, this)">No puede volver a dormirse si se levanta de la cama</div>
+            </div>
+        </div>
+
+        <!-- Ítem 7 -->
+        <div class="card" id="card-7">
+            <div class="question-number">Ítem 7 de 17</div>
+            <div class="question-text">Trabajo y actividades</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(7, 1, this)">Ideas y sentimientos de incapacidad. Fatiga o debilidad relacionadas con su actividad, trabajo o aficiones</div>
+                <div class="option" onclick="selectOption(7, 2, this)">Pérdida de interés en su actividad, aficiones o trabajo, manifestado directa o indirectamente</div>
+                <div class="option" onclick="selectOption(7, 3, this)">Disminución del tiempo dedicado a actividades o descenso en la productividad</div>
+                <div class="option" onclick="selectOption(7, 4, this)">Dejó de trabajar por la presente enfermedad</div>
+            </div>
+        </div>
+
+        <!-- Ítem 8 -->
+        <div class="card" id="card-8">
+            <div class="question-number">Ítem 8 de 17</div>
+            <div class="question-text">Inhibición (lentitud de pensamiento y de palabra, empeoramiento de la concentración, actividad motora disminuida)</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0, this)">Palabra y pensamiento normales</div>
+                <div class="option" onclick="selectOption(8, 1, this)">Ligero retraso en el diálogo</div>
+                <div class="option" onclick="selectOption(8, 2, this)">Evidente retraso en el diálogo</div>
+                <div class="option" onclick="selectOption(8, 3, this)">Diálogo difícil</div>
+                <div class="option" onclick="selectOption(8, 4, this)">Torpeza absoluta</div>
+            </div>
+        </div>
+
+        <!-- Ítem 9 -->
+        <div class="card" id="card-9">
+            <div class="question-number">Ítem 9 de 17</div>
+            <div class="question-text">Agitación</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 0, this)">Ninguna</div>
+                <div class="option" onclick="selectOption(9, 1, this)">"Juega" con sus manos, cabellos, etc.</div>
+                <div class="option" onclick="selectOption(9, 2, this)">Se retuerce las manos, se muerde las uñas, los labios, se tira de los cabellos, etc.</div>
+            </div>
+        </div>
+
+        <!-- Ítem 10 -->
+        <div class="card" id="card-10">
+            <div class="question-number">Ítem 10 de 17</div>
+            <div class="question-text">Ansiedad psíquica</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0, this)">No hay dificultad</div>
+                <div class="option" onclick="selectOption(10, 1, this)">Tensión subjetiva e irritabilidad</div>
+                <div class="option" onclick="selectOption(10, 2, this)">Preocupación por pequeñas cosas</div>
+                <div class="option" onclick="selectOption(10, 3, this)">Actitud aprensiva aparente en la expresión o en el habla</div>
+                <div class="option" onclick="selectOption(10, 4, this)">Terrores expresados sin preguntarle</div>
+            </div>
+        </div>
+
+        <!-- Ítem 11 -->
+        <div class="card" id="card-11">
+            <div class="question-number">Ítem 11 de 17</div>
+            <div class="question-text">Ansiedad somática</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(11, 1, this)">Ligera</div>
+                <div class="option" onclick="selectOption(11, 2, this)">Moderada</div>
+                <div class="option" onclick="selectOption(11, 3, this)">Grave</div>
+                <div class="option" onclick="selectOption(11, 4, this)">Incapacitante (signos fisiológicos concomitantes: GI, cardiovasculares, respiratorios, sudoración)</div>
+            </div>
+        </div>
+
+        <!-- Ítem 12 -->
+        <div class="card" id="card-12">
+            <div class="question-number">Ítem 12 de 17</div>
+            <div class="question-text">Síntomas somáticos gastrointestinales</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 0, this)">Ninguno</div>
+                <div class="option" onclick="selectOption(12, 1, this)">Pérdida del apetito, pero come sin necesidad de que lo estimulen. Sensación de pesadez en el abdomen</div>
+                <div class="option" onclick="selectOption(12, 2, this)">Dificultad en comer si no se le insiste. Solicita o necesita laxantes o medicación intestinal</div>
+            </div>
+        </div>
+
+        <!-- Ítem 13 -->
+        <div class="card" id="card-13">
+            <div class="question-number">Ítem 13 de 17</div>
+            <div class="question-text">Síntomas somáticos generales</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 0, this)">Ninguno</div>
+                <div class="option" onclick="selectOption(13, 1, this)">Pesadez en las extremidades, espalda o cabeza. Dorsalgias, cefalalgias, algias musculares. Pérdida de energía y fatigabilidad</div>
+                <div class="option" onclick="selectOption(13, 2, this)">Cualquier síntoma bien definido se califica 2</div>
+            </div>
+        </div>
+
+        <!-- Ítem 14 -->
+        <div class="card" id="card-14">
+            <div class="question-number">Ítem 14 de 17</div>
+            <div class="question-text">Síntomas genitales</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 0, this)">Ausente</div>
+                <div class="option" onclick="selectOption(14, 1, this)">Débil</div>
+                <div class="option" onclick="selectOption(14, 2, this)">Grave</div>
+                <div class="option" onclick="selectOption(14, 3, this)">Incapacitante (pérdida de la libido, trastornos menstruales)</div>
+            </div>
+        </div>
+
+        <!-- Ítem 15 -->
+        <div class="card" id="card-15">
+            <div class="question-number">Ítem 15 de 17</div>
+            <div class="question-text">Hipocondría</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 0, this)">No la hay</div>
+                <div class="option" onclick="selectOption(15, 1, this)">Preocupado de sí mismo (corporalmente)</div>
+                <div class="option" onclick="selectOption(15, 2, this)">Preocupado por su salud</div>
+                <div class="option" onclick="selectOption(15, 3, this)">Se lamenta constantemente, solicita ayudas, etc.</div>
+                <div class="option" onclick="selectOption(15, 4, this)">Ideas delirantes hipocondríacas</div>
+            </div>
+        </div>
+
+        <!-- Ítem 16 -->
+        <div class="card" id="card-16">
+            <div class="question-number">Ítem 16 de 17</div>
+            <div class="question-text">Pérdida de peso</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(16, 0, this)">No hay pérdida de peso / Pérdida inferior a 500g en una semana</div>
+                <div class="option" onclick="selectOption(16, 1, this)">Probable pérdida de peso asociada con la enfermedad actual / Pérdida de más de 500g en una semana</div>
+                <div class="option" onclick="selectOption(16, 2, this)">Pérdida de peso definida / Pérdida de más de 1kg en una semana (por término medio)</div>
+            </div>
+        </div>
+
+        <!-- Ítem 17 -->
+        <div class="card" id="card-17">
+            <div class="question-number">Ítem 17 de 17</div>
+            <div class="question-text">Insight (conciencia de enfermedad)</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(17, 0, this)">Se da cuenta de que está deprimido y enfermo</div>
+                <div class="option" onclick="selectOption(17, 1, this)">Se da cuenta de su enfermedad pero atribuye la causa a la mala alimentación, clima, exceso de trabajo, virus, etc.</div>
+                <div class="option" onclick="selectOption(17, 2, this)">Niega que esté enfermo</div>
+            </div>
+        </div>
+
+        <!-- Card Results -->
+        <div class="card" id="card-results">
+            <div class="card-header">
+                <h1>Resultados HDRS-17</h1>
+                <p>Evaluación Completa</p>
+            </div>
+            
+            <div class="score-display">
+                <h2>Puntuación Total</h2>
+                <div class="score" id="total-score">0</div>
+                <p id="severity-level">Nivel de Severidad</p>
+            </div>
+            
+            <div class="interpretation" id="interpretation-box">
+                <h3>Interpretación Clínica</h3>
+                <p id="interpretation-text"></p>
+            </div>
+            
+            <div id="alerts-section"></div>
+            
+            <div class="clinical-recommendations">
+                <h3>Consideraciones Clínicas</h3>
+                <ul id="recommendations-list">
+                </ul>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn" onclick="exportToPDF()">📄 Exportar PDF</button>
+                <button class="btn" onclick="exportToImage()">📷 Capturar Imagen</button>
+                <button class="btn" onclick="newEvaluation()">🔄 Nueva Evaluación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="back-btn" id="back-btn" onclick="previousCard()">← Regresar</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        let totalQuestions = 17;
+
+        function updateProgress() {
+            const progress = (currentCard / (totalQuestions + 1)) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function showCard(cardIndex) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Determinar el ID correcto del card
+            let cardId;
+            if (cardIndex === totalQuestions + 1) {
+                cardId = 'card-results';
+            } else {
+                cardId = `card-${cardIndex}`;
+            }
+            
+            const targetCard = document.getElementById(cardId);
+            if (targetCard) {
+                targetCard.classList.add('active');
+            }
+            
+            // Gestión del botón de regresar
+            const backBtn = document.getElementById('back-btn');
+            if (cardIndex === 0 || cardIndex === totalQuestions + 1) {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+            
+            updateProgress();
+        }
+
+        function nextCard() {
+            if (currentCard < totalQuestions + 1) {
+                currentCard++;
+                showCard(currentCard);
+            }
+        }
+
+        function previousCard() {
+            if (currentCard > 0) {
+                currentCard--;
+                showCard(currentCard);
+            }
+        }
+
+        function selectOption(questionNumber, value, element) {
+            // Limpiar selecciones previas
+            element.parentNode.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Marcar la opción seleccionada
+            element.classList.add('selected');
+            
+            // Guardar respuesta
+            responses[questionNumber] = value;
+            
+            // Auto-avance después de 150ms
+            setTimeout(() => {
+                if (questionNumber === totalQuestions) {
+                    // Si es la última pregunta, mostrar resultados
+                    showResults();
+                } else {
+                    // Si no, continuar con la siguiente pregunta
+                    nextCard();
+                }
+            }, 150);
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (responses[i] !== undefined) {
+                    totalScore += responses[i];
+                }
+            }
+            return totalScore;
+        }
+
+        function getInterpretation(score) {
+            if (score <= 7) {
+                return {
+                    level: "Sin depresión",
+                    severity: "severity-low",
+                    description: "Puntuación dentro del rango normal. No se evidencian síntomas depresivos clínicamente significativos.",
+                    clinical: "El paciente no presenta criterios para depresión clínica según esta escala. Considerar como evaluación basal o seguimiento de mejoría terapéutica."
+                };
+            } else if (score <= 13) {
+                return {
+                    level: "Depresión Leve",
+                    severity: "severity-mild",
+                    description: "Presencia de síntomas depresivos leves que pueden requerir intervención clínica.",
+                    clinical: "Síntomas depresivos de intensidad leve. Considerar intervenciones psicoterapéuticas, monitoreo estrecho y evaluación de factores psicosociales."
+                };
+            } else if (score <= 18) {
+                return {
+                    level: "Depresión Moderada",
+                    severity: "severity-moderate",
+                    description: "Depresión de intensidad moderada con impacto funcional significativo.",
+                    clinical: "Requiere intervención terapéutica activa. Considerar psicoterapia estructurada y/o farmacoterapia según criterio clínico y preferencias del paciente."
+                };
+            } else if (score <= 22) {
+                return {
+                    level: "Depresión Severa",
+                    severity: "severity-severe",
+                    description: "Depresión severa con deterioro funcional marcado que requiere tratamiento intensivo.",
+                    clinical: "Indicación clara de tratamiento farmacológico y psicoterapéutico. Evaluación de riesgo suicida y necesidad de seguimiento frecuente."
+                };
+            } else {
+                return {
+                    level: "Depresión Muy Severa",
+                    severity: "severity-very-severe",
+                    description: "Depresión de máxima severidad con alto riesgo de complicaciones y deterioro funcional grave.",
+                    clinical: "Requiere tratamiento intensivo inmediato. Considerar hospitalización si hay riesgo suicida. Evaluación urgente de seguridad del paciente."
+                };
+            }
+        }
+
+        function getAlerts() {
+            let alerts = [];
+            
+            // Alert for suicide risk (Item 3)
+            if (responses[3] >= 3) {
+                alerts.push({
+                    title: "⚠️ ALERTA: Riesgo Suicida Elevado",
+                    message: "El paciente presenta ideas o intentos suicidas. Requiere evaluación urgente de riesgo y medidas de seguridad inmediatas."
+                });
+            }
+            
+            // Alert for severe psychotic features (Item 2)
+            if (responses[2] >= 3) {
+                alerts.push({
+                    title: "⚠️ ALERTA: Síntomas Psicóticos",
+                    message: "Presencia de ideas delirantes de culpabilidad o alucinaciones. Considerar evaluación psiquiátrica especializada."
+                });
+            }
+            
+            // Alert for severe functional impairment (Item 7)
+            if (responses[7] >= 3) {
+                alerts.push({
+                    title: "⚠️ ALERTA: Deterioro Funcional Severo",
+                    message: "Marcado deterioro en el funcionamiento laboral/social. Evaluar necesidad de incapacidad temporal o ajustes laborales."
+                });
+            }
+            
+            // Alert for severe psychomotor symptoms (Item 8)
+            if (responses[8] >= 3) {
+                alerts.push({
+                    title: "⚠️ ALERTA: Inhibición Psicomotora Severa",
+                    message: "Grave enlentecimiento psicomotor. Considerar evaluación neurológica diferencial y monitoreo estrecho."
+                });
+            }
+
+            return alerts;
+        }
+
+        function getClinicalRecommendations(score) {
+            let recommendations = [];
+            
+            if (score <= 7) {
+                recommendations = [
+                    "Reevaluación en seguimientos rutinarios",
+                    "Mantener factores protectores identificados",
+                    "Educación sobre síntomas de recaída si hay historia previa"
+                ];
+            } else if (score <= 13) {
+                recommendations = [
+                    "Psicoeducación sobre depresión y opciones terapéuticas",
+                    "Consideración de psicoterapia (TCC, TIP, TAC)",
+                    "Evaluación de factores estresantes psicosociales",
+                    "Seguimiento clínico en 2-4 semanas",
+                    "Promoción de actividades placenteras y ejercicio"
+                ];
+            } else if (score <= 18) {
+                recommendations = [
+                    "Indicación de psicoterapia estructurada",
+                    "Evaluación de criterios para farmacoterapia",
+                    "Exploración de antecedentes familiares y personales",
+                    "Seguimiento clínico semanal inicialmente",
+                    "Evaluación de red de apoyo social",
+                    "Considerar evaluación por psiquiatría"
+                ];
+            } else if (score <= 22) {
+                recommendations = [
+                    "Indicación clara de tratamiento farmacológico",
+                    "Psicoterapia intensiva complementaria",
+                    "Evaluación semanal con escalas de severidad",
+                    "Monitoreo de efectos adversos medicamentosos",
+                    "Evaluación de cumplimiento terapéutico",
+                    "Coordinación con psiquiatría especializada"
+                ];
+            } else {
+                recommendations = [
+                    "Tratamiento farmacológico intensivo inmediato",
+                    "Evaluación de criterios de hospitalización",
+                    "Seguimiento clínico frecuente (2-3 veces/semana)",
+                    "Activación de red de apoyo familiar/social",
+                    "Protocolo de seguridad para riesgo suicida",
+                    "Consideración de terapias adyuvantes (TEC si indicado)",
+                    "Derivación urgente a psiquiatría especializada"
+                ];
+            }
+            
+            return recommendations;
+        }
+
+        function showResults() {
+            const totalScore = calculateScore();
+            const interpretation = getInterpretation(totalScore);
+            const alerts = getAlerts();
+            const recommendations = getClinicalRecommendations(totalScore);
+            
+            // Mostrar puntuación
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('severity-level').textContent = interpretation.level;
+            
+            // Aplicar color según severidad
+            const interpretationBox = document.getElementById('interpretation-box');
+            interpretationBox.className = `interpretation ${interpretation.severity}`;
+            
+            // Mostrar interpretación
+            document.getElementById('interpretation-text').innerHTML = `
+                <strong>${interpretation.description}</strong><br><br>
+                <strong>Consideraciones clínicas:</strong> ${interpretation.clinical}
+            `;
+            
+            // Mostrar alertas si las hay
+            const alertsSection = document.getElementById('alerts-section');
+            if (alerts.length > 0) {
+                alertsSection.innerHTML = alerts.map(alert => `
+                    <div class="alert-box">
+                        <h4>${alert.title}</h4>
+                        <p>${alert.message}</p>
+                    </div>
+                `).join('');
+            } else {
+                alertsSection.innerHTML = '';
+            }
+            
+            // Mostrar recomendaciones
+            const recommendationsList = document.getElementById('recommendations-list');
+            recommendationsList.innerHTML = recommendations.map(rec => `<li>${rec}</li>`).join('');
+            
+            // Mostrar card de resultados
+            currentCard = totalQuestions + 1;
+            showCard(currentCard);
+        }
+
+        function exportToPDF() {
+            const resultsCard = document.getElementById('card-results');
+            const originalDisplay = resultsCard.style.display;
+            
+            // Asegurar que la card esté visible
+            resultsCard.style.display = 'block';
+            
+            // Crear un elemento temporal para la impresión
+            const printContent = resultsCard.cloneNode(true);
+            const printWindow = window.open('', '_blank');
+            
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Resultados HDRS-17</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                padding: 20px;
+                                background: white;
+                            }
+                            .card-header {
+                                background: linear-gradient(135deg, #29A98C, #112F33);
+                                color: white;
+                                padding: 20px;
+                                border-radius: 15px;
+                                margin-bottom: 25px;
+                                text-align: center;
+                            }
+                            .score-display {
+                                background: linear-gradient(135deg, #29A98C, #112F33);
+                                color: white;
+                                padding: 20px;
+                                border-radius: 15px;
+                                text-align: center;
+                                margin: 20px 0;
+                            }
+                            .interpretation {
+                                background: rgba(255, 255, 255, 0.8);
+                                padding: 20px;
+                                border-radius: 15px;
+                                margin: 20px 0;
+                                border-left: 5px solid #29A98C;
+                            }
+                            .alert-box {
+                                background: rgba(245, 101, 101, 0.1);
+                                border: 2px solid #f56565;
+                                border-radius: 10px;
+                                padding: 15px;
+                                margin: 15px 0;
+                                color: #742a2a;
+                            }
+                            .clinical-recommendations {
+                                background: rgba(72, 187, 120, 0.1);
+                                border-left: 4px solid #48bb78;
+                                padding: 20px;
+                                border-radius: 10px;
+                                margin: 20px 0;
+                            }
+                            .action-buttons { display: none; }
+                            .score { font-size: 36px; font-weight: bold; margin: 10px 0; }
+                            h1, h2, h3 { color: #112F33; }
+                            ul { margin-left: 20px; }
+                            li { margin-bottom: 8px; line-height: 1.5; }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent.outerHTML}
+                        <div style="margin-top: 30px; text-align: center; color: #666; font-size: 12px;">
+                            Generado el ${new Date().toLocaleString('es-ES')} | Escala de Hamilton para la Depresión (HDRS-17)
+                        </div>
+                    </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+            
+            resultsCard.style.display = originalDisplay;
+        }
+
+        function exportToImage() {
+            // Para dispositivos móviles y tablets, usar una implementación simplificada
+            if (/iPhone|iPad|Android/i.test(navigator.userAgent)) {
+                alert('Para capturar en dispositivos móviles:\n1. Toma una captura de pantalla\n2. O usa la función "Imprimir > Guardar como PDF" del navegador');
+                return;
+            }
+            
+            // Implementación básica para navegadores de escritorio
+            const resultsCard = document.getElementById('card-results');
+            
+            // Crear un canvas temporal
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Configurar el canvas
+            canvas.width = 800;
+            canvas.height = 1000;
+            
+            // Fondo
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Texto básico con los resultados
+            ctx.fillStyle = '#112F33';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('Resultados HDRS-17', 50, 50);
+            
+            ctx.font = '18px Arial';
+            ctx.fillText(`Puntuación Total: ${document.getElementById('total-score').textContent}`, 50, 100);
+            ctx.fillText(`Nivel: ${document.getElementById('severity-level').textContent}`, 50, 130);
+            
+            // Crear enlace de descarga
+            const link = document.createElement('a');
+            link.download = `HDRS17_resultados_${new Date().toISOString().split('T')[0]}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function newEvaluation() {
+            if (confirm('¿Está seguro que desea iniciar una nueva evaluación? Se perderán los datos actuales.')) {
+                currentCard = 0;
+                responses = {};
+                
+                // Limpiar todas las selecciones
+                document.querySelectorAll('.option.selected').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                showCard(0);
+            }
+        }
+
+        // Inicialización
+        showCard(0);
+        updateProgress();
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' && currentCard > 0) {
+                previousCard();
+            } else if (e.key === 'ArrowRight' && currentCard < totalQuestions + 1) {
+                nextCard();
+            }
+        });
+    </script>
+</body>
+</html>

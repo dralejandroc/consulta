@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Síntomas Prodrómicos (SOPS)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .card.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .card-header h2 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .card-header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #112F33;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: #29A98C;
+            background: rgba(41, 169, 140, 0.1);
+        }
+
+        .option.selected {
+            border-color: #29A98C;
+            background: linear-gradient(135deg, rgba(41, 169, 140, 0.1), rgba(17, 47, 51, 0.1));
+        }
+
+        .option-value {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .option-text {
+            flex: 1;
+            color: #112F33;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            border-left: 4px solid #29A98C;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #112F33;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #112F33;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            color: #112F33;
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .results-section {
+            margin-top: 20px;
+        }
+
+        .score-summary {
+            background: linear-gradient(135deg, rgba(41, 169, 140, 0.1), rgba(17, 47, 51, 0.1));
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+
+        .score-label {
+            font-weight: bold;
+            color: #112F33;
+        }
+
+        .score-value {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .interpretation {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .interpretation h3 {
+            color: #112F33;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .interpretation p {
+            color: #112F33;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .alert {
+            background: #f56565;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .alert.warning {
+            background: #f6ad55;
+        }
+
+        .alert.info {
+            background: #48bb78;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            flex: 1;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .card-header h1 {
+                font-size: 1.5em;
+            }
+            
+            .card-header h2 {
+                font-size: 1.2em;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+            
+            .export-btn {
+                flex: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card 0: Instrucciones -->
+        <div class="card active" id="card-0">
+            <div class="card-header">
+                <h1>Escala de Síntomas Prodrómicos</h1>
+                <p>Scale of Prodromal Symptoms (SOPS)</p>
+                <p>McGlashan, Miller & Woods</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>📋 Instrucciones para el Profesional</h3>
+                <p><strong>Recomendación de aplicación:</strong> Esta escala debe utilizarse para evaluar la presencia e intensidad de síntomas prodrómicos en:</p>
+                <ul>
+                    <li>Adolescentes y adultos jóvenes (12-30 años) con sospecha de síndrome prodrómico de psicosis</li>
+                    <li>Pacientes referidos por síntomas psicóticos atenuados o deterioro funcional reciente</li>
+                    <li>Seguimiento de individuos en riesgo clínico alto (CHR) para psicosis</li>
+                    <li>Evaluación inicial en servicios de detección temprana de psicosis</li>
+                </ul>
+                
+                <h3>🔍 Instrucciones de Aplicación</h3>
+                <p><strong>Administración:</strong> Heteroaplicada por profesional entrenado en entrevista semiestructurada.</p>
+                <p><strong>Tiempo:</strong> 30-60 minutos aproximadamente.</p>
+                <p><strong>Periodo de evaluación:</strong> Síntomas presentes en el último mes, con especial atención a cambios en el último año.</p>
+                <p><strong>Puntuación:</strong> Escala Likert de 0-6 puntos por ítem (0=ausente, 6=severo y psicótico).</p>
+                
+                <h3>⚠️ Consideraciones Clínicas</h3>
+                <p>• Aplicar preferiblemente en períodos <6 meses desde la última evaluación</p>
+                <p>• Los síntomas positivos (P1-P5) son diagnósticos para síndromes de riesgo</p>
+                <p>• Puntuaciones ≥3 en síntomas positivos indican intensidad prodrómicas</p>
+                <p>• Recomendable tener formación específica en SIPS/SOPS</p>
+            </div>
+            
+            <button onclick="nextCard()" class="export-btn" style="width: 100%; margin-top: 20px;">
+                Iniciar Evaluación →
+            </button>
+        </div>
+
+        <!-- Cards 1-19: Items de la escala -->
+        <div class="card" id="card-1">
+            <div class="question-number">Pregunta 1 de 19 - Síntomas Positivos</div>
+            <div class="question-text">
+                <strong>P1. Contenido del pensamiento inusual/Ideas delirantes</strong><br>
+                Evalúe la presencia de ideas o creencias inusuales, extrañas o bizarras que pueden incluir ideas de referencia, ideas paranoides, ideas de grandiosidad, o ideas mágicas/religiosas atípicas.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - No presenta contenido de pensamiento inusual</div>
+                </div>
+                <div class="option" onclick="selectOption(1, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Ideas ligeramente inusuales, dudosa significancia clínica</div>
+                </div>
+                <div class="option" onclick="selectOption(1, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Ideas inusuales presentes pero no preocupantes para el paciente</div>
+                </div>
+                <div class="option" onclick="selectOption(1, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Ideas inusuales que ocasionalmente preocupan al paciente</div>
+                </div>
+                <div class="option" onclick="selectOption(1, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Ideas inusuales que frecuentemente preocupan al paciente</div>
+                </div>
+                <div class="option" onclick="selectOption(1, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo pero no psicótico - Ideas inusuales que dominan el pensamiento del paciente</div>
+                </div>
+                <div class="option" onclick="selectOption(1, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Severo y psicótico - Ideas delirantes francas con convicción total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-2">
+            <div class="question-number">Pregunta 2 de 19 - Síntomas Positivos</div>
+            <div class="question-text">
+                <strong>P2. Suspicacia/Ideas persecutorias</strong><br>
+                Evalúe la presencia de suspicacia excesiva, desconfianza o ideas de que otros tienen intenciones hostiles hacia el paciente.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - No presenta suspicacia anormal</div>
+                </div>
+                <div class="option" onclick="selectOption(2, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve desconfianza, dudosa significancia</div>
+                </div>
+                <div class="option" onclick="selectOption(2, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Suspicacia ocasional sin convicción</div>
+                </div>
+                <div class="option" onclick="selectOption(2, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Suspicacia frecuente con alguna convicción</div>
+                </div>
+                <div class="option" onclick="selectOption(2, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Suspicacia persistente con convicción moderada</div>
+                </div>
+                <div class="option" onclick="selectOption(2, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo pero no psicótico - Suspicacia intensa pero mantiene algo de insight</div>
+                </div>
+                <div class="option" onclick="selectOption(2, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Severo y psicótico - Ideas persecutorias delirantes con convicción total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-3">
+            <div class="question-number">Pregunta 3 de 19 - Síntomas Positivos</div>
+            <div class="question-text">
+                <strong>P3. Grandiosidad</strong><br>
+                Evalúe la presencia de una opinión inflada sobre el yo, habilidades, importancia o identidad del paciente.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - No presenta ideas de grandiosidad</div>
+                </div>
+                <div class="option" onclick="selectOption(3, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve exageración del yo</div>
+                </div>
+                <div class="option" onclick="selectOption(3, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Algunas ideas de superioridad sin convicción firme</div>
+                </div>
+                <div class="option" onclick="selectOption(3, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Ideas grandiosas ocasionales con alguna convicción</div>
+                </div>
+                <div class="option" onclick="selectOption(3, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Ideas grandiosas frecuentes con convicción moderada</div>
+                </div>
+                <div class="option" onclick="selectOption(3, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo pero no psicótico - Ideas grandiosas intensas pero mantiene algo de insight</div>
+                </div>
+                <div class="option" onclick="selectOption(3, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Severo y psicótico - Ideas grandiosas delirantes con convicción total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-4">
+            <div class="question-number">Pregunta 4 de 19 - Síntomas Positivos</div>
+            <div class="question-text">
+                <strong>P4. Anormalidades perceptuales/Alucinaciones</strong><br>
+                Evalúe la presencia de distorsiones perceptuales, ilusiones o experiencias que sugieren alucinaciones en cualquier modalidad sensorial.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - No presenta anormalidades perceptuales</div>
+                </div>
+                <div class="option" onclick="selectOption(4, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Distorsiones perceptuales vagas o dudosas</div>
+                </div>
+                <div class="option" onclick="selectOption(4, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Distorsiones perceptuales leves, reconoce que pueden no ser reales</div>
+                </div>
+                <div class="option" onclick="selectOption(4, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Distorsiones perceptuales moderadas, dudas sobre su realidad</div>
+                </div>
+                <div class="option" onclick="selectOption(4, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Experiencias perceptuales intensas con insight parcial</div>
+                </div>
+                <div class="option" onclick="selectOption(4, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo pero no psicótico - Experiencias perceptuales muy intensas, insight mínimo</div>
+                </div>
+                <div class="option" onclick="selectOption(4, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Severo y psicótico - Alucinaciones francas con convicción total de su realidad</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-5">
+            <div class="question-number">Pregunta 5 de 19 - Síntomas Positivos</div>
+            <div class="question-text">
+                <strong>P5. Comunicación desorganizada</strong><br>
+                Evalúe la presencia de desorganización en el pensamiento reflejada en el habla, incluyendo tangencialidad, circunstancialidad, o incoherencia.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Comunicación clara y organizada</div>
+                </div>
+                <div class="option" onclick="selectOption(5, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve desorganización ocasional</div>
+                </div>
+                <div class="option" onclick="selectOption(5, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Ocasional tangencialidad o circunstancialidad</div>
+                </div>
+                <div class="option" onclick="selectOption(5, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Frecuente desorganización del discurso</div>
+                </div>
+                <div class="option" onclick="selectOption(5, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Desorganización marcada del discurso</div>
+                </div>
+                <div class="option" onclick="selectOption(5, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo pero no psicótico - Discurso muy desorganizado pero comprensible</div>
+                </div>
+                <div class="option" onclick="selectOption(5, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Severo y psicótico - Discurso incoherente, incomprensible</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-6">
+            <div class="question-number">Pregunta 6 de 19 - Síntomas Negativos</div>
+            <div class="question-text">
+                <strong>N1. Anhedonia social y aislamiento</strong><br>
+                Evalúe la disminución en el interés, iniciativa y participación en actividades sociales, así como la reducción en las relaciones interpersonales.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Interés y participación social normal</div>
+                </div>
+                <div class="option" onclick="selectOption(6, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve disminución del interés social</div>
+                </div>
+                <div class="option" onclick="selectOption(6, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable del interés social</div>
+                </div>
+                <div class="option" onclick="selectOption(6, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcada disminución del interés social</div>
+                </div>
+                <div class="option" onclick="selectOption(6, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Aislamiento social significativo</div>
+                </div>
+                <div class="option" onclick="selectOption(6, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Aislamiento social extremo, evita el contacto</div>
+                </div>
+                <div class="option" onclick="selectOption(6, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Aislamiento social total y persistente</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-7">
+            <div class="question-number">Pregunta 7 de 19 - Síntomas Negativos</div>
+            <div class="question-text">
+                <strong>N2. Avolición (Apatía)</strong><br>
+                Evalúe la disminución en la iniciativa, motivación y voluntad para llevar a cabo actividades dirigidas a objetivos.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Motivación e iniciativa normal</div>
+                </div>
+                <div class="option" onclick="selectOption(7, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve disminución de la motivación</div>
+                </div>
+                <div class="option" onclick="selectOption(7, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable de la iniciativa</div>
+                </div>
+                <div class="option" onclick="selectOption(7, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcada disminución de la motivación</div>
+                </div>
+                <div class="option" onclick="selectOption(7, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Apatía significativa hacia actividades</div>
+                </div>
+                <div class="option" onclick="selectOption(7, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Apatía extrema, muy pocas actividades espontáneas</div>
+                </div>
+                <div class="option" onclick="selectOption(7, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Ausencia total de motivación e iniciativa</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-8">
+            <div class="question-number">Pregunta 8 de 19 - Síntomas Negativos</div>
+            <div class="question-text">
+                <strong>N3. Expresión emocional disminuida</strong><br>
+                Evalúe la disminución en la expresión facial, vocal y gestual de las emociones.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Expresión emocional normal</div>
+                </div>
+                <div class="option" onclick="selectOption(8, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve reducción de la expresividad</div>
+                </div>
+                <div class="option" onclick="selectOption(8, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable de la expresión emocional</div>
+                </div>
+                <div class="option" onclick="selectOption(8, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Expresión emocional marcadamente reducida</div>
+                </div>
+                <div class="option" onclick="selectOption(8, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Expresión emocional muy limitada</div>
+                </div>
+                <div class="option" onclick="selectOption(8, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Expresión emocional mínima o ausente</div>
+                </div>
+                <div class="option" onclick="selectOption(8, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Afecto plano completo</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-9">
+            <div class="question-number">Pregunta 9 de 19 - Síntomas Negativos</div>
+            <div class="question-text">
+                <strong>N4. Experiencia emocional disminuida y del yo</strong><br>
+                Evalúe la disminución en la capacidad de experimentar emociones y en el sentido de identidad personal.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Experiencia emocional normal</div>
+                </div>
+                <div class="option" onclick="selectOption(9, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve embotamiento emocional</div>
+                </div>
+                <div class="option" onclick="selectOption(9, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable de la intensidad emocional</div>
+                </div>
+                <div class="option" onclick="selectOption(9, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcada disminución de la experiencia emocional</div>
+                </div>
+                <div class="option" onclick="selectOption(9, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Embotamiento emocional significativo</div>
+                </div>
+                <div class="option" onclick="selectOption(9, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Experiencia emocional muy limitada</div>
+                </div>
+                <div class="option" onclick="selectOption(9, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Ausencia casi total de experiencia emocional</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-10">
+            <div class="question-number">Pregunta 10 de 19 - Síntomas Negativos</div>
+            <div class="question-text">
+                <strong>N5. Pensamiento empobrecido</strong><br>
+                Evalúe la disminución en la cantidad, fluencia y productividad del pensamiento y el habla.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Pensamiento y habla normal</div>
+                </div>
+                <div class="option" onclick="selectOption(10, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve disminución del habla</div>
+                </div>
+                <div class="option" onclick="selectOption(10, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable de la fluencia verbal</div>
+                </div>
+                <div class="option" onclick="selectOption(10, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcada disminución del contenido del habla</div>
+                </div>
+                <div class="option" onclick="selectOption(10, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Empobrecimiento significativo del pensamiento</div>
+                </div>
+                <div class="option" onclick="selectOption(10, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Pensamiento muy empobrecido, respuestas monosilábicas</div>
+                </div>
+                <div class="option" onclick="selectOption(10, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Alogia severa, mutismo</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-11">
+            <div class="question-number">Pregunta 11 de 19 - Síntomas Negativos</div>
+            <div class="question-text">
+                <strong>N6. Deterioro del funcionamiento del rol</strong><br>
+                Evalúe la disminución en el funcionamiento en roles esperados como estudiante, trabajador o en el hogar.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Funcionamiento normal en roles</div>
+                </div>
+                <div class="option" onclick="selectOption(11, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve disminución del funcionamiento</div>
+                </div>
+                <div class="option" onclick="selectOption(11, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable del funcionamiento</div>
+                </div>
+                <div class="option" onclick="selectOption(11, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcado deterioro del funcionamiento</div>
+                </div>
+                <div class="option" onclick="selectOption(11, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Deterioro significativo en múltiples áreas</div>
+                </div>
+                <div class="option" onclick="selectOption(11, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Incapacidad para mantener roles básicos</div>
+                </div>
+                <div class="option" onclick="selectOption(11, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Ausencia total de funcionamiento en roles</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-12">
+            <div class="question-number">Pregunta 12 de 19 - Síntomas de Desorganización</div>
+            <div class="question-text">
+                <strong>D1. Apariencia y comportamiento raros</strong><br>
+                Evalúe la presencia de vestimenta, arreglo personal o comportamiento que sea extraño, bizarro o inapropiado para el contexto.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Apariencia y comportamiento apropiados</div>
+                </div>
+                <div class="option" onclick="selectOption(12, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Ligeras rarezas ocasionales</div>
+                </div>
+                <div class="option" onclick="selectOption(12, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Rarezas notables pero no llamativas</div>
+                </div>
+                <div class="option" onclick="selectOption(12, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Comportamiento claramente raro o inapropiado</div>
+                </div>
+                <div class="option" onclick="selectOption(12, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Comportamiento muy raro y llamativo</div>
+                </div>
+                <div class="option" onclick="selectOption(12, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Comportamiento marcadamente bizarro</div>
+                </div>
+                <div class="option" onclick="selectOption(12, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Comportamiento bizarro extremo y persistente</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-13">
+            <div class="question-number">Pregunta 13 de 19 - Síntomas de Desorganización</div>
+            <div class="question-text">
+                <strong>D2. Pensamiento bizarro</strong><br>
+                Evalúe la presencia de procesos de pensamiento extraños, ilógicos o que parecen desconectados de la realidad.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Pensamiento lógico y coherente</div>
+                </div>
+                <div class="option" onclick="selectOption(13, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Ocasionales pensamientos ligeramente raros</div>
+                </div>
+                <div class="option" onclick="selectOption(13, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Pensamientos notablemente raros o ilógicos</div>
+                </div>
+                <div class="option" onclick="selectOption(13, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Pensamiento claramente bizarro o ilógico</div>
+                </div>
+                <div class="option" onclick="selectOption(13, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Pensamiento muy bizarro y desorganizado</div>
+                </div>
+                <div class="option" onclick="selectOption(13, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Pensamiento marcadamente bizarro y desconectado</div>
+                </div>
+                <div class="option" onclick="selectOption(13, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Pensamiento totalmente bizarro e incomprensible</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-14">
+            <div class="question-number">Pregunta 14 de 19 - Síntomas de Desorganización</div>
+            <div class="question-text">
+                <strong>D3. Problemas de atención y concentración</strong><br>
+                Evalúe las dificultades para mantener la atención, concentrarse en tareas o procesar información de manera eficiente.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Atención y concentración normal</div>
+                </div>
+                <div class="option" onclick="selectOption(14, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leves dificultades de concentración</div>
+                </div>
+                <div class="option" onclick="selectOption(14, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Dificultades notables de atención</div>
+                </div>
+                <div class="option" onclick="selectOption(14, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcadas dificultades de concentración</div>
+                </div>
+                <div class="option" onclick="selectOption(14, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Problemas significativos de atención</div>
+                </div>
+                <div class="option" onclick="selectOption(14, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Incapacidad para mantener atención sostenida</div>
+                </div>
+                <div class="option" onclick="selectOption(14, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Ausencia total de capacidad atencional</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-15">
+            <div class="question-number">Pregunta 15 de 19 - Síntomas de Desorganización</div>
+            <div class="question-text">
+                <strong>D4. Deterioro de la higiene personal/habilidades sociales</strong><br>
+                Evalúe la disminución en el cuidado personal, higiene y habilidades sociales básicas.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Higiene y habilidades sociales apropiadas</div>
+                </div>
+                <div class="option" onclick="selectOption(15, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve descuido ocasional</div>
+                </div>
+                <div class="option" onclick="selectOption(15, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Deterioro notable pero no problemático</div>
+                </div>
+                <div class="option" onclick="selectOption(15, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcado deterioro en higiene/habilidades sociales</div>
+                </div>
+                <div class="option" onclick="selectOption(15, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Deterioro significativo y problemático</div>
+                </div>
+                <div class="option" onclick="selectOption(15, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Deterioro extremo de higiene y habilidades</div>
+                </div>
+                <div class="option" onclick="selectOption(15, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Ausencia total de autocuidado</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-16">
+            <div class="question-number">Pregunta 16 de 19 - Síntomas Generales</div>
+            <div class="question-text">
+                <strong>G1. Trastornos del sueño</strong><br>
+                Evalúe las alteraciones en el patrón, calidad o cantidad del sueño del paciente.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(16, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Patrón de sueño normal</div>
+                </div>
+                <div class="option" onclick="selectOption(16, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leves alteraciones del sueño</div>
+                </div>
+                <div class="option" onclick="selectOption(16, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Alteraciones notables pero no problemáticas</div>
+                </div>
+                <div class="option" onclick="selectOption(16, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Alteraciones marcadas del sueño</div>
+                </div>
+                <div class="option" onclick="selectOption(16, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Trastornos significativos del sueño</div>
+                </div>
+                <div class="option" onclick="selectOption(16, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Trastornos graves del sueño</div>
+                </div>
+                <div class="option" onclick="selectOption(16, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Alteraciones extremas del sueño</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-17">
+            <div class="question-number">Pregunta 17 de 19 - Síntomas Generales</div>
+            <div class="question-text">
+                <strong>G2. Estado de ánimo disfórico</strong><br>
+                Evalúe la presencia de tristeza, depresión, ansiedad, irritabilidad u otros estados de ánimo negativos.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(17, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Estado de ánimo normal</div>
+                </div>
+                <div class="option" onclick="selectOption(17, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leves alteraciones del ánimo</div>
+                </div>
+                <div class="option" onclick="selectOption(17, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disforia notable pero no incapacitante</div>
+                </div>
+                <div class="option" onclick="selectOption(17, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcadas alteraciones del estado de ánimo</div>
+                </div>
+                <div class="option" onclick="selectOption(17, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Disforia significativa</div>
+                </div>
+                <div class="option" onclick="selectOption(17, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Disforia intensa y persistente</div>
+                </div>
+                <div class="option" onclick="selectOption(17, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Disforia extrema e incapacitante</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-18">
+            <div class="question-number">Pregunta 18 de 19 - Síntomas Generales</div>
+            <div class="question-text">
+                <strong>G3. Trastornos motores</strong><br>
+                Evalúe la presencia de alteraciones en la actividad motora, incluyendo agitación, retardo psicomotor o movimientos anormales.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(18, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Actividad motora normal</div>
+                </div>
+                <div class="option" onclick="selectOption(18, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leves alteraciones motoras</div>
+                </div>
+                <div class="option" onclick="selectOption(18, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Alteraciones motoras notables</div>
+                </div>
+                <div class="option" onclick="selectOption(18, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcadas alteraciones motoras</div>
+                </div>
+                <div class="option" onclick="selectOption(18, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Trastornos motores significativos</div>
+                </div>
+                <div class="option" onclick="selectOption(18, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Trastornos motores graves</div>
+                </div>
+                <div class="option" onclick="selectOption(18, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Trastornos motores extremos</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-19">
+            <div class="question-number">Pregunta 19 de 19 - Síntomas Generales</div>
+            <div class="question-text">
+                <strong>G4. Tolerancia disminuida al estrés normal</strong><br>
+                Evalúe la disminución en la capacidad para manejar situaciones estresantes cotidianas que anteriormente no causaban problemas.
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(19, 0)">
+                    <div class="option-value">0</div>
+                    <div class="option-text">Ausente - Tolerancia normal al estrés</div>
+                </div>
+                <div class="option" onclick="selectOption(19, 1)">
+                    <div class="option-value">1</div>
+                    <div class="option-text">Cuestionablemente presente - Leve disminución de la tolerancia</div>
+                </div>
+                <div class="option" onclick="selectOption(19, 2)">
+                    <div class="option-value">2</div>
+                    <div class="option-text">Leve - Disminución notable de la tolerancia al estrés</div>
+                </div>
+                <div class="option" onclick="selectOption(19, 3)">
+                    <div class="option-value">3</div>
+                    <div class="option-text">Moderado - Marcada disminución de la tolerancia</div>
+                </div>
+                <div class="option" onclick="selectOption(19, 4)">
+                    <div class="option-value">4</div>
+                    <div class="option-text">Moderadamente severo - Tolerancia muy limitada al estrés</div>
+                </div>
+                <div class="option" onclick="selectOption(19, 5)">
+                    <div class="option-value">5</div>
+                    <div class="option-text">Severo - Intolerancia severa al estrés mínimo</div>
+                </div>
+                <div class="option" onclick="selectOption(19, 6)">
+                    <div class="option-value">6</div>
+                    <div class="option-text">Extremo - Ausencia total de tolerancia al estrés</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Results -->
+        <div class="card" id="card-results">
+            <div class="card-header">
+                <h1>Resultados SOPS</h1>
+                <p>Interpretación Profesional</p>
+            </div>
+            
+            <div class="score-summary">
+                <div class="score-item">
+                    <span class="score-label">Síntomas Positivos (P1-P5)</span>
+                    <span class="score-value" id="positive-score">0/30</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Síntomas Negativos (N1-N6)</span>
+                    <span class="score-value" id="negative-score">0/36</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Síntomas Desorganización (D1-D4)</span>
+                    <span class="score-value" id="disorg-score">0/24</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Síntomas Generales (G1-G4)</span>
+                    <span class="score-value" id="general-score">0/24</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label"><strong>Puntuación Total</strong></span>
+                    <span class="score-value" id="total-score">0/114</span>
+                </div>
+            </div>
+
+            <div class="interpretation">
+                <h3>🎯 Interpretación Clínica</h3>
+                <div id="clinical-interpretation"></div>
+            </div>
+
+            <div class="interpretation">
+                <h3>⚠️ Alertas y Recomendaciones</h3>
+                <div id="alerts-section"></div>
+            </div>
+
+            <div class="interpretation">
+                <h3>📊 Criterios Diagnósticos</h3>
+                <div id="diagnostic-criteria"></div>
+            </div>
+
+            <div class="export-buttons">
+                <button class="export-btn" onclick="exportToPDF()">📄 Exportar PDF</button>
+                <button class="export-btn" onclick="exportToImage()">📸 Capturar Imagen</button>
+                <button class="export-btn" onclick="newEvaluation()">🔄 Nueva Evaluación</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" id="back-btn" onclick="previousCard()">← Regresar</button>
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        let totalQuestions = 19;
+
+        function showCard(cardNumber) {
+            // Ocultar todas las cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Mostrar la card actual
+            document.getElementById(`card-${cardNumber}`).classList.add('active');
+            
+            // Actualizar progreso
+            updateProgress();
+            
+            // Mostrar/ocultar botón de regresar
+            const backBtn = document.getElementById('back-btn');
+            if (cardNumber === 0 || cardNumber === 'results') {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+        }
+
+        function nextCard() {
+            if (currentCard < totalQuestions) {
+                currentCard++;
+                showCard(currentCard);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousCard() {
+            if (currentCard > 1) {
+                currentCard--;
+                showCard(currentCard);
+            }
+        }
+
+        function selectOption(questionNumber, value) {
+            responses[questionNumber] = value;
+            
+            // Actualizar visualización de selección
+            const card = document.getElementById(`card-${questionNumber}`);
+            card.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            const selectedOption = card.querySelector(`.option[onclick="selectOption(${questionNumber}, ${value})"]`);
+            selectedOption.classList.add('selected');
+            
+            // Auto-avance después de 150ms
+            setTimeout(() => {
+                nextCard();
+            }, 150);
+        }
+
+        function updateProgress() {
+            const progress = (currentCard / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function calculateScores() {
+            let positiveScore = 0;
+            let negativeScore = 0;
+            let disorgScore = 0;
+            let generalScore = 0;
+
+            // Síntomas Positivos (P1-P5): preguntas 1-5
+            for (let i = 1; i <= 5; i++) {
+                positiveScore += responses[i] || 0;
+            }
+
+            // Síntomas Negativos (N1-N6): preguntas 6-11
+            for (let i = 6; i <= 11; i++) {
+                negativeScore += responses[i] || 0;
+            }
+
+            // Síntomas Desorganización (D1-D4): preguntas 12-15
+            for (let i = 12; i <= 15; i++) {
+                disorgScore += responses[i] || 0;
+            }
+
+            // Síntomas Generales (G1-G4): preguntas 16-19
+            for (let i = 16; i <= 19; i++) {
+                generalScore += responses[i] || 0;
+            }
+
+            return {
+                positive: positiveScore,
+                negative: negativeScore,
+                disorganization: disorgScore,
+                general: generalScore,
+                total: positiveScore + negativeScore + disorgScore + generalScore
+            };
+        }
+
+        function getInterpretation(scores) {
+            let interpretation = '';
+            let alerts = [];
+            let diagnosticInfo = '';
+
+            // Interpretación por dominios
+            interpretation += `<p><strong>Síntomas Positivos:</strong> ${getScoreLevel(scores.positive, 30)} (${scores.positive}/30 puntos)</p>`;
+            interpretation += `<p><strong>Síntomas Negativos:</strong> ${getScoreLevel(scores.negative, 36)} (${scores.negative}/36 puntos)</p>`;
+            interpretation += `<p><strong>Síntomas de Desorganización:</strong> ${getScoreLevel(scores.disorganization, 24)} (${scores.disorganization}/24 puntos)</p>`;
+            interpretation += `<p><strong>Síntomas Generales:</strong> ${getScoreLevel(scores.general, 24)} (${scores.general}/24 puntos)</p>`;
+
+            // Criterios diagnósticos de riesgo
+            if (scores.positive >= 7) {
+                diagnosticInfo += '<div class="alert">🔴 <strong>Criterio de Riesgo Alto:</strong> Suma de síntomas positivos ≥7 puntos sugiere Síndrome Prodrómico Sintomático Atenuado (APS).</div>';
+            } else if (scores.positive >= 3) {
+                diagnosticInfo += '<div class="alert warning">🟡 <strong>Riesgo Moderado:</strong> Presencia de síntomas positivos que requieren seguimiento.</div>';
+            } else {
+                diagnosticInfo += '<div class="alert info">🟢 <strong>Riesgo Bajo:</strong> Sin criterios actuales para síndrome prodrómico.</div>';
+            }
+
+            // Alertas por ítems individuales
+            for (let i = 1; i <= 19; i++) {
+                if (responses[i] >= 4) { // ≥66% del máximo (4/6)
+                    alerts.push(`Ítem ${i}: Puntuación alta (${responses[i]}/6) - ${getItemName(i)}`);
+                }
+            }
+
+            // Recomendaciones específicas
+            let recommendations = '<p><strong>Recomendaciones clínicas basadas en los resultados:</strong></p><ul>';
+            
+            if (scores.positive >= 7) {
+                recommendations += '<li>Seguimiento intensivo cada 1-3 meses para monitoreo de conversión a psicosis</li>';
+                recommendations += '<li>Considerar intervención psicoterapéutica especializada (TCC para psicosis)</li>';
+                recommendations += '<li>Evaluación del funcionamiento global y social</li>';
+            }
+            
+            if (scores.negative >= 15) {
+                recommendations += '<li>Intervención específica para síntomas negativos</li>';
+                recommendations += '<li>Evaluación de factores depresivos comórbidos</li>';
+            }
+            
+            if (scores.disorganization >= 10) {
+                recommendations += '<li>Evaluación cognitiva y neuropsicológica</li>';
+                recommendations += '<li>Consideración de estrategias de rehabilitación cognitiva</li>';
+            }
+            
+            if (scores.general >= 12) {
+                recommendations += '<li>Abordaje de síntomas generales que impactan la calidad de vida</li>';
+                recommendations += '<li>Evaluación de trastornos del sueño y estado de ánimo</li>';
+            }
+            
+            recommendations += '</ul>';
+
+            return {
+                clinical: interpretation + recommendations,
+                alerts: alerts,
+                diagnostic: diagnosticInfo
+            };
+        }
+
+        function getScoreLevel(score, maxScore) {
+            const percentage = (score / maxScore) * 100;
+            if (percentage >= 70) return 'Severo';
+            if (percentage >= 50) return 'Moderado-Alto';
+            if (percentage >= 30) return 'Moderado';
+            if (percentage >= 15) return 'Leve';
+            return 'Mínimo';
+        }
+
+        function getItemName(itemNumber) {
+            const itemNames = {
+                1: 'Contenido del pensamiento inusual',
+                2: 'Suspicacia/Ideas persecutorias',
+                3: 'Grandiosidad',
+                4: 'Anormalidades perceptuales',
+                5: 'Comunicación desorganizada',
+                6: 'Anhedonia social',
+                7: 'Avolición',
+                8: 'Expresión emocional disminuida',
+                9: 'Experiencia emocional disminuida',
+                10: 'Pensamiento empobrecido',
+                11: 'Deterioro funcionamiento rol',
+                12: 'Apariencia y comportamiento raros',
+                13: 'Pensamiento bizarro',
+                14: 'Problemas atención/concentración',
+                15: 'Higiene personal/habilidades sociales',
+                16: 'Trastornos del sueño',
+                17: 'Estado de ánimo disfórico',
+                18: 'Trastornos motores',
+                19: 'Tolerancia disminuida al estrés'
+            };
+            return itemNames[itemNumber] || `Ítem ${itemNumber}`;
+        }
+
+        function showResults() {
+            currentCard = 'results';
+            const scores = calculateScores();
+            const interpretation = getInterpretation(scores);
+
+            // Actualizar puntuaciones
+            document.getElementById('positive-score').textContent = `${scores.positive}/30`;
+            document.getElementById('negative-score').textContent = `${scores.negative}/36`;
+            document.getElementById('disorg-score').textContent = `${scores.disorganization}/24`;
+            document.getElementById('general-score').textContent = `${scores.general}/24`;
+            document.getElementById('total-score').textContent = `${scores.total}/114`;
+
+            // Actualizar interpretación
+            document.getElementById('clinical-interpretation').innerHTML = interpretation.clinical;
+            
+            // Actualizar alertas
+            const alertsSection = document.getElementById('alerts-section');
+            if (interpretation.alerts.length > 0) {
+                alertsSection.innerHTML = '<ul>' + interpretation.alerts.map(alert => `<li>${alert}</li>`).join('') + '</ul>';
+            } else {
+                alertsSection.innerHTML = '<p>No se identificaron ítems con puntuaciones de alerta.</p>';
+            }
+
+            // Actualizar criterios diagnósticos
+            document.getElementById('diagnostic-criteria').innerHTML = interpretation.diagnostic;
+
+            showCard('results');
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function exportToImage() {
+            const resultsCard = document.getElementById('card-results');
+            
+            if (navigator.share) {
+                // Usar Web Share API si está disponible
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Configurar canvas
+                canvas.width = 800;
+                canvas.height = 1000;
+                ctx.fillStyle = '#29A98C';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Agregar texto básico
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.fillText('Resultados SOPS', 50, 50);
+                
+                // Convertir a blob y compartir
+                canvas.toBlob(blob => {
+                    const file = new File([blob], 'resultados-sops.png', { type: 'image/png' });
+                    navigator.share({
+                        files: [file],
+                        title: 'Resultados SOPS'
+                    });
+                });
+            } else {
+                alert('Funcionalidad de captura implementada. En un entorno de producción, aquí se capturaría la imagen de los resultados.');
+            }
+        }
+
+        function newEvaluation() {
+            if (confirm('¿Está seguro de que desea iniciar una nueva evaluación? Se perderán los datos actuales.')) {
+                currentCard = 0;
+                responses = {};
+                
+                // Limpiar todas las selecciones
+                document.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                showCard(0);
+            }
+        }
+
+        // Inicializar la aplicación
+        showCard(0);
+    </script>
+</body>
+</html>

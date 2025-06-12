@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala para la Evaluación del Delirium Revisada-98</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .card h3 {
+            color: #112F33;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #29A98C;
+        }
+
+        .instructions h4 {
+            color: #29A98C;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .instructions ul {
+            color: #112F33;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            font-size: 1.2em;
+        }
+
+        .question-text {
+            color: #112F33;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(41, 169, 140, 0.3);
+            border-radius: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            color: #112F33;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(41, 169, 140, 0.1);
+            border-color: #29A98C;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border-color: #29A98C;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+        }
+
+        .back-button.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .interpretation {
+            background: rgba(41, 169, 140, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #29A98C;
+            text-align: left;
+        }
+
+        .interpretation h4 {
+            color: #29A98C;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .interpretation p, .interpretation ul {
+            color: #112F33;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .interpretation ul {
+            padding-left: 20px;
+        }
+
+        .alert-high {
+            background: rgba(245, 101, 101, 0.1);
+            border-left: 5px solid #f56565;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .alert-high h5 {
+            color: #742a2a;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .alert-high p {
+            color: #742a2a;
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(41, 169, 140, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #112F33, #29A98C);
+        }
+
+        .severity-level {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .severity-minimal {
+            background: rgba(72, 187, 120, 0.2);
+            color: #22543d;
+        }
+
+        .severity-mild {
+            background: rgba(246, 173, 85, 0.2);
+            color: #9c4221;
+        }
+
+        .severity-moderate {
+            background: rgba(237, 137, 54, 0.2);
+            color: #9c4221;
+        }
+
+        .severity-severe {
+            background: rgba(245, 101, 101, 0.2);
+            color: #742a2a;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .card h2 {
+                font-size: 1.5em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card 0: Instrucciones -->
+        <div class="card active" id="card-0">
+            <h2>Escala para la Evaluación del Delirium Revisada-98</h2>
+            <h3>(DRS-R-98)</h3>
+            
+            <div class="instructions">
+                <h4>Instrucciones para el Profesional</h4>
+                <ul>
+                    <li><strong>Período de evaluación:</strong> Síntomas presentes en las últimas 24 horas</li>
+                    <li><strong>Administración:</strong> Heteroaplicada por profesional de salud mental</li>
+                    <li><strong>Duración:</strong> Aproximadamente 15-20 minutos</li>
+                    <li><strong>Fuentes de información:</strong> Observación directa, entrevista con paciente, informantes colaterales (familia, enfermería)</li>
+                </ul>
+            </div>
+
+            <div class="instructions">
+                <h4>Estructura de la Escala</h4>
+                <ul>
+                    <li><strong>Ítems 1-13:</strong> Síntomas de gravedad (0-3 puntos cada uno)</li>
+                    <li><strong>Ítems 14-16:</strong> Ítems diagnósticos (0-2 o 0-3 puntos)</li>
+                    <li><strong>Puntuación de gravedad:</strong> Suma de ítems 1-13 (0-39 puntos)</li>
+                    <li><strong>Punto de corte sugerido:</strong> ≥15 puntos para delirium</li>
+                </ul>
+            </div>
+
+            <div class="instructions">
+                <h4>Criterios de Puntuación</h4>
+                <ul>
+                    <li><strong>0:</strong> Ausente o normal</li>
+                    <li><strong>1:</strong> Leve</li>
+                    <li><strong>2:</strong> Moderado</li>
+                    <li><strong>3:</strong> Grave o severo</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="startAssessment()">Iniciar Evaluación</button>
+            </div>
+        </div>
+
+        <!-- Card 1: Ciclo sueño-vigilia -->
+        <div class="card" id="card-1">
+            <div class="question-number">1</div>
+            <div class="question-text">
+                <strong>Ciclo sueño-vigilia</strong><br>
+                Evalúe la alteración del patrón normal de sueño-vigilia en las últimas 24 horas
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0)">
+                    <strong>0 - Normal:</strong> Patrón de sueño-vigilia normal para la edad
+                </div>
+                <div class="option" onclick="selectOption(1, 1)">
+                    <strong>1 - Leve:</strong> Siestas ocasionales durante el día, ligera alteración nocturna
+                </div>
+                <div class="option" onclick="selectOption(1, 2)">
+                    <strong>2 - Moderado:</strong> Inversión parcial día-noche, múltiples siestas diurnas
+                </div>
+                <div class="option" onclick="selectOption(1, 3)">
+                    <strong>3 - Severo:</strong> Inversión completa día-noche o vigilia persistente
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Alteraciones perceptuales -->
+        <div class="card" id="card-2">
+            <div class="question-number">2</div>
+            <div class="question-text">
+                <strong>Alteraciones perceptuales</strong><br>
+                Presencia de ilusiones, alucinaciones o distorsiones perceptuales
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 0)">
+                    <strong>0 - Ausente:</strong> Sin alteraciones perceptuales
+                </div>
+                <div class="option" onclick="selectOption(2, 1)">
+                    <strong>1 - Leve:</strong> Ilusiones ocasionales o distorsiones perceptuales leves
+                </div>
+                <div class="option" onclick="selectOption(2, 2)">
+                    <strong>2 - Moderado:</strong> Alucinaciones/ilusiones episódicas pero reconocidas como irreales
+                </div>
+                <div class="option" onclick="selectOption(2, 3)">
+                    <strong>3 - Severo:</strong> Alucinaciones/ilusiones frecuentes, vividas, creídas como reales
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Ideas delirantes -->
+        <div class="card" id="card-3">
+            <div class="question-number">3</div>
+            <div class="question-text">
+                <strong>Ideas delirantes</strong><br>
+                Presencia de creencias falsas, ideas delirantes o paranoia
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 0)">
+                    <strong>0 - Ausente:</strong> Sin ideas delirantes
+                </div>
+                <div class="option" onclick="selectOption(3, 1)">
+                    <strong>1 - Leve:</strong> Ideas suspicaces o interpretaciones erróneas ocasionales
+                </div>
+                <div class="option" onclick="selectOption(3, 2)">
+                    <strong>2 - Moderado:</strong> Ideas delirantes mal estructuradas, episódicas
+                </div>
+                <div class="option" onclick="selectOption(3, 3)">
+                    <strong>3 - Severo:</strong> Ideas delirantes bien formadas, persistentes, sistematizadas
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Labilidad afectiva -->
+        <div class="card" id="card-4">
+            <div class="question-number">4</div>
+            <div class="question-text">
+                <strong>Labilidad afectiva</strong><br>
+                Cambios rápidos e inapropiados del estado de ánimo
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 0)">
+                    <strong>0 - Normal:</strong> Afecto apropiado y estable
+                </div>
+                <div class="option" onclick="selectOption(4, 1)">
+                    <strong>1 - Leve:</strong> Cambios de ánimo ocasionales, algo inapropiados
+                </div>
+                <div class="option" onclick="selectOption(4, 2)">
+                    <strong>2 - Moderado:</strong> Cambios frecuentes de ánimo, claramente inapropiados
+                </div>
+                <div class="option" onclick="selectOption(4, 3)">
+                    <strong>3 - Severo:</strong> Labilidad marcada, cambios extremos y rápidos
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 5: Lenguaje -->
+        <div class="card" id="card-5">
+            <div class="question-number">5</div>
+            <div class="question-text">
+                <strong>Lenguaje</strong><br>
+                Alteraciones en la producción, comprensión o coherencia del lenguaje
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 0)">
+                    <strong>0 - Normal:</strong> Lenguaje claro, coherente, apropiado
+                </div>
+                <div class="option" onclick="selectOption(5, 1)">
+                    <strong>1 - Leve:</strong> Ocasionales dificultades para encontrar palabras o expresarse
+                </div>
+                <div class="option" onclick="selectOption(5, 2)">
+                    <strong>2 - Moderado:</strong> Lenguaje notablemente alterado, disártrico o incoherente
+                </div>
+                <div class="option" onclick="selectOption(5, 3)">
+                    <strong>3 - Severo:</strong> Lenguaje muy alterado, incomprensible o mutismo
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 6: Proceso de pensamiento -->
+        <div class="card" id="card-6">
+            <div class="question-number">6</div>
+            <div class="question-text">
+                <strong>Proceso de pensamiento</strong><br>
+                Organización, coherencia y lógica del pensamiento
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 0)">
+                    <strong>0 - Normal:</strong> Pensamiento organizado, lógico, coherente
+                </div>
+                <div class="option" onclick="selectOption(6, 1)">
+                    <strong>1 - Leve:</strong> Ocasional pérdida del hilo del pensamiento o tangencialidad
+                </div>
+                <div class="option" onclick="selectOption(6, 2)">
+                    <strong>2 - Moderado:</strong> Pensamiento frecuentemente desorganizado o ilógico
+                </div>
+                <div class="option" onclick="selectOption(6, 3)">
+                    <strong>3 - Severo:</strong> Pensamiento muy desorganizado, incoherente, fragmentado
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 7: Agitación motora -->
+        <div class="card" id="card-7">
+            <div class="question-number">7</div>
+            <div class="question-text">
+                <strong>Agitación motora</strong><br>
+                Actividad motora excesiva, inquietud, hiperactividad
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 0)">
+                    <strong>0 - Ausente:</strong> Actividad motora normal
+                </div>
+                <div class="option" onclick="selectOption(7, 1)">
+                    <strong>1 - Leve:</strong> Inquietud ocasional, ligera agitación
+                </div>
+                <div class="option" onclick="selectOption(7, 2)">
+                    <strong>2 - Moderado:</strong> Agitación frecuente, dificultad para permanecer quieto
+                </div>
+                <div class="option" onclick="selectOption(7, 3)">
+                    <strong>3 - Severo:</strong> Agitación constante, hiperactividad extrema, requiere contención
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 8: Retardo motor -->
+        <div class="card" id="card-8">
+            <div class="question-number">8</div>
+            <div class="question-text">
+                <strong>Retardo motor</strong><br>
+                Disminución de la actividad motora, lentitud, estupor
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0)">
+                    <strong>0 - Ausente:</strong> Actividad motora normal
+                </div>
+                <div class="option" onclick="selectOption(8, 1)">
+                    <strong>1 - Leve:</strong> Lentitud ocasional en movimientos o respuestas
+                </div>
+                <div class="option" onclick="selectOption(8, 2)">
+                    <strong>2 - Moderado:</strong> Lentitud notable, disminución marcada de actividad
+                </div>
+                <div class="option" onclick="selectOption(8, 3)">
+                    <strong>3 - Severo:</strong> Estupor, actividad motora mínima o ausente
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 9: Orientación -->
+        <div class="card" id="card-9">
+            <div class="question-number">9</div>
+            <div class="question-text">
+                <strong>Orientación</strong><br>
+                Orientación en tiempo, lugar y persona
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 0)">
+                    <strong>0 - Normal:</strong> Orientado en tiempo, lugar y persona
+                </div>
+                <div class="option" onclick="selectOption(9, 1)">
+                    <strong>1 - Leve:</strong> Desorientación en una esfera (tiempo, lugar o persona)
+                </div>
+                <div class="option" onclick="selectOption(9, 2)">
+                    <strong>2 - Moderado:</strong> Desorientación en dos esferas
+                </div>
+                <div class="option" onclick="selectOption(9, 3)">
+                    <strong>3 - Severo:</strong> Desorientación en las tres esferas
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 10: Atención -->
+        <div class="card" id="card-10">
+            <div class="question-number">10</div>
+            <div class="question-text">
+                <strong>Atención</strong><br>
+                Capacidad para dirigir, enfocar, sostener y cambiar la atención
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0)">
+                    <strong>0 - Normal:</strong> Atención normal, capaz de concentrarse
+                </div>
+                <div class="option" onclick="selectOption(10, 1)">
+                    <strong>1 - Leve:</strong> Distractibilidad ocasional, dificultad leve para concentrarse
+                </div>
+                <div class="option" onclick="selectOption(10, 2)">
+                    <strong>2 - Moderado:</strong> Atención claramente alterada, distractibilidad marcada
+                </div>
+                <div class="option" onclick="selectOption(10, 3)">
+                    <strong>3 - Severo:</strong> Incapacidad para concentrarse, atención muy alterada
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 11: Memoria a corto plazo -->
+        <div class="card" id="card-11">
+            <div class="question-number">11</div>
+            <div class="question-text">
+                <strong>Memoria a corto plazo</strong><br>
+                Capacidad para registrar y recordar información nueva
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 0)">
+                    <strong>0 - Normal:</strong> Registra y recuerda información nueva normalmente
+                </div>
+                <div class="option" onclick="selectOption(11, 1)">
+                    <strong>1 - Leve:</strong> Dificultad ocasional para recordar información reciente
+                </div>
+                <div class="option" onclick="selectOption(11, 2)">
+                    <strong>2 - Moderado:</strong> Dificultad notable para recordar información nueva
+                </div>
+                <div class="option" onclick="selectOption(11, 3)">
+                    <strong>3 - Severo:</strong> Incapacidad para recordar información nueva
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 12: Memoria a largo plazo -->
+        <div class="card" id="card-12">
+            <div class="question-number">12</div>
+            <div class="question-text">
+                <strong>Memoria a largo plazo</strong><br>
+                Capacidad para recordar información remota o pasada
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 0)">
+                    <strong>0 - Normal:</strong> Recuerda información pasada normalmente
+                </div>
+                <div class="option" onclick="selectOption(12, 1)">
+                    <strong>1 - Leve:</strong> Dificultad ocasional para recordar información remota
+                </div>
+                <div class="option" onclick="selectOption(12, 2)">
+                    <strong>2 - Moderado:</strong> Dificultad notable para recordar información pasada
+                </div>
+                <div class="option" onclick="selectOption(12, 3)">
+                    <strong>3 - Severo:</strong> Incapacidad para recordar información remota
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 13: Habilidad visuoespacial -->
+        <div class="card" id="card-13">
+            <div class="question-number">13</div>
+            <div class="question-text">
+                <strong>Habilidad visuoespacial</strong><br>
+                Capacidad para percibir relaciones espaciales y copiar dibujos
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 0)">
+                    <strong>0 - Normal:</strong> Habilidades visuoespaciales normales
+                </div>
+                <div class="option" onclick="selectOption(13, 1)">
+                    <strong>1 - Leve:</strong> Dificultad ocasional con tareas visuoespaciales
+                </div>
+                <div class="option" onclick="selectOption(13, 2)">
+                    <strong>2 - Moderado:</strong> Dificultad notable con tareas visuoespaciales
+                </div>
+                <div class="option" onclick="selectOption(13, 3)">
+                    <strong>3 - Severo:</strong> Incapacidad para realizar tareas visuoespaciales simples
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 14: Inicio temporal de síntomas -->
+        <div class="card" id="card-14">
+            <div class="question-number">14</div>
+            <div class="question-text">
+                <strong>Inicio temporal de síntomas (Ítem diagnóstico)</strong><br>
+                Patrón de inicio de los síntomas actuales
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 0)">
+                    <strong>0:</strong> Sin cambio significativo del estado basal
+                </div>
+                <div class="option" onclick="selectOption(14, 1)">
+                    <strong>1:</strong> Cambio gradual del estado basal (durante semanas)
+                </div>
+                <div class="option" onclick="selectOption(14, 2)">
+                    <strong>2:</strong> Cambio agudo del estado basal (dentro de días)
+                </div>
+                <div class="option" onclick="selectOption(14, 3)">
+                    <strong>3:</strong> Cambio hiperagudo del estado basal (dentro de horas)
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 15: Fluctuación de síntomas -->
+        <div class="card" id="card-15">
+            <div class="question-number">15</div>
+            <div class="question-text">
+                <strong>Fluctuación de síntomas (Ítem diagnóstico)</strong><br>
+                Variabilidad de los síntomas durante el día
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 0)">
+                    <strong>0:</strong> Sin fluctuación o síntomas no presentes
+                </div>
+                <div class="option" onclick="selectOption(15, 1)">
+                    <strong>1:</strong> Fluctuación leve durante 24 horas
+                </div>
+                <div class="option" onclick="selectOption(15, 2)">
+                    <strong>2:</strong> Fluctuación marcada durante 24 horas
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 16: Condición física causal -->
+        <div class="card" id="card-16">
+            <div class="question-number">16</div>
+            <div class="question-text">
+                <strong>Condición física causal (Ítem diagnóstico)</strong><br>
+                Evidencia de causa física/médica para los síntomas
+            </div>
+            <div class="options">
+                <div class="option" onclick="selectOption(16, 0)">
+                    <strong>0:</strong> Sin evidencia de causa física
+                </div>
+                <div class="option" onclick="selectOption(16, 1)">
+                    <strong>1:</strong> Posible relación con condición física
+                </div>
+                <div class="option" onclick="selectOption(16, 2)">
+                    <strong>2:</strong> Probable relación con condición física
+                </div>
+                <div class="option" onclick="selectOption(16, 3)">
+                    <strong>3:</strong> Relación temporal clara con condición física
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Results -->
+        <div class="card" id="card-results">
+            <div class="results-container">
+                <h2>Resultados DRS-R-98</h2>
+                
+                <div class="score-display">
+                    <div>Puntuación de Gravedad: <span id="severity-score">0</span>/39</div>
+                    <div>Puntuación Total: <span id="total-score">0</span>/46</div>
+                </div>
+
+                <div id="severity-level"></div>
+
+                <div class="interpretation">
+                    <h4>Interpretación Clínica</h4>
+                    <div id="interpretation-text"></div>
+                </div>
+
+                <div id="high-alerts"></div>
+
+                <div class="interpretation">
+                    <h4>Recomendaciones Profesionales</h4>
+                    <div id="recommendations"></div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn" onclick="exportToPDF()">📄 Exportar PDF</button>
+                    <button class="btn" onclick="captureResults()">📸 Capturar</button>
+                    <button class="btn btn-secondary" onclick="newAssessment()">🔄 Nueva Evaluación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-bar" id="progress-bar"></div>
+    <button class="back-button" id="back-button" onclick="goBack()">←</button>
+
+    <script>
+        let currentCard = 0;
+        let responses = {};
+        const totalQuestions = 16;
+
+        function startAssessment() {
+            currentCard = 1;
+            showCard(currentCard);
+            updateProgress();
+            updateBackButton();
+        }
+
+        function showCard(cardNumber) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(`card-${cardNumber}`).classList.add('active');
+        }
+
+        function selectOption(question, value) {
+            responses[question] = value;
+            
+            // Visual feedback
+            const currentCardElement = document.getElementById(`card-${question}`);
+            const options = currentCardElement.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            event.target.classList.add('selected');
+
+            // Auto advance
+            setTimeout(() => {
+                if (currentCard < totalQuestions) {
+                    currentCard++;
+                    showCard(currentCard);
+                    updateProgress();
+                    updateBackButton();
+                } else {
+                    calculateScore();
+                    showResults();
+                }
+            }, 150);
+        }
+
+        function goBack() {
+            if (currentCard > 1) {
+                currentCard--;
+                showCard(currentCard);
+                updateProgress();
+                updateBackButton();
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentCard / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function updateBackButton() {
+            const backButton = document.getElementById('back-button');
+            if (currentCard > 1 && currentCard <= totalQuestions) {
+                backButton.classList.add('visible');
+            } else {
+                backButton.classList.remove('visible');
+            }
+        }
+
+        function calculateScore() {
+            // Puntuación de gravedad (ítems 1-13)
+            let severityScore = 0;
+            for (let i = 1; i <= 13; i++) {
+                severityScore += responses[i] || 0;
+            }
+
+            // Puntuación total (ítems 1-16)
+            let totalScore = severityScore;
+            for (let i = 14; i <= 16; i++) {
+                totalScore += responses[i] || 0;
+            }
+
+            return { severityScore, totalScore };
+        }
+
+        function getInterpretation(severityScore, totalScore) {
+            let level, interpretation, recommendations;
+
+            if (severityScore < 8) {
+                level = { class: 'severity-minimal', text: 'Mínimo/Normal' };
+                interpretation = `
+                    <p><strong>Interpretación:</strong> Los síntomas evaluados están dentro del rango normal o son mínimos. No se observan signos significativos de delirium según los criterios de la DRS-R-98.</p>
+                    <ul>
+                        <li>Puntuación por debajo del punto de corte establecido para delirium</li>
+                        <li>Funcionamiento cognitivo dentro de parámetros normales</li>
+                        <li>Ausencia de alteraciones significativas en el estado de conciencia</li>
+                    </ul>
+                `;
+                recommendations = `
+                    <ul>
+                        <li>Continuar con vigilancia clínica habitual</li>
+                        <li>Documentar el estado cognitivo basal para futuras comparaciones</li>
+                        <li>Mantener medidas preventivas generales en población de riesgo</li>
+                    </ul>
+                `;
+            } else if (severityScore < 15) {
+                level = { class: 'severity-mild', text: 'Leve' };
+                interpretation = `
+                    <p><strong>Interpretación:</strong> Se observan síntomas leves que pueden indicar alteraciones cognitivas incipientes o factores de riesgo para desarrollo de delirium.</p>
+                    <ul>
+                        <li>Síntomas presentes pero por debajo del punto de corte diagnóstico</li>
+                        <li>Posible estado prodrómico o delirium subsindrómico</li>
+                        <li>Requiere evaluación de factores de riesgo y monitoreo estrecho</li>
+                    </ul>
+                `;
+                recommendations = `
+                    <ul>
+                        <li>Intensificar vigilancia clínica y reevaluación frecuente</li>
+                        <li>Identificar y modificar factores de riesgo precipitantes</li>
+                        <li>Implementar medidas preventivas no farmacológicas</li>
+                        <li>Considerar evaluación neuropsicológica complementaria</li>
+                    </ul>
+                `;
+            } else if (severityScore < 25) {
+                level = { class: 'severity-moderate', text: 'Moderado' };
+                interpretation = `
+                    <p><strong>Interpretación:</strong> Síntomas compatibles con delirium establecido según criterios DRS-R-98. Se observan alteraciones significativas en múltiples dominios cognitivos.</p>
+                    <ul>
+                        <li>Puntuación por encima del punto de corte diagnóstico (≥15)</li>
+                        <li>Delirium establecido con síntomas moderados</li>
+                        <li>Alteraciones en atención, conciencia y cognición</li>
+                        <li>Requiere intervención inmediata y manejo especializado</li>
+                    </ul>
+                `;
+                recommendations = `
+                    <ul>
+                        <li>Iniciar manejo integral del delirium inmediatamente</li>
+                        <li>Identificar y tratar causas subyacentes específicas</li>
+                        <li>Implementar medidas de seguridad y supervisión continua</li>
+                        <li>Considerar intervenciones farmacológicas si está indicado</li>
+                        <li>Monitoreo neurológico y médico estrecho</li>
+                    </ul>
+                `;
+            } else {
+                level = { class: 'severity-severe', text: 'Severo' };
+                interpretation = `
+                    <p><strong>Interpretación:</strong> Delirium severo con síntomas graves que comprometen significativamente el funcionamiento y la seguridad del paciente.</p>
+                    <ul>
+                        <li>Puntuación muy elevada indicando delirium severo</li>
+                        <li>Alto riesgo de complicaciones médicas y psiquiátricas</li>
+                        <li>Alteraciones graves en múltiples dominios cognitivos</li>
+                        <li>Requiere manejo inmediato en ambiente controlado</li>
+                    </ul>
+                `;
+                recommendations = `
+                    <ul>
+                        <li>Manejo inmediato en unidad de cuidados especializados</li>
+                        <li>Evaluación médica integral urgente para causas tratables</li>
+                        <li>Implementar medidas de seguridad máximas</li>
+                        <li>Considerar interconsulta psiquiátrica especializada</li>
+                        <li>Monitoreo continuo de signos vitales y estado neurológico</li>
+                        <li>Planificación de cuidados a largo plazo</li>
+                    </ul>
+                `;
+            }
+
+            return { level, interpretation, recommendations };
+        }
+
+        function getHighAlerts() {
+            const alerts = [];
+            const alertThreshold = 2; // ≥66% del máximo (2/3 puntos)
+
+            const itemNames = [
+                '', 'Ciclo sueño-vigilia', 'Alteraciones perceptuales', 'Ideas delirantes',
+                'Labilidad afectiva', 'Lenguaje', 'Proceso de pensamiento',
+                'Agitación motora', 'Retardo motor', 'Orientación',
+                'Atención', 'Memoria a corto plazo', 'Memoria a largo plazo',
+                'Habilidad visuoespacial', 'Inicio temporal', 'Fluctuación',
+                'Condición física causal'
+            ];
+
+            for (let i = 1; i <= 16; i++) {
+                if (responses[i] >= alertThreshold) {
+                    alerts.push({
+                        item: itemNames[i],
+                        score: responses[i],
+                        number: i
+                    });
+                }
+            }
+
+            return alerts;
+        }
+
+        function showResults() {
+            const { severityScore, totalScore } = calculateScore();
+            const { level, interpretation, recommendations } = getInterpretation(severityScore, totalScore);
+            const alerts = getHighAlerts();
+
+            document.getElementById('severity-score').textContent = severityScore;
+            document.getElementById('total-score').textContent = totalScore;
+
+            // Mostrar nivel de severidad
+            const severityLevelDiv = document.getElementById('severity-level');
+            severityLevelDiv.innerHTML = `<div class="severity-level ${level.class}">Nivel: ${level.text}</div>`;
+
+            // Mostrar interpretación
+            document.getElementById('interpretation-text').innerHTML = interpretation;
+
+            // Mostrar recomendaciones
+            document.getElementById('recommendations').innerHTML = recommendations;
+
+            // Mostrar alertas
+            const alertsDiv = document.getElementById('high-alerts');
+            if (alerts.length > 0) {
+                let alertsHTML = '<div class="alert-high"><h5>⚠️ Ítems con Puntuación Alta</h5>';
+                alerts.forEach(alert => {
+                    alertsHTML += `<p><strong>Ítem ${alert.number} - ${alert.item}:</strong> Puntuación ${alert.score}/3</p>`;
+                });
+                alertsHTML += '</div>';
+                alertsDiv.innerHTML = alertsHTML;
+            } else {
+                alertsDiv.innerHTML = '';
+            }
+
+            showCard('results');
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('back-button').classList.remove('visible');
+        }
+
+        function exportToPDF() {
+            const resultsCard = document.getElementById('card-results');
+            const printContent = resultsCard.cloneNode(true);
+            
+            // Remover botones de acción del contenido a imprimir
+            const actionButtons = printContent.querySelector('.action-buttons');
+            if (actionButtons) {
+                actionButtons.remove();
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Resultados DRS-R-98</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .score-display { background: #29A98C; color: white; padding: 20px; margin: 20px 0; }
+                            .interpretation { background: #f5f5f5; padding: 15px; margin: 15px 0; border-left: 5px solid #29A98C; }
+                            .alert-high { background: #ffebee; padding: 15px; margin: 15px 0; border-left: 5px solid #f56565; }
+                            .severity-level { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin: 10px 0; }
+                            .severity-minimal { background: rgba(72, 187, 120, 0.2); color: #22543d; }
+                            .severity-mild { background: rgba(246, 173, 85, 0.2); color: #9c4221; }
+                            .severity-moderate { background: rgba(237, 137, 54, 0.2); color: #9c4221; }
+                            .severity-severe { background: rgba(245, 101, 101, 0.2); color: #742a2a; }
+                            h2, h4 { color: #29A98C; }
+                            h5 { color: #742a2a; }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent.innerHTML}
+                        <div style="margin-top: 30px; font-size: 0.9em; color: #666;">
+                            <p>Evaluación realizada el: ${new Date().toLocaleDateString('es-ES')} a las ${new Date().toLocaleTimeString('es-ES')}</p>
+                            <p>Escala para la Evaluación del Delirium Revisada-98 (DRS-R-98)</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function captureResults() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const resultsCard = document.getElementById('card-results');
+            
+            // Crear una imagen temporal de los resultados
+            html2canvas(resultsCard, {
+                canvas: canvas,
+                backgroundColor: '#ffffff',
+                scale: 2
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `DRS-R-98_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }).catch(() => {
+                // Fallback simple si html2canvas no está disponible
+                alert('Para capturar los resultados, use la opción "Exportar PDF" o tome una captura de pantalla manualmente.');
+            });
+        }
+
+        function newAssessment() {
+            currentCard = 0;
+            responses = {};
+            showCard(0);
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('back-button').classList.remove('visible');
+            
+            // Limpiar selecciones anteriores
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            updateBackButton();
+        });
+    </script>
+</body>
+</html>
