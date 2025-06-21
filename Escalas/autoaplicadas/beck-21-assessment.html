@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Depresión de Beck-21 (BDI-21)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #29A98C 0%, #112F33 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h1 {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card h2 {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #112F33;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .option:hover {
+            border-color: #29A98C;
+            background: rgba(41, 169, 140, 0.05);
+        }
+
+        .option.selected {
+            border-color: #29A98C;
+            background: linear-gradient(135deg, rgba(41, 169, 140, 0.1), rgba(17, 47, 51, 0.1));
+            color: #112F33;
+            font-weight: 500;
+        }
+
+        .instructions {
+            background: rgba(41, 169, 140, 0.1);
+            border-left: 4px solid #29A98C;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #29A98C, #112F33);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .result-content {
+            text-align: left;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .score-range {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .interpretation {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #29A98C;
+        }
+
+        .interpretation h3 {
+            color: #112F33;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .interpretation p {
+            margin-bottom: 12px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .alert-high {
+            background: #ffebee;
+            border-left: 4px solid #f56565;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert-high h4 {
+            color: #742a2a;
+            margin-bottom: 8px;
+        }
+
+        .subscales {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .subscale {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #29A98C;
+        }
+
+        .subscale h4 {
+            color: #112F33;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .subscale .score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #29A98C;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: scale(1.05);
+        }
+
+        .medical-button {
+            background: linear-gradient(135deg, #29A98C, #112F33);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 30px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .medical-button:hover {
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .subscales {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card 0: Bienvenida -->
+        <div class="card active" id="card-0">
+            <h1>Inventario de Depresión de Beck-21</h1>
+            <h2>(BDI-21)</h2>
+            
+            <div class="instructions">
+                <strong>Instrucciones:</strong><br><br>
+                Este cuestionario contiene grupos de afirmaciones. Por favor, lea íntegro el grupo de afirmaciones de cada uno de los 21 apartados y escoja la afirmación de cada grupo que mejor describa el modo en que se siente en el tiempo más reciente.
+                <br><br>
+                Marque con una selección el círculo que mejor refleje su situación actual. No hay respuestas correctas o incorrectas. Es importante que sea honesto(a) en sus respuestas.
+                <br><br>
+                La evaluación tomará aproximadamente 10-15 minutos.
+            </div>
+
+            <button class="medical-button" onclick="nextCard()">Comenzar Evaluación</button>
+        </div>
+
+        <!-- Card 1: Estado de ánimo -->
+        <div class="card" id="card-1">
+            <div class="question-number">Pregunta 1 de 21</div>
+            <div class="question-text">Estado de ánimo</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(1, 0, this)">NO me encuentro triste</div>
+                <div class="option" onclick="selectOption(1, 1, this)">Me siento algo triste y deprimido</div>
+                <div class="option" onclick="selectOption(1, 2, this)">Esta tristeza me produce verdaderos sufrimientos</div>
+                <div class="option" onclick="selectOption(1, 2, this)">Tengo SIEMPRE como una pena encima que no me la puedo quitar</div>
+                <div class="option" onclick="selectOption(1, 3, this)">Ya no puedo soportar esta pena</div>
+            </div>
+        </div>
+
+        <!-- Card 2: Pesimismo -->
+        <div class="card" id="card-2">
+            <div class="question-number">Pregunta 2 de 21</div>
+            <div class="question-text">Pesimismo</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(2, 1, this)">Me siento desanimado cuando pienso en el futuro</div>
+                <div class="option" onclick="selectOption(2, 2, this)">Creo que nunca me recuperaré de mis penas</div>
+                <div class="option" onclick="selectOption(2, 0, this)">No soy especialmente pesimista, ni creo que las cosas me vayan a ir mal</div>
+                <div class="option" onclick="selectOption(2, 2, this)">NO espero nada bueno de la vida</div>
+                <div class="option" onclick="selectOption(2, 3, this)">No espero nada. Esto NO tiene remedio</div>
+            </div>
+        </div>
+
+        <!-- Card 3: Sentimiento de fracaso -->
+        <div class="card" id="card-3">
+            <div class="question-number">Pregunta 3 de 21</div>
+            <div class="question-text">Sentimiento de fracaso</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(3, 3, this)">He fracasado TOTALMENTE como persona (padre, madre, marido, hijo, profesional, etc.)</div>
+                <div class="option" onclick="selectOption(3, 1, this)">He tenido MÁS fracasos que la mayoría de la gente</div>
+                <div class="option" onclick="selectOption(3, 2, this)">Siento que he hecho pocas cosas que valgan la pena</div>
+                <div class="option" onclick="selectOption(3, 0, this)">NO me considero fracasado</div>
+                <div class="option" onclick="selectOption(3, 2, this)">Veo mi vida LLENA de fracasos</div>
+            </div>
+        </div>
+
+        <!-- Card 4: Insatisfacción -->
+        <div class="card" id="card-4">
+            <div class="question-number">Pregunta 4 de 21</div>
+            <div class="question-text">Insatisfacción</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(4, 2, this)">Ya nada me llena</div>
+                <div class="option" onclick="selectOption(4, 1, this)">Me encuentro insatisfecho conmigo mismo</div>
+                <div class="option" onclick="selectOption(4, 1, this)">Ya NO me divierte lo que antes me divertía</div>
+                <div class="option" onclick="selectOption(4, 0, this)">NO estoy especialmente insatisfecho</div>
+                <div class="option" onclick="selectOption(4, 3, this)">Estoy HARTO de todo</div>
+            </div>
+        </div>
+
+        <!-- Card 5: Sentimientos de culpa -->
+        <div class="card" id="card-5">
+            <div class="question-number">Pregunta 5 de 21</div>
+            <div class="question-text">Sentimientos de culpa</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(5, 1, this)">A VECES me siento despreciable y mala persona</div>
+                <div class="option" onclick="selectOption(5, 2, this)">Me siento bastante culpable</div>
+                <div class="option" onclick="selectOption(5, 2, this)">Me siento prácticamente todo el tiempo MALA PERSONA y despreciable</div>
+                <div class="option" onclick="selectOption(5, 3, this)">Me siento muy infame (perverso, canalla) y despreciable</div>
+                <div class="option" onclick="selectOption(5, 0, this)">NO me siento culpable</div>
+            </div>
+        </div>
+
+        <!-- Card 6: Sentimiento de castigo -->
+        <div class="card" id="card-6">
+            <div class="question-number">Pregunta 6 de 21</div>
+            <div class="question-text">Sentimiento de castigo</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(6, 1, this)">Presiento que algo malo me puede suceder</div>
+                <div class="option" onclick="selectOption(6, 3, this)">Siento que MEREZCO ser castigado</div>
+                <div class="option" onclick="selectOption(6, 0, this)">NO pienso que esté siendo castigado</div>
+                <div class="option" onclick="selectOption(6, 2, this)">Siento que me están castigando o me castigarán</div>
+                <div class="option" onclick="selectOption(6, 3, this)">QUIERO que me castiguen</div>
+            </div>
+        </div>
+
+        <!-- Card 7: Odio a sí mismo -->
+        <div class="card" id="card-7">
+            <div class="question-number">Pregunta 7 de 21</div>
+            <div class="question-text">Odio a sí mismo</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(7, 1, this)">Estoy descontento conmigo mismo</div>
+                <div class="option" onclick="selectOption(7, 1, this)">NO me aprecio</div>
+                <div class="option" onclick="selectOption(7, 2, this)">Me odio (me desprecio)</div>
+                <div class="option" onclick="selectOption(7, 2, this)">Estoy asqueado de mí</div>
+                <div class="option" onclick="selectOption(7, 0, this)">Estoy satisfecho de mí mismo</div>
+            </div>
+        </div>
+
+        <!-- Card 8: Autoacusación -->
+        <div class="card" id="card-8">
+            <div class="question-number">Pregunta 8 de 21</div>
+            <div class="question-text">Autoacusación</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(8, 0, this)">NO creo ser peor que otros</div>
+                <div class="option" onclick="selectOption(8, 2, this)">Me acuso a mí mismo de todo lo que va mal</div>
+                <div class="option" onclick="selectOption(8, 3, this)">Me siento culpable de TODO lo malo que ocurre</div>
+                <div class="option" onclick="selectOption(8, 2, this)">Siento que tengo MUCHOS y muy graves defectos</div>
+                <div class="option" onclick="selectOption(8, 1, this)">Me critico mucho a causa de mis debilidades y errores</div>
+            </div>
+        </div>
+
+        <!-- Card 9: Impulsos suicidas -->
+        <div class="card" id="card-9">
+            <div class="question-number">Pregunta 9 de 21</div>
+            <div class="question-text">Impulsos suicidas</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(9, 1, this)">Tengo pensamientos de hacerme daño, pero NO llegaría a hacerlo</div>
+                <div class="option" onclick="selectOption(9, 2, this)">Siento que estaría mejor muerto</div>
+                <div class="option" onclick="selectOption(9, 2, this)">Siento que mi familia estaría mejor si yo muriera</div>
+                <div class="option" onclick="selectOption(9, 3, this)">Tengo planes decididos de SUICIDARME</div>
+                <div class="option" onclick="selectOption(9, 2, this)">Me mataría si pudiera</div>
+                <div class="option" onclick="selectOption(9, 0, this)">NO tengo pensamientos de hacerme daño</div>
+            </div>
+        </div>
+
+        <!-- Card 10: Períodos de llanto -->
+        <div class="card" id="card-10">
+            <div class="question-number">Pregunta 10 de 21</div>
+            <div class="question-text">Períodos de llanto</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(10, 0, this)">NO lloro más de lo habitual</div>
+                <div class="option" onclick="selectOption(10, 3, this)">Antes podía llorar; ahora no lloro aunque me sienta MUY mal</div>
+                <div class="option" onclick="selectOption(10, 2, this)">Ahora lloro CONTINUAMENTE. No puedo evitarlo</div>
+                <div class="option" onclick="selectOption(10, 1, this)">Ahora lloro MÁS de lo normal</div>
+            </div>
+        </div>
+
+        <!-- Card 11: Irritabilidad -->
+        <div class="card" id="card-11">
+            <div class="question-number">Pregunta 11 de 21</div>
+            <div class="question-text">Irritabilidad</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(11, 0, this)">NO estoy más irritable que normalmente</div>
+                <div class="option" onclick="selectOption(11, 1, this)">Me irrito con más facilidad que antes</div>
+                <div class="option" onclick="selectOption(11, 3, this)">Me siento irritado todo el tiempo</div>
+                <div class="option" onclick="selectOption(11, 1, this)">Ya no me irrita lo que antes me irritaba</div>
+            </div>
+        </div>
+
+        <!-- Card 12: Aislamiento social -->
+        <div class="card" id="card-12">
+            <div class="question-number">Pregunta 12 de 21</div>
+            <div class="question-text">Aislamiento social</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(12, 3, this)">He perdido TODO mi interés por los demás y no me importan en absoluto</div>
+                <div class="option" onclick="selectOption(12, 1, this)">Me intereso por la gente MENOS que antes</div>
+                <div class="option" onclick="selectOption(12, 0, this)">NO he perdido mi interés por los demás</div>
+                <div class="option" onclick="selectOption(12, 2, this)">He perdido casi todo mi interés por los demás y apenas tengo sentimientos hacia ellos</div>
+            </div>
+        </div>
+
+        <!-- Card 13: Indecisión -->
+        <div class="card" id="card-13">
+            <div class="question-number">Pregunta 13 de 21</div>
+            <div class="question-text">Indecisión</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(13, 1, this)">Ahora estoy inseguro de mí mismo y procuro evitar tomar decisiones</div>
+                <div class="option" onclick="selectOption(13, 0, this)">Tomo mis decisiones igual como siempre</div>
+                <div class="option" onclick="selectOption(13, 3, this)">Ya NO puedo tomar decisiones en absoluto</div>
+                <div class="option" onclick="selectOption(13, 2, this)">NO puedo tomar decisiones SIN ayuda</div>
+            </div>
+        </div>
+
+        <!-- Card 14: Imagen corporal -->
+        <div class="card" id="card-14">
+            <div class="question-number">Pregunta 14 de 21</div>
+            <div class="question-text">Imagen corporal</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(14, 1, this)">Estoy preocupado porque me veo viejo y desmejorado</div>
+                <div class="option" onclick="selectOption(14, 3, this)">Me siento feo y repulsivo</div>
+                <div class="option" onclick="selectOption(14, 0, this)">NO me siento con peor aspecto que antes</div>
+                <div class="option" onclick="selectOption(14, 2, this)">Siento que hay cambios en mi aspecto físico que me hacen parecer DESAGRADABLE (o menos atractivo)</div>
+            </div>
+        </div>
+
+        <!-- Card 15: Capacidad laboral -->
+        <div class="card" id="card-15">
+            <div class="question-number">Pregunta 15 de 21</div>
+            <div class="question-text">Capacidad laboral</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(15, 0, this)">Puedo trabajar tan bien como antes</div>
+                <div class="option" onclick="selectOption(15, 1, this)">Tengo que esforzarme mucho MAS para hacer cualquier cosa</div>
+                <div class="option" onclick="selectOption(15, 3, this)">NO puedo trabajar en nada</div>
+                <div class="option" onclick="selectOption(15, 2, this)">Necesito un esfuerzo extra para empezar a hacer algo</div>
+                <div class="option" onclick="selectOption(15, 1, this)">NO trabajo tan bien como lo hacía antes</div>
+            </div>
+        </div>
+
+        <!-- Card 16: Trastornos del sueño -->
+        <div class="card" id="card-16">
+            <div class="question-number">Pregunta 16 de 21</div>
+            <div class="question-text">Trastornos del sueño</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(16, 0, this)">Duermo tan bien como antes</div>
+                <div class="option" onclick="selectOption(16, 1, this)">Me despierto MÁS cansado por la mañana</div>
+                <div class="option" onclick="selectOption(16, 2, this)">Me despierto unas 2 horas antes de lo normal y me resulta difícil volver a dormir</div>
+                <div class="option" onclick="selectOption(16, 2, this)">Tardo 1 o 2 horas en dormirme por la noche</div>
+                <div class="option" onclick="selectOption(16, 2, this)">Me despierto sin motivo en mitad de la noche y tardo en volver a dormirme</div>
+                <div class="option" onclick="selectOption(16, 3, this)">Me despierto temprano todos los días y NO duermo más de 5 horas</div>
+                <div class="option" onclick="selectOption(16, 3, this)">Tardo más de 2 horas en dormirme y NO duermo más de 5 horas</div>
+                <div class="option" onclick="selectOption(16, 3, this)">NO logro dormir MÁS de 3 o 4 horas seguidas</div>
+            </div>
+        </div>
+
+        <!-- Card 17: Cansancio -->
+        <div class="card" id="card-17">
+            <div class="question-number">Pregunta 17 de 21</div>
+            <div class="question-text">Cansancio</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(17, 1, this)">Me canso MÁS fácilmente que antes</div>
+                <div class="option" onclick="selectOption(17, 2, this)">Cualquier cosa que hago me fatiga</div>
+                <div class="option" onclick="selectOption(17, 0, this)">NO me canso más de lo normal</div>
+                <div class="option" onclick="selectOption(17, 3, this)">Me canso tanto que NO PUEDO hacer nada</div>
+            </div>
+        </div>
+
+        <!-- Card 18: Pérdida de apetito -->
+        <div class="card" id="card-18">
+            <div class="question-number">Pregunta 18 de 21</div>
+            <div class="question-text">Pérdida de apetito</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(18, 3, this)">He perdido TOTALMENTE el apetito</div>
+                <div class="option" onclick="selectOption(18, 1, this)">Mi apetito NO es tan bueno como antes</div>
+                <div class="option" onclick="selectOption(18, 2, this)">Mi apetito es ahora MUCHO menor</div>
+                <div class="option" onclick="selectOption(18, 0, this)">Tengo el mismo apetito de siempre</div>
+            </div>
+        </div>
+
+        <!-- Card 19: Pérdida de peso -->
+        <div class="card" id="card-19">
+            <div class="question-number">Pregunta 19 de 21</div>
+            <div class="question-text">Pérdida de peso</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(19, 0, this)">NO he perdido peso últimamente</div>
+                <div class="option" onclick="selectOption(19, 1, this)">He perdido MÁS de 2,5 kg</div>
+                <div class="option" onclick="selectOption(19, 2, this)">He perdido MÁS de 5 kg</div>
+                <div class="option" onclick="selectOption(19, 3, this)">He perdido MÁS de 7,5 kg</div>
+            </div>
+        </div>
+
+        <!-- Card 20: Hipocondria -->
+        <div class="card" id="card-20">
+            <div class="question-number">Pregunta 20 de 21</div>
+            <div class="question-text">Hipocondria</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(20, 2, this)">Estoy TAN preocupado por mi salud que me es difícil pensar en otras cosas</div>
+                <div class="option" onclick="selectOption(20, 1, this)">Estoy preocupado por dolores y trastornos</div>
+                <div class="option" onclick="selectOption(20, 0, this)">NO me preocupa mi salud más de lo normal</div>
+                <div class="option" onclick="selectOption(20, 3, this)">Estoy CONSTANTEMENTE pendiente de lo que me sucede y de cómo me encuentro</div>
+            </div>
+        </div>
+
+        <!-- Card 21: Libido -->
+        <div class="card" id="card-21">
+            <div class="question-number">Pregunta 21 de 21</div>
+            <div class="question-text">Libido</div>
+            <div class="options">
+                <div class="option" onclick="selectOption(21, 1, this)">Estoy MENOS interesado por el sexo que antes</div>
+                <div class="option" onclick="selectOption(21, 3, this)">He perdido TODO mi interés por el sexo</div>
+                <div class="option" onclick="selectOption(21, 2, this)">Apenas me siento atraído sexualmente</div>
+                <div class="option" onclick="selectOption(21, 0, this)">NO he notado ningún cambio en mi atracción por el sexo</div>
+            </div>
+        </div>
+
+        <!-- Card Final -->
+        <div class="card" id="card-final">
+            <h1>Evaluación Completada</h1>
+            <div class="instructions">
+                Muchas gracias por completar el Inventario de Depresión de Beck-21. 
+                <br><br>
+                Por favor, pase el dispositivo a su médico o profesional de la salud mental para la revisión e interpretación de los resultados.
+            </div>
+            <button class="medical-button" onclick="showResults()">Revisar Resultados (Médico)</button>
+        </div>
+
+        <!-- Card Results -->
+        <div class="card" id="card-results">
+            <h1>Resultados del BDI-21</h1>
+            <div class="result-content">
+                <div class="score-display">
+                    <div class="score-number" id="total-score">0</div>
+                    <div class="score-range" id="score-interpretation">de 63 puntos</div>
+                </div>
+
+                <div class="subscales">
+                    <div class="subscale">
+                        <h4>Síntomas Cognitivos</h4>
+                        <div class="score" id="cognitive-score">0/15</div>
+                    </div>
+                    <div class="subscale">
+                        <h4>Síntomas Afectivos</h4>
+                        <div class="score" id="affective-score">0/24</div>
+                    </div>
+                    <div class="subscale">
+                        <h4>Síntomas Somáticos</h4>
+                        <div class="score" id="somatic-score">0/9</div>
+                    </div>
+                    <div class="subscale">
+                        <h4>Síntomas Vegetativos</h4>
+                        <div class="score" id="vegetative-score">0/15</div>
+                    </div>
+                </div>
+
+                <div class="interpretation" id="sleep-analysis">
+                    <h3>Análisis Específico del Sueño (Ítem 16)</h3>
+                    <p id="sleep-type"></p>
+                </div>
+
+                <div class="interpretation" id="main-interpretation">
+                    <h3>Interpretación Clínica</h3>
+                    <p id="interpretation-text"></p>
+                </div>
+
+                <div id="high-alerts"></div>
+
+                <div class="interpretation">
+                    <h3>Información Técnica</h3>
+                    <p><strong>Subescalas del BDI-21:</strong></p>
+                    <p>• <strong>Síntomas Cognitivos (5 ítems):</strong> Evalúan la tríada cognitiva negativa de Beck, incluyendo pesimismo, sentimientos de fracaso, expectativas de castigo, autoacusación e indecisión. Reflejan distorsiones en el procesamiento de información sobre sí mismo, el mundo y el futuro.</p>
+                    <p>• <strong>Síntomas Afectivos (8 ítems):</strong> Evalúan alteraciones del estado de ánimo y emocionales como tristeza, insatisfacción, culpa, odio hacia sí mismo, ideación suicida, llanto, irritabilidad y aislamiento social.</p>
+                    <p>• <strong>Síntomas Somáticos (3 ítems):</strong> Evalúan manifestaciones físicas conscientes como preocupaciones por la imagen corporal, fatiga y preocupaciones hipocondríacas por la salud.</p>
+                    <p>• <strong>Síntomas Vegetativos (5 ítems):</strong> Evalúan funciones neurovegetativas automáticas incluyendo capacidad laboral, trastornos del sueño, pérdida de apetito, pérdida de peso y disminución de la libido.</p>
+                    
+                    <p><strong>Consideraciones clínicas diferenciales:</strong></p>
+                    <p>• Los síntomas cognitivos responden prioritariamente a terapia cognitivo-conductual y reestructuración cognitiva.</p>
+                    <p>• Los síntomas afectivos pueden beneficiarse de enfoques integrados cognitivo-conductuales y farmacológicos.</p>
+                    <p>• Los síntomas somáticos requieren descarte de comorbilidad médica y manejo específico de preocupaciones somáticas.</p>
+                    <p>• Los síntomas vegetativos frecuentemente requieren intervención farmacológica dirigida a sistemas neurotransmisores específicos.</p>
+                    <p>• La evaluación diferencial de subescalas permite personalizar estrategias terapéuticas según el perfil sintomático predominante.</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-button" onclick="exportToPDF()">Exportar a PDF</button>
+                    <button class="action-button" onclick="exportToImage()">Capturar Imagen</button>
+                    <button class="action-button" onclick="newEvaluation()">Nueva Evaluación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-button" id="back-btn" onclick="previousCard()">← Regresar</button>
+    <div class="progress-bar" id="progress"></div>
+
+    <script>
+        // Variables globales
+        let currentCard = 0;
+        let responses = {};
+        let responseDetails = {};
+        const totalQuestions = 21;
+
+        // Definir ítems por subescala
+        const cognitiveItems = [2, 3, 6, 8, 13];
+        const affectiveItems = [1, 4, 5, 7, 9, 10, 11, 12];
+        const somaticItems = [14, 17, 20];
+        const vegetativeItems = [15, 16, 18, 19, 21];
+
+        // Funciones principales
+        function updateProgress() {
+            const progress = (currentCard / (totalQuestions + 2)) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function updateBackButton() {
+            const backBtn = document.getElementById('back-btn');
+            if (currentCard === 0 || currentCard === totalQuestions + 1 || currentCard === totalQuestions + 2) {
+                backBtn.style.display = 'none';
+            } else {
+                backBtn.style.display = 'block';
+            }
+        }
+
+        function nextCard() {
+            document.getElementById('card-' + currentCard).classList.remove('active');
+            currentCard++;
+            document.getElementById('card-' + currentCard).classList.add('active');
+            updateProgress();
+            updateBackButton();
+        }
+
+        function previousCard() {
+            if (currentCard > 1) {
+                document.getElementById('card-' + currentCard).classList.remove('active');
+                currentCard--;
+                document.getElementById('card-' + currentCard).classList.add('active');
+                updateProgress();
+                updateBackButton();
+            }
+        }
+
+        function selectOption(question, score, element) {
+            const options = element.parentElement.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            element.classList.add('selected');
+            responses[question] = score;
+            
+            if (question === 16) {
+                const optionIndex = Array.from(options).indexOf(element);
+                responseDetails[question] = { optionIndex: optionIndex, text: element.textContent };
+            }
+            
+            setTimeout(function() {
+                if (currentCard < totalQuestions) {
+                    nextCard();
+                } else {
+                    document.getElementById('card-' + currentCard).classList.remove('active');
+                    currentCard = totalQuestions + 1;
+                    document.getElementById('card-final').classList.add('active');
+                    updateProgress();
+                    updateBackButton();
+                }
+            }, 150);
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            let cognitiveScore = 0;
+            let affectiveScore = 0;
+            let somaticScore = 0;
+            let vegetativeScore = 0;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const score = responses[i] || 0;
+                totalScore += score;
+
+                if (cognitiveItems.includes(i)) {
+                    cognitiveScore += score;
+                } else if (affectiveItems.includes(i)) {
+                    affectiveScore += score;
+                } else if (somaticItems.includes(i)) {
+                    somaticScore += score;
+                } else if (vegetativeItems.includes(i)) {
+                    vegetativeScore += score;
+                }
+            }
+
+            return { totalScore: totalScore, cognitiveScore: cognitiveScore, affectiveScore: affectiveScore, somaticScore: somaticScore, vegetativeScore: vegetativeScore };
+        }
+
+        function getSleepAnalysis() {
+            const item16Detail = responseDetails[16];
+            if (!item16Detail) {
+                return {
+                    type: "Sin información sobre el sueño",
+                    description: "No se completó la evaluación del ítem de sueño.",
+                    clinical: "Completar evaluación para análisis específico."
+                };
+            }
+
+            const sleepPatterns = [
+                {
+                    type: "Sin alteraciones del sueño",
+                    description: "No se identifican trastornos del sueño significativos. El patrón de sueño se mantiene dentro de parámetros normales.",
+                    clinical: "No requiere intervención específica para trastornos del sueño."
+                },
+                {
+                    type: "Sueño no reparador",
+                    description: "Se presenta fatiga matutina a pesar de horas de sueño aparentemente adecuadas.",
+                    clinical: "Evaluar higiene del sueño, descartar trastornos respiratorios del sueño."
+                },
+                {
+                    type: "Despertar precoz clásico",
+                    description: "Despertar temprano con incapacidad para retomar el sueño. Característico de depresión mayor.",
+                    clinical: "Altamente asociado con depresión mayor. Considerar tratamiento antidepresivo."
+                },
+                {
+                    type: "Insomnio de conciliación",
+                    description: "Dificultad para iniciar el sueño con latencia prolongada (1-2 horas).",
+                    clinical: "Técnicas de relajación, higiene del sueño, manejo de ansiedad."
+                },
+                {
+                    type: "Insomnio de mantenimiento",
+                    description: "Despertares frecuentes durante la noche con dificultad para retomar el sueño.",
+                    clinical: "Evaluar causas médicas. Considerar tratamiento farmacológico."
+                },
+                {
+                    type: "Despertar precoz severo",
+                    description: "Despertar temprano con reducción severa del tiempo total de sueño (≤5 horas).",
+                    clinical: "Intervención prioritaria. Tratamiento antidepresivo indicado."
+                },
+                {
+                    type: "Insomnio de conciliación severo",
+                    description: "Latencia extremadamente prolongada (>2h) con tiempo total reducido (≤5h).",
+                    clinical: "Requiere evaluación multidisciplinaria urgente."
+                },
+                {
+                    type: "Insomnio total/Global",
+                    description: "Sueño severamente fragmentado con incapacidad para mantener períodos continuos.",
+                    clinical: "Urgencia terapéutica. Evaluación inmediata de causas subyacentes."
+                }
+            ];
+
+            const optionIndex = item16Detail.optionIndex;
+            return sleepPatterns[optionIndex] || sleepPatterns[0];
+        }
+
+        function getInterpretation(score) {
+            if (score <= 9) {
+                return {
+                    level: "Sin depresión",
+                    description: "La puntuación indica ausencia de sintomatología depresiva clínicamente significativa.",
+                    color: "#48bb78",
+                    recommendations: "• Mantener estrategias de bienestar actual\n• Continuar con actividades preventivas de salud mental\n• Monitoreo rutinario en seguimientos regulares"
+                };
+            } else if (score <= 18) {
+                return {
+                    level: "Depresión leve",
+                    description: "Se evidencia presencia de sintomatología depresiva de intensidad leve.",
+                    color: "#f6ad55",
+                    recommendations: "• Evaluación de factores precipitantes\n• Considerar intervenciones psicoeducativas\n• Estrategias de manejo del estrés\n• Monitoreo periódico"
+                };
+            } else if (score <= 29) {
+                return {
+                    level: "Depresión moderada",
+                    description: "La puntuación indica sintomatología depresiva de intensidad moderada que requiere intervención clínica.",
+                    color: "#ed8936",
+                    recommendations: "• Intervención psicoterapéutica estructurada\n• Evaluación de tratamiento farmacológico\n• Evaluación de riesgo suicida\n• Seguimiento clínico regular"
+                };
+            } else {
+                return {
+                    level: "Depresión grave",
+                    description: "La puntuación indica sintomatología depresiva severa que requiere intervención clínica inmediata.",
+                    color: "#f56565",
+                    recommendations: "• Intervención clínica inmediata\n• Evaluación prioritaria de riesgo suicida\n• Tratamiento farmacológico combinado\n• Seguimiento clínico intensivo"
+                };
+            }
+        }
+
+        function showResults() {
+            const scores = calculateScore();
+            const interpretation = getInterpretation(scores.totalScore);
+            const sleepAnalysis = getSleepAnalysis();
+
+            document.getElementById('total-score').textContent = scores.totalScore;
+            document.getElementById('score-interpretation').textContent = interpretation.level + ' (' + scores.totalScore + '/63)';
+            document.getElementById('cognitive-score').textContent = scores.cognitiveScore + '/15';
+            document.getElementById('affective-score').textContent = scores.affectiveScore + '/24';
+            document.getElementById('somatic-score').textContent = scores.somaticScore + '/9';
+            document.getElementById('vegetative-score').textContent = scores.vegetativeScore + '/15';
+
+            document.getElementById('sleep-type').innerHTML = '<strong>Clasificación:</strong> ' + sleepAnalysis.type + '<br><br><strong>Descripción:</strong> ' + sleepAnalysis.description + '<br><br><strong>Consideraciones clínicas:</strong> ' + sleepAnalysis.clinical;
+
+            document.getElementById('interpretation-text').innerHTML = '<strong>Nivel:</strong> ' + interpretation.level + '<br><br><strong>Descripción:</strong> ' + interpretation.description + '<br><br><strong>Recomendaciones clínicas:</strong><br>' + interpretation.recommendations.split('\n').join('<br>');
+
+            document.querySelector('.score-display').style.background = 'linear-gradient(135deg, ' + interpretation.color + ', ' + interpretation.color + 'dd)';
+
+            let alertsHTML = '';
+            const highRiskItems = [];
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                const score = responses[i] || 0;
+                if (score >= 2) {
+                    highRiskItems.push({
+                        item: i,
+                        score: score,
+                        name: getItemName(i)
+                    });
+                }
+            }
+
+            if (highRiskItems.length > 0) {
+                alertsHTML = '<div class="alert-high"><h4>Ítems de Atención Prioritaria</h4><p>Los siguientes ítems presentan puntuaciones elevadas:</p><ul>';
+                for (let item of highRiskItems) {
+                    alertsHTML += '<li><strong>Ítem ' + item.item + '</strong> (' + item.name + '): Puntuación ' + item.score + '</li>';
+                }
+                alertsHTML += '</ul>';
+                
+                const hasSuicidalIdeation = highRiskItems.some(item => item.item === 9);
+                if (hasSuicidalIdeation) {
+                    alertsHTML += '<p><strong>⚠️ ALERTA:</strong> Se detectó puntuación elevada en ideación suicida. Evaluación inmediata del riesgo requerida.</p>';
+                }
+                alertsHTML += '</div>';
+            }
+
+            document.getElementById('high-alerts').innerHTML = alertsHTML;
+
+            document.getElementById('card-final').classList.remove('active');
+            currentCard = totalQuestions + 2;
+            document.getElementById('card-results').classList.add('active');
+            updateProgress();
+            updateBackButton();
+        }
+
+        function getItemName(item) {
+            const itemNames = {
+                1: "Estado de ánimo", 2: "Pesimismo", 3: "Sentimiento de fracaso",
+                4: "Insatisfacción", 5: "Sentimientos de culpa", 6: "Sentimiento de castigo",
+                7: "Odio a sí mismo", 8: "Autoacusación", 9: "Impulsos suicidas",
+                10: "Períodos de llanto", 11: "Irritabilidad", 12: "Aislamiento social",
+                13: "Indecisión", 14: "Imagen corporal", 15: "Capacidad laboral",
+                16: "Trastornos del sueño", 17: "Cansancio", 18: "Pérdida de apetito",
+                19: "Pérdida de peso", 20: "Hipocondria", 21: "Libido"
+            };
+            return itemNames[item] || 'Ítem ' + item;
+        }
+
+        function exportToPDF() {
+            const scores = calculateScore();
+            const interpretation = getInterpretation(scores.totalScore);
+            const sleepAnalysis = getSleepAnalysis();
+            
+            // Generar alertas de ítems altos
+            const highRiskItems = [];
+            for (let i = 1; i <= totalQuestions; i++) {
+                const score = responses[i] || 0;
+                if (score >= 2) {
+                    highRiskItems.push({
+                        item: i,
+                        score: score,
+                        name: getItemName(i)
+                    });
+                }
+            }
+            
+            const hasSuicidalIdeation = highRiskItems.some(item => item.item === 9);
+            
+            // Generar HTML para alertas
+            let alertsHTML = '';
+            if (highRiskItems.length > 0) {
+                alertsHTML = `
+                    <div style="background: #fff5f5; border: 2px solid #f56565; border-radius: 12px; padding: 20px; margin: 20px 0; break-inside: avoid;">
+                        <h3 style="color: #742a2a; margin-bottom: 15px; font-size: 18px;">⚠️ Ítems de Atención Prioritaria</h3>
+                        <p style="margin-bottom: 15px; color: #555;">Los siguientes ítems presentan puntuaciones elevadas que requieren evaluación específica:</p>
+                        <ul style="margin: 0; padding-left: 20px; color: #555;">
+                            ${highRiskItems.map(item => `<li style="margin-bottom: 8px;"><strong>Ítem ${item.item}</strong> (${item.name}): <strong>Puntuación ${item.score}/3</strong></li>`).join('')}
+                        </ul>
+                        ${hasSuicidalIdeation ? '<p style="margin-top: 15px; padding: 15px; background: #fee; border-left: 4px solid #f56565; color: #742a2a; font-weight: bold;">🚨 ALERTA CRÍTICA: Se detectó puntuación elevada en ideación suicida. Evaluación inmediata del riesgo requerida.</p>' : ''}
+                    </div>
+                `;
+            }
+
+            const printContent = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Resultados BDI-21 - ${new Date().toLocaleDateString('es-ES')}</title>
+                    <style>
+                        @media print {
+                            body { margin: 0.5in; }
+                            .no-print { display: none; }
+                            .page-break { page-break-before: always; }
+                        }
+                        
+                        * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                        }
+                        
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+                            line-height: 1.6;
+                            color: #333;
+                            background: #ffffff;
+                            padding: 20px;
+                        }
+                        
+                        .header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            padding: 30px;
+                            background: linear-gradient(135deg, #29A98C20, #112F3310);
+                            border-radius: 15px;
+                            break-inside: avoid;
+                        }
+                        
+                        .header h1 {
+                            background: linear-gradient(135deg, #29A98C, #112F33);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            background-clip: text;
+                            font-size: 28px;
+                            font-weight: 700;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .header .subtitle {
+                            font-size: 18px;
+                            color: #666;
+                            margin-bottom: 20px;
+                        }
+                        
+                        .header .date {
+                            font-size: 14px;
+                            color: #888;
+                            border-top: 1px solid #ddd;
+                            padding-top: 15px;
+                        }
+                        
+                        .score-display {
+                            background: linear-gradient(135deg, ${interpretation.color}20, ${interpretation.color}10);
+                            border: 2px solid ${interpretation.color};
+                            border-radius: 15px;
+                            padding: 25px;
+                            text-align: center;
+                            margin: 25px 0;
+                            break-inside: avoid;
+                        }
+                        
+                        .score-number {
+                            font-size: 48px;
+                            font-weight: 700;
+                            color: ${interpretation.color};
+                            margin-bottom: 10px;
+                        }
+                        
+                        .score-level {
+                            font-size: 20px;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 5px;
+                        }
+                        
+                        .score-range {
+                            font-size: 16px;
+                            color: #666;
+                        }
+                        
+                        .subscales {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 20px;
+                            margin: 25px 0;
+                        }
+                        
+                        .subscale {
+                            background: #f8f9fa;
+                            border: 1px solid #e9ecef;
+                            border-left: 4px solid #29A98C;
+                            border-radius: 12px;
+                            padding: 20px;
+                            text-align: center;
+                            break-inside: avoid;
+                        }
+                        
+                        .subscale h4 {
+                            color: #112F33;
+                            margin-bottom: 12px;
+                            font-size: 16px;
+                            font-weight: 600;
+                        }
+                        
+                        .subscale .score-num {
+                            font-size: 28px;
+                            font-weight: 700;
+                            color: #29A98C;
+                        }
+                        
+                        .subscale .items {
+                            font-size: 12px;
+                            color: #666;
+                            margin-top: 8px;
+                        }
+                        
+                        .section {
+                            margin: 25px 0;
+                            break-inside: avoid;
+                        }
+                        
+                        .section h3 {
+                            color: #112F33;
+                            font-size: 20px;
+                            font-weight: 600;
+                            margin-bottom: 15px;
+                            padding-bottom: 8px;
+                            border-bottom: 2px solid #29A98C;
+                        }
+                        
+                        .section p {
+                            margin-bottom: 12px;
+                            color: #555;
+                            text-align: justify;
+                        }
+                        
+                        .sleep-analysis {
+                            background: #f0f8ff;
+                            border: 1px solid #b3d9ff;
+                            border-left: 4px solid #007acc;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin: 20px 0;
+                            break-inside: avoid;
+                        }
+                        
+                        .interpretation {
+                            background: #f8f9fa;
+                            border: 1px solid #e9ecef;
+                            border-left: 4px solid #29A98C;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin: 20px 0;
+                            break-inside: avoid;
+                        }
+                        
+                        .recommendations {
+                            background: #f0fff0;
+                            border: 1px solid #90ee90;
+                            border-left: 4px solid #28a745;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin: 20px 0;
+                            break-inside: avoid;
+                        }
+                        
+                        .recommendations ul {
+                            margin: 10px 0;
+                            padding-left: 20px;
+                        }
+                        
+                        .recommendations li {
+                            margin-bottom: 8px;
+                            color: #555;
+                        }
+                        
+                        .technical-info {
+                            background: #fafafa;
+                            border: 1px solid #ddd;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin: 25px 0;
+                            font-size: 14px;
+                            break-inside: avoid;
+                        }
+                        
+                        .technical-info h4 {
+                            color: #112F33;
+                            margin-bottom: 10px;
+                            font-size: 16px;
+                        }
+                        
+                        .footer {
+                            margin-top: 40px;
+                            padding-top: 20px;
+                            border-top: 1px solid #ddd;
+                            text-align: center;
+                            font-size: 12px;
+                            color: #888;
+                        }
+                        
+                        @media screen {
+                            .print-button {
+                                position: fixed;
+                                top: 20px;
+                                right: 20px;
+                                background: #29A98C;
+                                color: white;
+                                border: none;
+                                padding: 12px 24px;
+                                border-radius: 25px;
+                                cursor: pointer;
+                                font-weight: 600;
+                                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                                z-index: 1000;
+                            }
+                            
+                            .print-button:hover {
+                                background: #1e8a6e;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <button class="print-button no-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+                    
+                    <div class="header">
+                        <h1>Inventario de Depresión de Beck-21</h1>
+                        <div class="subtitle">Resultados de Evaluación Clínica</div>
+                        <div class="date">
+                            Fecha: ${new Date().toLocaleDateString('es-ES')} | 
+                            Hora: ${new Date().toLocaleTimeString('es-ES')}
+                        </div>
+                    </div>
+                    
+                    <div class="score-display">
+                        <div class="score-number">${scores.totalScore}</div>
+                        <div class="score-level">${interpretation.level}</div>
+                        <div class="score-range">${scores.totalScore}/63 puntos</div>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>📊 Subescalas Específicas</h3>
+                        <div class="subscales">
+                            <div class="subscale">
+                                <h4>🧠 Síntomas Cognitivos</h4>
+                                <div class="score-num">${scores.cognitiveScore}/15</div>
+                                <div class="items">Ítems 2, 3, 6, 8, 13</div>
+                            </div>
+                            <div class="subscale">
+                                <h4>💔 Síntomas Afectivos</h4>
+                                <div class="score-num">${scores.affectiveScore}/24</div>
+                                <div class="items">Ítems 1, 4, 5, 7, 9, 10, 11, 12</div>
+                            </div>
+                            <div class="subscale">
+                                <h4>🫀 Síntomas Somáticos</h4>
+                                <div class="score-num">${scores.somaticScore}/9</div>
+                                <div class="items">Ítems 14, 17, 20</div>
+                            </div>
+                            <div class="subscale">
+                                <h4>🌿 Síntomas Vegetativos</h4>
+                                <div class="score-num">${scores.vegetativeScore}/15</div>
+                                <div class="items">Ítems 15, 16, 18, 19, 21</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sleep-analysis">
+                        <h3>🌙 Análisis Específico del Sueño (Ítem 16)</h3>
+                        <p><strong>Clasificación:</strong> ${sleepAnalysis.type}</p>
+                        <p><strong>Descripción:</strong> ${sleepAnalysis.description}</p>
+                        <p><strong>Consideraciones clínicas:</strong> ${sleepAnalysis.clinical}</p>
+                    </div>
+                    
+                    <div class="interpretation">
+                        <h3>🏥 Interpretación Clínica</h3>
+                        <p><strong>Nivel:</strong> ${interpretation.level}</p>
+                        <p><strong>Descripción:</strong> ${interpretation.description}</p>
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h3>📋 Recomendaciones Clínicas</h3>
+                        <ul>
+                            ${interpretation.recommendations.split('\n').filter(rec => rec.trim()).map(rec => `<li>${rec.replace('• ', '')}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    ${alertsHTML}
+                    
+                    <div class="technical-info">
+                        <h4>📚 Información Técnica - Subescalas del BDI-21</h4>
+                        <p><strong>Síntomas Cognitivos:</strong> Evalúan la tríada cognitiva negativa de Beck, incluyendo pesimismo, sentimientos de fracaso, expectativas de castigo, autoacusación e indecisión.</p>
+                        <p><strong>Síntomas Afectivos:</strong> Evalúan alteraciones del estado de ánimo y emocionales como tristeza, insatisfacción, culpa, odio hacia sí mismo, ideación suicida, llanto, irritabilidad y aislamiento social.</p>
+                        <p><strong>Síntomas Somáticos:</strong> Evalúan manifestaciones físicas conscientes como preocupaciones por la imagen corporal, fatiga y preocupaciones hipocondríacas.</p>
+                        <p><strong>Síntomas Vegetativos:</strong> Evalúan funciones neurovegetativas automáticas incluyendo capacidad laboral, trastornos del sueño, pérdida de apetito, pérdida de peso y disminución de la libido.</p>
+                    </div>
+                    
+                    <div class="footer">
+                        <p>Este documento fue generado automáticamente por el sistema BDI-21.</p>
+                        <p>Para interpretación clínica completa, consulte con un profesional de salud mental cualificado.</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Abrir nueva ventana e inyectar contenido
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            
+            // Enfocar la ventana y abrir diálogo de impresión
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+        }
+
+        function exportToImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 600;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#333333';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('Resultados BDI-21', 50, 50);
+
+            const scores = calculateScore();
+            const interpretation = getInterpretation(scores.totalScore);
+            
+            ctx.font = '18px Arial';
+            ctx.fillText('Puntuación Total: ' + scores.totalScore + '/63', 50, 100);
+            ctx.fillText('Nivel: ' + interpretation.level, 50, 130);
+
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'BDI-21_Resultados_' + new Date().toISOString().split('T')[0] + '.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function newEvaluation() {
+            currentCard = 0;
+            responses = {};
+            responseDetails = {};
+            
+            document.querySelectorAll('.option').forEach(function(opt) {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.card').forEach(function(card) {
+                card.classList.remove('active');
+            });
+            
+            document.getElementById('card-0').classList.add('active');
+            updateProgress();
+            updateBackButton();
+        }
+
+        // Inicializar
+        updateProgress();
+        updateBackButton();
+    </script>
+</body>
+</html>
